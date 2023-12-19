@@ -88,4 +88,10 @@ or missing are:
 * Provide ready to install packages for different target machines.
 * Put Android app on Google Playstore.
 
+== Copyright and License
+
+Copyright (C) 2023 Thomas Kern
+
+Licensed under MIT License. See link:LICENSE[LICENSE] for details.
+
 

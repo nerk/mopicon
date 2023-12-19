@@ -1,0 +1,191 @@
+{
+  "@@locale": "en",
+  "appName": "Mopicon",
+  "okBtn": "OK",
+  "cancelBtn": "Cancel",
+  "abortBtn": "Abort",
+  "yesBtn": "Yes",
+  "noBtn": "No",
+  "retryBtn": "Retry",
+  "submitBtn": "Submit",
+  "saveBtn": "Save",
+  "connectingPageConnecting": "Connecting...",
+  "connectingPageStopBtn": "Stop",
+  "homePageSearchLbl": "Search",
+  "homePageBrowseLbl": "Browse",
+  "homePageTracksLbl": "Tracks",
+  "pageNotFoundMsg": "Page not found!",
+  "preferencesPageTitle": "Settings",
+  "preferencesPageMopidyServerHintText": "IP address or hostname of Mopidy server.",
+  "preferencesPageMopidyServerLblText": "Mopidy server *",
+  "preferencesPageMopidyServerInvalid": "Please enter a valid hostname or IP address.",
+  "preferencesPageMopidyPortHintText": "Port of Mopidy server.",
+  "preferencesPageMopidyPortLblText": "Mopidy server port *",
+  "preferencesPageMopidyPortInvalid": "Please enter a valid port number.",
+  "preferencesPageConnectionLbl": "Connection",
+  "preferencesPageAppearanceLbl": "Appearance",
+  "preferencesPageUiLbl": "User Interface",
+  "preferencesPageThemeLbl": "Theme",
+  "preferencesPageLanguageLbl": "Language",
+  "preferencesPageTranslateServerNamesLbl": "Translate server names",
+  "preferencesPageHideFileExtensionLbl": "Hide file extension",
+  "preferencesPageShowAllMediaCategoriesLbl": "Show all media categories",
+  "preferencesPageSaveBtn": "Save",
+  "preferencesPageLoadError": "Loading preferences failed.",
+  "preferencesPageSaveError": "Saving preferences failed.",
+  "preferencesPageConnectErrorTitle": "Connecting to Mopidy server failed.",
+  "preferencesPageConnectErrorDetails": "Max retries exceeded.",
+  "libraryBrowserPageTitle": "Browse",
+  "libraryPlaylistSeparator": "Playlists",
+  "trackListPageTitle": "Tracks",
+  "playlistPageTitle": "Playlist",
+  "searchPageTitle": "Search",
+  "searchPageNotSupportedMessage": "Search not supported, because Mopidy-Local server extension is not enabled.",
+
+  "aboutPageTitle": "About",
+  "aboutPageDescription": "A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk[source code] is available on Github.",
+  "aboutPageLicenseSection": "License",
+  "aboutPageVersionSection": "Version",
+  "aboutPageHelpSection": "Help",
+  "aboutPageHelpDescription": "https://github.com/nerk[Documentation and Help]",
+  "aboutPageLinkLaunchError": "Could not launch '{url}'.",
+  "@aboutPageLinkLaunchError" : {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+
+  "selectPlaylistDialogTitle": "Select Playlist",
+
+  "newPlaylistDialogTitle": "New Playlist",
+  "newPlaylistDialogNameLabel": "Name",
+  "newPlaylistDialogNameHint": "Enter name of new Playlist",
+  "newPlaylistDialogSubmitBtn": "OK",
+  "newPlaylistDialogCancelBtn": "Cancel",
+  "newPlaylistNameInvalid": "Please enter a valid playlist name.",
+  "newPlaylistCreateError": "Could not create playlist.",
+  "newPlaylistAlreadyExistsError": "Playlist already exists.",
+
+  "deletePlaylistDialogTitle": "Delete Playlist",
+  "deletePlaylistDialogMessage": "Do you really want to delete playlist '{name}'?",
+  "@deletePlaylistDialogMessage" : {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deletePlaylistError": "Playlist could not be deleted.",
+
+  "newPlaylistStreamDialogTitle": "Add new stream to Playlist",
+  "newTracklistStreamDialogTitle": "Add new stream to Tracklist",
+  "newStreamDialogUriLabel": "URI",
+  "newStreamDialogUriHint": "Enter URI of new stream",
+  "newStreamDialogSubmitBtn": "OK",
+  "newStreamDialogCancelBtn": "Cancel",
+  "newStreamUriInvalid": "Please enter a valid URI for the stream.",
+  "newStreamCreateError": "Could not create stream.",
+  "newStreamAccessError": "Stream cannot be accessed. Invalid URI?",
+
+  "menuAddToTracklist": "Add to TrackList",
+  "menuAddToPlaylist": "Add to Playlist",
+  "menuSettings": "Settings",
+  "menuAbout": "About",
+  "menuNewPlaylist": "Create Playlist",
+  "menuNewStream": "New Stream",
+  "menuPlayNow": "Play now",
+  "menuSelection": "Selection",
+  "menuSelectAll": "Select all",
+  "menuRemoveSelected": "Remove selected",
+  "menuRemove": "Remove",
+  "menuDelete": "Delete",
+  "menuClearList": "Clear list",
+
+  "nameTranslateFiles": "Files",
+  "nameTranslateLocalMedia": "Local Media",
+  "nameTranslateAlbums": "Albums",
+  "nameTranslateArtists": "Artists",
+  "nameTranslatePerformers": "Performers",
+  "nameTranslateComposers": "Composers",
+  "nameTranslateGenres": "Genres",
+  "nameTranslateTracks": "Tracks",
+  "nameTranslateReleaseYears": "Release Years",
+  "nameTranslateLastWeeksUpdates": "Last Week's Updates",
+  "nameTranslateLastMonthsUpdates": "Last Month's Updates",
+
+  "tracksAddedToTracklistMessage": "{n} tracks added to tracklist.",
+  "@tracksAddedToTracklistMessage" : {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "trackAddedToTracklistMessage": "Track added to tracklist.",
+
+  "tracksAddedToPlaylistMessage": "{n} tracks added to playlist {p}.",
+  "@tracksAddedToPlaylistMessage" : {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+
+  "trackAddedToPlaylistMessage": "Track added to playlist {p}.",
+  "@trackAddedToPlaylistMessage" : {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+
+  "albumDateLbl": "Year: {date}",
+  "@albumDateLbl" : {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "albumNumTracksLbl": "Tracks: {numTracks}",
+  "@albumNumTracksLbl" : {
+    "placeholders": {
+      "numTracks": {}
+    }
+  },
+
+  "nowPlayingDiscLbl": "Disc: {discNo}",
+  "@nowPlayingDiscLbl" : {
+    "placeholders": {
+      "discNo": {
+        "type": "int"
+      }
+    }
+  },
+  "nowPlayingTrackNoLbl": "Track: {trackNo}",
+  "@nowPlayingTrackNoLbl" : {
+    "placeholders": {
+      "trackNo": {
+        "type": "int"
+      }
+    }
+  },
+  "nowPlayingDateLbl": "Year: {date}",
+  "@nowPlayingDateLbl" : {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "nowPlayingBitrateLbl": "Bitrate: {bitrate} kbit/s",
+  "@nowPlayingBitrateLbl" : {
+    "placeholders": {
+      "bitrate": {}
+    }
+  }
+}
+

@@ -1,0 +1,190 @@
+{
+  "@@locale": "de",
+  "appName": "Mopicon",
+  "okBtn": "OK",
+  "submitBtn": "Bestätigen",
+  "cancelBtn": "Abbruch",
+  "abortBtn": "Abbruch",
+  "yesBtn": "Ja",
+  "noBtn": "Nein",
+  "retryBtn": "Wiederholen",
+  "saveBtn": "Speichern",
+  "connectingPageConnecting": "Verbinden...",
+  "connectingPageStopBtn": "Stopp",
+  "homePageSearchLbl": "Suche",
+  "homePageBrowseLbl": "Bibliothek",
+  "homePageTracksLbl": "Titelliste",
+  "pageNotFoundMsg": "Seite nicht gefunden!",
+  "preferencesPageTitle": "Einstellungen",
+  "preferencesPageMopidyServerHintText": "IP-Adresse oder Name des Mopidy-Servers.",
+  "preferencesPageMopidyServerLblText": "Mopidy Server *",
+  "preferencesPageMopidyServerInvalid": "Bitte gültigen Namen oder IP-Adresse eingeben.",
+  "preferencesPageMopidyPortHintText": "Port des Mopidy-Servers.",
+  "preferencesPageMopidyPortLblText": "Mopidy-Server Port *",
+  "preferencesPageMopidyPortInvalid": "Bitte gültigen Port eingeben.",
+  "preferencesPageConnectionLbl": "Verbindung",
+  "preferencesPageAppearanceLbl": "Erscheinungsbild",
+  "preferencesPageUiLbl": "User Interface",
+  "preferencesPageThemeLbl": "Theme",
+  "preferencesPageLanguageLbl": "Sprache",
+  "preferencesPageTranslateServerNamesLbl": "Server-Namen übersetzen",
+  "preferencesPageHideFileExtensionLbl": "Mopidy File-Extension verbergen",
+  "preferencesPageShowAllMediaCategoriesLbl": "Alle Medienkategorien anzeigen",
+  "preferencesPageSaveBtn": "Speichern",
+  "preferencesPageLoadError": "Einstellungen konnten nicht geladen werden.",
+  "preferencesPageSaveError": "Einstellungen konnten nicht gespeichert werden.",
+  "preferencesPageConnectErrorTitle": "Keine Verbindung zum Mopidy Server.",
+  "preferencesPageConnectErrorDetails": "Maximale Versuche überschritten.",
+  "libraryBrowserPageTitle": "Bibliothek",
+  "libraryPlaylistSeparator": "Playlists",
+  "trackListPageTitle": "Titelliste",
+  "playlistPageTitle": "Playlist",
+  "searchPageTitle": "Suche",
+  "searchPageNotSupportedMessage": "Suche wird nicht unterstützt, weil die Mopidy-Local Erweiterung des Servers nicht aktiviert ist.",
+
+  "aboutPageTitle": "Über",
+  "aboutPageDescription": "Ein https://mopidy.com[Mopidy-Client] implementiert mit Flutter und Dart.\nDer http://github.com/nerk[Sourcecode] ist auf Github verfügbar.",
+  "aboutPageLicenseSection": "Lizenz",
+  "aboutPageVersionSection": "Version",
+  "aboutPageHelpSection": "Hilfe",
+  "aboutPageHelpDescription": "https://github.com/nerk[Dokumentation und Hilfe]",
+  "aboutPageLinkLaunchError": "Link '{url}' konnte nicht geöffnet werden.",
+  "@aboutPageLinkLaunchError" : {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+
+  "selectPlaylistDialogTitle": "Playlist auswählen",
+
+  "newPlaylistDialogTitle": "Neue Playlist",
+  "newPlaylistDialogNameLabel": "Name",
+  "newPlaylistDialogNameHint": "Name der Playlist",
+  "newPlaylistDialogSubmitBtn": "Bestätigen",
+  "newPlaylistDialogCancelBtn": "Abbruch",
+  "newPlaylistNameInvalid": "Bitte gültigen Namen eingeben.",
+  "newPlaylistCreateError": "Playlist konnte nicht angelegt werden.",
+  "newPlaylistAlreadyExistsError": "Playlist existiert bereits.",
+
+  "deletePlaylistDialogTitle": "Playlist löschen",
+  "deletePlaylistDialogMessage": "Playlist '{name}' unwiderruflich löschen?",
+  "@deletePlaylistDialogMessage" : {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deletePlaylistError": "Playlist konnte nicht gelöscht werden.",
+
+  "newPlaylistStreamDialogTitle": "Neuen Stream zur Playlist hinzufügen",
+  "newTracklistStreamDialogTitle": "Neuen Stream zur Titelliste hinzufügen",
+  "newStreamDialogUriLabel": "URI",
+  "newStreamDialogUriHint": "URI des Streams.",
+  "newStreamDialogSubmitBtn": "OK",
+  "newStreamDialogCancelBtn": "Cancel",
+  "newStreamUriInvalid": "Bitte gültigen URI des Streams eingeben.",
+  "newStreamCreateError": "Stream konnte nicht angelegt werden.",
+  "newStreamAccessError": "Zugriff auf den Stream gescheitert. Ungültiger URI?",
+
+  "menuAddToTracklist": "Zu Titelliste hinzufügen",
+  "menuAddToPlaylist": "Zu Playlist hinzufügen",
+  "menuSettings": "Einstellungen",
+  "menuAbout": "Über",
+  "menuNewPlaylist": "Neue Playlist",
+  "menuNewStream": "Neuer Stream",
+  "menuPlayNow": "Abspielen",
+  "menuSelection": "Auswahl",
+  "menuSelectAll": "Alles auswählen",
+  "menuRemoveSelected": "Selektierte entfernen",
+  "menuRemove": "Entfernen",
+  "menuDelete": "Löschen",
+  "menuClearList": "Liste leeren",
+
+  "nameTranslateFiles": "Dateien",
+  "nameTranslateLocalMedia": "Lokale Medien",
+  "nameTranslateAlbums": "Alben",
+  "nameTranslateArtists": "Künstler",
+  "nameTranslatePerformers": "Interpreten",
+  "nameTranslateComposers": "Komponisten",
+  "nameTranslateGenres": "Genres",
+  "nameTranslateTracks": "Titel",
+  "nameTranslateReleaseYears": "Erscheinungsjahre",
+  "nameTranslateLastWeeksUpdates": "Letzte Woche aktualisiert",
+  "nameTranslateLastMonthsUpdates": "Letzten Monat aktualisiert",
+
+  "tracksAddedToTracklistMessage": "{n} Titel zu Titelliste hinzugefügt.",
+  "@tracksAddedToTracklistMessage" : {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "trackAddedToTracklistMessage": "Titel zu Titelliste hinzugefügt.",
+
+  "tracksAddedToPlaylistMessage": "{n} Titel zu Playlist '{p}' hinzugefügt.",
+  "@tracksAddedToPlaylistMessage" : {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+
+  "trackAddedToPlaylistMessage": "Titel zu Playlist '{p}' hinzugefügt.",
+  "@trackAddedToPlaylistMessage" : {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+
+  "albumDateLbl": "Jahr: {date}",
+  "@albumDateLbl" : {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "albumNumTracksLbl": "Tracks: {numTracks}",
+  "@albumNumTracksLbl" : {
+    "placeholders": {
+      "numTracks": {}
+    }
+  },
+
+  "nowPlayingDiscLbl": "CD: {discNo}",
+  "@nowPlayingDiscLbl" : {
+    "placeholders": {
+      "discNo": {
+        "type": "int"
+      }
+    }
+  },
+  "nowPlayingTrackNoLbl": "Titel Nr.: {trackNo}",
+  "@nowPlayingTrackNoLbl" : {
+    "placeholders": {
+      "trackNo": {
+        "type": "int"
+      }
+    }
+  },
+  "nowPlayingDateLbl": "Jahr: {date}",
+  "@nowPlayingDateLbl" : {
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "nowPlayingBitrateLbl": "Bitrate: {bitrate} kbit/s",
+  "@nowPlayingBitrateLbl" : {
+    "placeholders": {
+      "bitrate": {}
+    }
+  }
+}

@@ -226,7 +226,7 @@ class MopidyServiceImpl extends MopidyService {
       if (trackMap.isNotEmpty) {
         for (var ref in refs) {
           var tracks = trackMap[ref.uri];
-          if (tracks != null) {
+          if (tracks != null && tracks.isNotEmpty) {
             Album? album = tracks.first.album;
             if (album != null) {
               ref.extraData = AlbumInfoExtraData(album);

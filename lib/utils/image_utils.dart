@@ -59,18 +59,6 @@ class ImageUtils {
     return type;
   }
 
-  static String imageUri(Ref ref) {
-    if (ref.uri.startsWith('local:album:')) {
-      return ref.uri;
-    }
-
-    final uri = Uri.parse(ref.uri);
-    if (uri.hasQuery) {
-      return uri.queryParameters['album'] ?? ref.uri;
-    }
-    return ref.uri;
-  }
-
   static Widget pad(image, double size) {
     return Padding(padding: EdgeInsets.all(size), child: image);
   }

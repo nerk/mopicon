@@ -115,7 +115,8 @@ class Preferences {
   }
 
   String computeNetworkUrl(MImage img) {
-    return 'http://$host:$port${img.uri}';
+    var uri = Uri.parse(img.uri);
+    return uri.hasScheme ? img.uri : 'http://$host:$port${img.uri}';
   }
 
   bool get hasChanged => _dirty;

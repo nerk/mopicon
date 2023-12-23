@@ -82,7 +82,6 @@ The application is already fully functional and usable. Some things to be improv
 or missing are:
 
 * Help documentation.
-* Renaming of existing playlists.
 * Shuffle/repeat for tracklist.
 * Python project for installing the web application as a Mopidy extension.
 * Provide ready to install packages for different target machines.

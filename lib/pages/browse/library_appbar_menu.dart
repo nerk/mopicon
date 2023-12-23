@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
+import 'package:mopicon/pages/browse/rename_playlist_dialog.dart';
 import 'package:mopicon/pages/browse/new_playlist_dialog.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/error_snackbar.dart';
@@ -33,7 +34,7 @@ import 'package:mopicon/utils/globals.dart';
 class LibraryBrowserAppBarMenu extends StatelessWidget {
   final mopidyService = GetIt.instance<MopidyService>();
 
-  List<Ref> items;
+  final List<Ref> items;
   final LibraryBrowserController controller;
 
   LibraryBrowserAppBarMenu(this.items, this.controller, {super.key});
@@ -45,9 +46,14 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
       menuBuilder.addMenuItem(
           S.of(context).menuSelectAll, Icons.select_all, _selectAll);
     }
-    return menuBuilder
-        .addMenuItem(
+
+    controller.selectionChanged.value.positions.length != 1
+        ? menuBuilder.addMenuItem(
             S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
+        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist,
+            Icons.drive_file_rename_outline, _renamePlayList);
+
+    return menuBuilder
         .addDivider()
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
@@ -68,7 +74,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
         if (name != null && name.isNotEmpty) {
           mopidyService.createPlaylist(name).then((playlist) {
             if (playlist == null) {
-              showError(S.of(context!).newPlaylistAlreadyExistsError, null);
+              showError(S.of(context!).playlistAlreadyExistsError, null);
             }
           }).onError((e, s) {
             Globals.logger.e(e, stackTrace: s);
@@ -77,5 +83,16 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
         }
       });
     });
+  }
+
+  void _renamePlayList(BuildContext? context, _, __) async {
+    if (controller.selectionChanged.value.positions.length == 1) {
+      var ref = items[controller.selectionChanged.value.positions.first];
+      controller.unselect();
+      var name = await renamePlaylistDialog(ref.name);
+      if (name != null) {
+        await controller.renamePlayList(ref, name);
+      }
+    }
   }
 }

@@ -128,11 +128,13 @@ abstract class MopidyService {
   Future<List<Ref>> getPlaylists();
   Future<List<Track>> getPlaylistItems(Ref playlist);
   Future<Playlist?> createPlaylist(String name);
+  Future<Playlist?> savePlaylist(Playlist playlist);
   Future<void> deletePlaylist(Ref playlist);
   Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> tracks);
   Future<void> movePlaylistItem(Ref playlist, int from, int to);
   Future<Playlist?> deletePlaylistItems(
       Ref playlist, SelectedItemPositions positions);
+  Future<bool> renamePlaylist(Ref playlist, String name);
 
   // Mixer
   Future<bool> setMute(bool mute);
@@ -487,29 +489,40 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
+  Future<Playlist?> savePlaylist(Playlist playlist) {
+    return _mopidy.playlists.save(playlist);
+  }
+
+  @override
   Future<void> deletePlaylist(Ref playlist) async {
     assert(playlist.type == Ref.typePlaylist);
     await _mopidy.playlists.delete(playlist.uri);
   }
 
   @override
-  Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> tracks) async {
-    assert(tracks is List<Ref> ||
-        tracks is List<Track> ||
-        tracks is List<TlTrack>);
+  Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> items) async {
+    assert(
+        items is List<Ref> || items is List<Track> || items is List<TlTrack>);
     Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
     bool trackAdded = false;
     if (pl != null) {
-      for (var track in tracks) {
-        String uri = getUri(track)!;
-        // Special error handling if this is a stream uri and lookup fails if the stream is invalid
-        // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
-        Track tr = (await _mopidy.library.lookup([uri])).values.first[0];
-        if (tr.name != 'INVALID_STREAM_ERROR') {
-          pl.addTrack(tr);
+      for (var item in items) {
+        if (item is Ref) {
+          Track tr = (await _mopidy.library.lookup([item.uri])).values.first[0];
+          // Special error handling if this is a stream uri and lookup fails if the stream is invalid
+          // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
+          if (tr.name != 'INVALID_STREAM_ERROR') {
+            pl.addTrack(tr);
+            trackAdded = true;
+          } else {
+            showError(S.of(rootContext()).newStreamAccessError, tr.uri);
+          }
+        } else if (item is TlTrack) {
+          pl.addTrack(item.track);
           trackAdded = true;
         } else {
-          showError(S.of(rootContext()).newStreamAccessError, tr.uri);
+          pl.addTrack(item as Track);
+          trackAdded = true;
         }
       }
       if (trackAdded) {
@@ -546,6 +559,18 @@ class MopidyServiceImpl extends MopidyService {
       return Future.value(result);
     }
     return Future.value(null);
+  }
+
+  @override
+  Future<bool> renamePlaylist(Ref playlist, String name) async {
+    Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
+    if (pl != null) {
+      pl.name = name;
+      await _mopidy.playlists.save(pl);
+      await _mopidy.playlists.delete(pl.uri);
+      return true;
+    }
+    return false;
   }
 }
 

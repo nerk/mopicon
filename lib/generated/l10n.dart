@@ -560,10 +560,10 @@ class S {
     );
   }
 
-  /// `Enter name of new Playlist`
+  /// `Enter name of new playlist`
   String get newPlaylistDialogNameHint {
     return Intl.message(
-      'Enter name of new Playlist',
+      'Enter name of new playlist',
       name: 'newPlaylistDialogNameHint',
       desc: '',
       args: [],
@@ -590,16 +590,6 @@ class S {
     );
   }
 
-  /// `Please enter a valid playlist name.`
-  String get newPlaylistNameInvalid {
-    return Intl.message(
-      'Please enter a valid playlist name.',
-      name: 'newPlaylistNameInvalid',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Could not create playlist.`
   String get newPlaylistCreateError {
     return Intl.message(
@@ -610,11 +600,81 @@ class S {
     );
   }
 
+  /// `Rename Playlist`
+  String get renamePlaylistDialogTitle {
+    return Intl.message(
+      'Rename Playlist',
+      name: 'renamePlaylistDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get renamePlaylistDialogNameLabel {
+    return Intl.message(
+      'Name',
+      name: 'renamePlaylistDialogNameLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter playlist new name`
+  String get renamePlaylistDialogNameHint {
+    return Intl.message(
+      'Enter playlist new name',
+      name: 'renamePlaylistDialogNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `OK`
+  String get renamePlaylistDialogSubmitBtn {
+    return Intl.message(
+      'OK',
+      name: 'renamePlaylistDialogSubmitBtn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get renamePlaylistDialogCancelBtn {
+    return Intl.message(
+      'Cancel',
+      name: 'renamePlaylistDialogCancelBtn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Could not rename playlist.`
+  String get renamePlaylistCreateError {
+    return Intl.message(
+      'Could not rename playlist.',
+      name: 'renamePlaylistCreateError',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Playlist already exists.`
-  String get newPlaylistAlreadyExistsError {
+  String get playlistAlreadyExistsError {
     return Intl.message(
       'Playlist already exists.',
-      name: 'newPlaylistAlreadyExistsError',
+      name: 'playlistAlreadyExistsError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid playlist name.`
+  String get playlistNameInvalidError {
+    return Intl.message(
+      'Please enter a valid playlist name.',
+      name: 'playlistNameInvalidError',
       desc: '',
       args: [],
     );
@@ -785,6 +845,16 @@ class S {
     return Intl.message(
       'Create Playlist',
       name: 'menuNewPlaylist',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rename Playlist`
+  String get menuRenamePlaylist {
+    return Intl.message(
+      'Rename Playlist',
+      name: 'menuRenamePlaylist',
       desc: '',
       args: [],
     );

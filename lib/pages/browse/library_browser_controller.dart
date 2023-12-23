@@ -40,6 +40,7 @@ abstract class LibraryBrowserController with TracklistMethods, PlaylistMethods {
   Future<List<Ref>> browse(Ref? parent);
   Future<List<Ref>> getSelectedItems(Ref? parent);
   void deleteSelectedPlaylists();
+  Future<void> renamePlayList(Ref pl, String name);
   void unselect();
 }
 
@@ -134,6 +135,23 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
       }
     }
     unselect();
+  }
+
+  @override
+  Future<void> renamePlayList(Ref pl, String name) async {
+    try {
+      var playlists = await _mopidyService.getPlaylists();
+      if (name.isNotEmpty) {
+        if (playlists.indexWhere((e) => e.name == name) != -1) {
+          showError(S.of(rootContext()).playlistAlreadyExistsError, null);
+        } else {
+          await _mopidyService.renamePlaylist(pl, name);
+        }
+      }
+    } catch (e, s) {
+      Globals.logger.e(e, stackTrace: s);
+      showError(S.of(rootContext()).renamePlaylistCreateError, null);
+    }
   }
 
   @override

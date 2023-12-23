@@ -90,6 +90,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "menuRemove": MessageLookupByLibrary.simpleMessage("Remove"),
         "menuRemoveSelected":
             MessageLookupByLibrary.simpleMessage("Remove selected"),
+        "menuRenamePlaylist":
+            MessageLookupByLibrary.simpleMessage("Rename Playlist"),
         "menuSelectAll": MessageLookupByLibrary.simpleMessage("Select all"),
         "menuSelection": MessageLookupByLibrary.simpleMessage("Selection"),
         "menuSettings": MessageLookupByLibrary.simpleMessage("Settings"),
@@ -110,22 +112,18 @@ class MessageLookup extends MessageLookupByLibrary {
         "nameTranslateReleaseYears":
             MessageLookupByLibrary.simpleMessage("Release Years"),
         "nameTranslateTracks": MessageLookupByLibrary.simpleMessage("Tracks"),
-        "newPlaylistAlreadyExistsError":
-            MessageLookupByLibrary.simpleMessage("Playlist already exists."),
         "newPlaylistCreateError":
             MessageLookupByLibrary.simpleMessage("Could not create playlist."),
         "newPlaylistDialogCancelBtn":
             MessageLookupByLibrary.simpleMessage("Cancel"),
         "newPlaylistDialogNameHint":
-            MessageLookupByLibrary.simpleMessage("Enter name of new Playlist"),
+            MessageLookupByLibrary.simpleMessage("Enter name of new playlist"),
         "newPlaylistDialogNameLabel":
             MessageLookupByLibrary.simpleMessage("Name"),
         "newPlaylistDialogSubmitBtn":
             MessageLookupByLibrary.simpleMessage("OK"),
         "newPlaylistDialogTitle":
             MessageLookupByLibrary.simpleMessage("New Playlist"),
-        "newPlaylistNameInvalid": MessageLookupByLibrary.simpleMessage(
-            "Please enter a valid playlist name."),
         "newPlaylistStreamDialogTitle":
             MessageLookupByLibrary.simpleMessage("Add new stream to Playlist"),
         "newStreamAccessError": MessageLookupByLibrary.simpleMessage(
@@ -150,6 +148,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "okBtn": MessageLookupByLibrary.simpleMessage("OK"),
         "pageNotFoundMsg":
             MessageLookupByLibrary.simpleMessage("Page not found!"),
+        "playlistAlreadyExistsError":
+            MessageLookupByLibrary.simpleMessage("Playlist already exists."),
+        "playlistNameInvalidError": MessageLookupByLibrary.simpleMessage(
+            "Please enter a valid playlist name."),
         "playlistPageTitle": MessageLookupByLibrary.simpleMessage("Playlist"),
         "preferencesPageAppearanceLbl":
             MessageLookupByLibrary.simpleMessage("Appearance"),
@@ -194,6 +196,18 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Translate server names"),
         "preferencesPageUiLbl":
             MessageLookupByLibrary.simpleMessage("User Interface"),
+        "renamePlaylistCreateError":
+            MessageLookupByLibrary.simpleMessage("Could not rename playlist."),
+        "renamePlaylistDialogCancelBtn":
+            MessageLookupByLibrary.simpleMessage("Cancel"),
+        "renamePlaylistDialogNameHint":
+            MessageLookupByLibrary.simpleMessage("Enter playlist new name"),
+        "renamePlaylistDialogNameLabel":
+            MessageLookupByLibrary.simpleMessage("Name"),
+        "renamePlaylistDialogSubmitBtn":
+            MessageLookupByLibrary.simpleMessage("OK"),
+        "renamePlaylistDialogTitle":
+            MessageLookupByLibrary.simpleMessage("Rename Playlist"),
         "retryBtn": MessageLookupByLibrary.simpleMessage("Retry"),
         "saveBtn": MessageLookupByLibrary.simpleMessage("Save"),
         "searchPageNotSupportedMessage": MessageLookupByLibrary.simpleMessage(

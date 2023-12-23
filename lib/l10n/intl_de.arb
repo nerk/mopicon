@@ -64,9 +64,17 @@
   "newPlaylistDialogNameHint": "Name der Playlist",
   "newPlaylistDialogSubmitBtn": "Bestätigen",
   "newPlaylistDialogCancelBtn": "Abbruch",
-  "newPlaylistNameInvalid": "Bitte gültigen Namen eingeben.",
   "newPlaylistCreateError": "Playlist konnte nicht angelegt werden.",
-  "newPlaylistAlreadyExistsError": "Playlist existiert bereits.",
+
+  "renamePlaylistDialogTitle": "Playlist umbenennen",
+  "renamePlaylistDialogNameLabel": "Name",
+  "renamePlaylistDialogNameHint": "Neuer Name der Playlist",
+  "renamePlaylistDialogSubmitBtn": "Bestätigen",
+  "renamePlaylistDialogCancelBtn": "Abbruch",
+  "renamePlaylistCreateError": "Playlist konnte nicht umbenannt werden.",
+
+  "playlistNameInvalidError": "Bitte gültigen Namen eingeben.",
+  "playlistAlreadyExistsError": "Playlist mit diesem Namen existiert bereits.",
 
   "deletePlaylistDialogTitle": "Playlist löschen",
   "deletePlaylistDialogMessage": "Playlist '{name}' unwiderruflich löschen?",
@@ -94,6 +102,7 @@
   "menuSettings": "Einstellungen",
   "menuAbout": "Über",
   "menuNewPlaylist": "Neue Playlist",
+  "menuRenamePlaylist": "Playlist umbenennen",
   "menuNewStream": "Neuer Stream",
   "menuPlayNow": "Abspielen",
   "menuSelection": "Auswahl",

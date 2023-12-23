@@ -21,7 +21,6 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/services/mopidy_service.dart';
 
 enum SelectionMode { on, off }
 
@@ -43,12 +42,8 @@ class SelectedItemPositions {
 
   List<T> filterSelected<T>(List<T> items) {
     List<T> filtered = List<T>.empty(growable: true);
-    if (positions.isNotEmpty) {
-      for (var i = 0; i < items.length; i++) {
-        if (positions.contains(i)) {
-          filtered.add(items[i]);
-        }
-      }
+    for (int pos in positions) {
+      filtered.add(items[pos]);
     }
     return filtered;
   }

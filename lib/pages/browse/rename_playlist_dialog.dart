@@ -26,7 +26,7 @@ import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
 import 'package:mopicon/utils/globals.dart';
 
-Future<String?> newPlaylistDialog() {
+Future<String?> renamePlaylistDialog(String currentName) {
   final modalDialogKey = GlobalKey<FormState>();
   String newName = '';
 
@@ -35,17 +35,17 @@ Future<String?> newPlaylistDialog() {
         .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
       return ModalDialog(
-        Text(S.of(context).newPlaylistDialogTitle),
+        Text(S.of(context).renamePlaylistDialogTitle),
         Form(
             key: modalDialogKey,
             child: TextFormField(
               keyboardType: TextInputType.text,
-              initialValue: '',
+              initialValue: currentName,
               autocorrect: false,
               decoration: InputDecoration(
-                  icon: const Icon(Icons.playlist_add),
-                  hintText: S.of(context).newPlaylistDialogNameHint,
-                  labelText: S.of(context).newPlaylistDialogNameLabel),
+                  icon: const Icon(Icons.drive_file_rename_outline),
+                  hintText: S.of(context).renamePlaylistDialogNameHint,
+                  labelText: S.of(context).renamePlaylistDialogNameLabel),
               onChanged: (String value) {
                 newName = value;
               },

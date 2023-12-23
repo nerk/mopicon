@@ -61,12 +61,20 @@
 
   "newPlaylistDialogTitle": "New Playlist",
   "newPlaylistDialogNameLabel": "Name",
-  "newPlaylistDialogNameHint": "Enter name of new Playlist",
+  "newPlaylistDialogNameHint": "Enter name of new playlist",
   "newPlaylistDialogSubmitBtn": "OK",
   "newPlaylistDialogCancelBtn": "Cancel",
-  "newPlaylistNameInvalid": "Please enter a valid playlist name.",
   "newPlaylistCreateError": "Could not create playlist.",
-  "newPlaylistAlreadyExistsError": "Playlist already exists.",
+
+  "renamePlaylistDialogTitle": "Rename Playlist",
+  "renamePlaylistDialogNameLabel": "Name",
+  "renamePlaylistDialogNameHint": "Enter playlist new name",
+  "renamePlaylistDialogSubmitBtn": "OK",
+  "renamePlaylistDialogCancelBtn": "Cancel",
+  "renamePlaylistCreateError": "Could not rename playlist.",
+
+  "playlistAlreadyExistsError": "Playlist already exists.",
+  "playlistNameInvalidError": "Please enter a valid playlist name.",
 
   "deletePlaylistDialogTitle": "Delete Playlist",
   "deletePlaylistDialogMessage": "Do you really want to delete playlist '{name}'?",
@@ -94,6 +102,7 @@
   "menuSettings": "Settings",
   "menuAbout": "About",
   "menuNewPlaylist": "Create Playlist",
+  "menuRenamePlaylist": "Rename Playlist",
   "menuNewStream": "New Stream",
   "menuPlayNow": "Play now",
   "menuSelection": "Selection",

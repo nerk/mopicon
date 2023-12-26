@@ -63,7 +63,12 @@ abstract class MopidyService {
   final playlistChangedNotifier = ValueNotifier<Playlist?>(null);
 
   // Connection methods
+
   void connect();
+
+  /// Returns the URI to the currently connected server.
+  /// `null` if the clieng is offline.
+  String? get currentConnectionUri;
 
   void stop();
 
@@ -174,10 +179,17 @@ class MopidyServiceImpl extends MopidyService {
 
   bool _stopped = false;
 
+  String? _currentConnectionUri;
+
   MopidyServiceImpl() {
     _mopidy =
         Mopidy(logger: logger, backoffDelayMin: 500, backoffDelayMax: 6000);
     _mopidy.clientState$.listen((value) {
+      if (value.state == ClientState.online) {
+        _currentConnectionUri = Globals.preferences.url;
+      } else {
+        _currentConnectionUri = null;
+      }
       _clientState = value.state;
       connectionNotifier.value = value;
     });
@@ -226,9 +238,13 @@ class MopidyServiceImpl extends MopidyService {
   @override
   void connect() {
     _mopidy.disconnect();
+    logger.i("Connecting to ${Globals.preferences.url}");
     _mopidy.connect(webSocketUrl: Globals.preferences.url);
     _stopped = false;
   }
+
+  @override
+  String? get currentConnectionUri => _currentConnectionUri;
 
   @override
   void stop() {

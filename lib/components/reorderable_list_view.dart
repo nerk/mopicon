@@ -74,7 +74,7 @@ class ReorderableTrackListView<T extends Object> {
 
   Widget buildListView() {
     var listView = ReorderableListView.builder(
-        buildDefaultDragHandles: true,
+        buildDefaultDragHandles: false,
         shrinkWrap: items.length > 500,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) =>

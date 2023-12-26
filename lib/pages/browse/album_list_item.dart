@@ -52,14 +52,8 @@ class AlbumListItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            thumbnail,
             Expanded(
-              flex: 1,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [thumbnail]),
-            ),
-            Expanded(
-              flex: 2,
               child: _AlbumDescription(title, artist, numTracks, date),
             ),
             _controller
@@ -90,14 +84,13 @@ class _AlbumDescription extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
             ),
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
           Text(
             artist,
-            style: const TextStyle(fontSize: 14.0),
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
           numTracks != null

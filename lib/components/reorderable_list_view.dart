@@ -74,7 +74,7 @@ class ReorderableTrackListView<T extends Object> {
 
   Widget buildListView() {
     var listView = ReorderableListView.builder(
-        buildDefaultDragHandles: false,
+        buildDefaultDragHandles: true,
         shrinkWrap: items.length > 500,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) =>
@@ -97,11 +97,6 @@ class ReorderableTrackListView<T extends Object> {
         tileColor: index == markedItemIndex
             ? Globals.preferences.theme.data.colorScheme.inversePrimary
             : null,
-        onLongPress: () {
-          selectionModeChangedNotifier.value = SelectionMode.on;
-          selectedPositions.set(index);
-          selectionChangedNotifier.value = selectedPositions;
-        },
         onTap: () async {
           if (selectionModeChangedNotifier.value == SelectionMode.on) {
             selectedPositions.toggle(index);
@@ -113,7 +108,13 @@ class ReorderableTrackListView<T extends Object> {
             onTap!(item, index);
           }
         },
-        leading: _getImage(item, index, false),
+        leading: GestureDetector(
+            onLongPress: () {
+              selectionModeChangedNotifier.value = SelectionMode.on;
+              selectedPositions.set(index);
+              selectionChangedNotifier.value = selectedPositions;
+            },
+            child: _getImage(item, index, false)),
         title: Text(track.name),
         subtitle: track.artistNames != null ? Text(track.artistNames!) : null);
 
@@ -139,7 +140,7 @@ class ReorderableTrackListView<T extends Object> {
           return false;
         },
         child: onReorder != null
-            ? ReorderableDragStartListener(
+            ? ReorderableDelayedDragStartListener(
                 key: Key("$index$item.uri"),
                 index: index,
                 child: listTile,

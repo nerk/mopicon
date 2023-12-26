@@ -301,7 +301,9 @@ class _PreferencesState extends State<PreferencesPage> {
                             trailing: ElevatedButton(
                                 child: Text(S.of(context).showLogButtonLbl),
                                 onPressed: () {
-                                  showTextDialog(S.of(context).logDialogTitle,
+                                  showTextDialog(
+                                      context,
+                                      S.of(context).logDialogTitle,
                                       getLogMessages());
                                 }),
                           ),

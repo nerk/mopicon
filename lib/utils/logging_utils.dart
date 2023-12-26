@@ -46,6 +46,7 @@ StringBuffer _logBuffer = StringBuffer();
 Logger createLogger(Level? level) {
   return Logger(
       level: level,
+      filter: _Filter(),
       output: _LoggerOutput(),
       printer: PrettyPrinter(
           lineLength: 120,
@@ -78,5 +79,12 @@ class _LoggerOutput extends LogOutput {
       _logBuffer.clear();
       _logBuffer.write(s.substring(s.length - _minLen, s.length));
     }
+  }
+}
+
+class _Filter extends LogFilter {
+  @override
+  bool shouldLog(LogEvent event) {
+    return event.level.value >= level!.value;
   }
 }

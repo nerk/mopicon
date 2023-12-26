@@ -23,17 +23,15 @@
 import 'package:flutter/material.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
-import 'package:mopicon/utils/globals.dart';
 
 /// Displays [text] in a modal dialog.
 /// [text] is selectable and scrollable in all directions.
-Future<void> showTextDialog(String? title, String text) {
+Future<void> showTextDialog(BuildContext context, String? title, String text) {
   return showDialog<void>(
-    context: Globals
-        .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
-    builder: (BuildContext ctx1) {
+    context: context,
+    builder: (BuildContext ctx) {
       return ModalDialog(
-        constrainSize: false,
+        constrainSize: true,
         title != null ? Text(title) : const SizedBox(),
         SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -41,9 +39,9 @@ Future<void> showTextDialog(String? title, String text) {
               scrollDirection: Axis.horizontal, child: Text(text)),
         ),
         <Widget>[
-          DialogButton.oK(ctx1, onPressed: () {
-            if (ctx1.mounted) {
-              Navigator.of(ctx1).pop();
+          DialogButton.oK(ctx, onPressed: () {
+            if (ctx.mounted) {
+              Navigator.of(ctx).pop();
             }
           }),
         ],

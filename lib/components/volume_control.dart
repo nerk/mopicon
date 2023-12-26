@@ -62,7 +62,7 @@ class _VolumeControlState extends State<VolumeControl> {
         });
       }
     } catch (e) {
-      Globals.logger.e(e);
+      logger.e(e);
     }
   }
 
@@ -105,7 +105,7 @@ class _VolumeControlState extends State<VolumeControl> {
                       try {
                         await _mopidyService.setMute(m);
                       } catch (e) {
-                        Globals.logger.e(e);
+                        logger.e(e);
                       }
                     },
                   ),
@@ -122,7 +122,7 @@ class _VolumeControlState extends State<VolumeControl> {
                           volume = value.toInt();
                         });
                       } catch (e) {
-                        Globals.logger.e(e);
+                        logger.e(e);
                       }
                     },
                     onChanged: (double value) {

@@ -30,7 +30,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   mopidy_client:
-    git: 
+    git:
       url: https://github.com/nerk/mopidy_dart_client
   flutter:
     sdk: flutter

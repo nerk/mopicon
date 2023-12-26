@@ -22,14 +22,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/services/initializer_service.dart';
-import 'package:logger/logger.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 
 void main() {
-  Logger.level = Level.debug;
   GetIt.instance
       .registerLazySingleton<InitializerService>(() => InitializeServiceImpl());
   return runApp(const AppWidget());

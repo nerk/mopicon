@@ -46,9 +46,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "abortBtn": MessageLookupByLibrary.simpleMessage("Abbruch"),
         "aboutPageDescription": MessageLookupByLibrary.simpleMessage(
-            "Ein https://mopidy.com[Mopidy-Client] implementiert mit Flutter und Dart.\nDer http://github.com/nerk[Sourcecode] ist auf Github verfügbar."),
+            "Ein https://mopidy.com[Mopidy-Client] implementiert mit Flutter und Dart.\nDer http://github.com/nerk/mopicon[Sourcecode] ist auf Github verfügbar."),
         "aboutPageHelpDescription": MessageLookupByLibrary.simpleMessage(
-            "https://github.com/nerk[Dokumentation und Hilfe]"),
+            "https://github.com/nerk/mopicon[Dokumentation und Hilfe]"),
         "aboutPageHelpSection": MessageLookupByLibrary.simpleMessage("Hilfe"),
         "aboutPageLicenseSection":
             MessageLookupByLibrary.simpleMessage("Lizenz"),
@@ -60,6 +60,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "albumNumTracksLbl": m2,
         "appName": MessageLookupByLibrary.simpleMessage("Mopicon"),
         "cancelBtn": MessageLookupByLibrary.simpleMessage("Abbruch"),
+        "clearLogButtonLbl":
+            MessageLookupByLibrary.simpleMessage("Log löschen"),
         "connectingPageConnecting":
             MessageLookupByLibrary.simpleMessage("Verbinden..."),
         "connectingPageStopBtn": MessageLookupByLibrary.simpleMessage("Stopp"),
@@ -75,6 +77,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Bibliothek"),
         "libraryPlaylistSeparator":
             MessageLookupByLibrary.simpleMessage("Playlists"),
+        "logDialogTitle": MessageLookupByLibrary.simpleMessage("Log"),
+        "loggingLbl": MessageLookupByLibrary.simpleMessage("Logging"),
         "menuAbout": MessageLookupByLibrary.simpleMessage("Über"),
         "menuAddToPlaylist":
             MessageLookupByLibrary.simpleMessage("Zu Playlist hinzufügen"),
@@ -220,6 +224,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "searchPageTitle": MessageLookupByLibrary.simpleMessage("Suche"),
         "selectPlaylistDialogTitle":
             MessageLookupByLibrary.simpleMessage("Playlist auswählen"),
+        "showLogButtonLbl":
+            MessageLookupByLibrary.simpleMessage("Log anzeigen"),
         "submitBtn": MessageLookupByLibrary.simpleMessage("Bestätigen"),
         "trackAddedToPlaylistMessage": m8,
         "trackAddedToTracklistMessage": MessageLookupByLibrary.simpleMessage(

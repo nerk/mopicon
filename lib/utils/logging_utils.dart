@@ -19,17 +19,64 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+library mopicon.logging;
+
+import 'dart:io' as io;
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 export 'package:logger/logger.dart';
 
-Logger getLogger(Level? level) {
+/// Global logger.
+Logger logger = createLogger(kDebugMode ? Level.debug : Level.info);
+
+String getLogMessages() {
+  return _logBuffer.toString();
+}
+
+void clearLogMessages() {
+  _logBuffer.clear();
+}
+
+// log buffer
+const _maxLen = 20000;
+const _minLen = 5000;
+StringBuffer _logBuffer = StringBuffer();
+
+Logger createLogger(Level? level) {
   return Logger(
-    level: level,
-    printer: PrettyPrinter(
-      lineLength: 90,
-      colors: true,
-      methodCount: 1,
-      errorMethodCount: 5,
-    ),
-  );
+      level: level,
+      output: _LoggerOutput(),
+      printer: PrettyPrinter(
+          lineLength: 120,
+          colors: false,
+          printEmojis: true,
+          methodCount: 2,
+          errorMethodCount: 10,
+          noBoxingByDefault: true,
+          printTime: true));
+}
+
+class _LoggerOutput extends LogOutput {
+  _LoggerOutput() {
+    _logBuffer.clear();
+  }
+
+  @override
+  void output(OutputEvent event) {
+    if (kDebugMode && io.stdout.hasTerminal) {
+      for (var line in event.lines) {
+        // Send to console
+        debugPrint(line);
+      }
+    }
+    // write to buffer
+    _logBuffer.write('\n\n');
+    _logBuffer.writeAll(event.lines, '\n');
+    if (_logBuffer.length > _maxLen) {
+      var s = _logBuffer.toString();
+      _logBuffer.clear();
+      _logBuffer.write(s.substring(s.length - _minLen, s.length));
+    }
+  }
 }

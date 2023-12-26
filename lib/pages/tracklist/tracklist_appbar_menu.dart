@@ -60,7 +60,7 @@ class TracklistAppBarMenu extends StatelessWidget {
         Ref track = Ref(uri, '', Ref.typeTrack);
         await controller.addItemsToTracklist<Ref>([track]);
       } catch (e, s) {
-        Globals.logger.e(e, stackTrace: s);
+        logger.e(e, stackTrace: s);
         showError(S.of(rootContext()).newStreamCreateError, null);
       }
     }

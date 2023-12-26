@@ -108,7 +108,7 @@ class _TrackListState extends State<TrackListPage> {
         tracks = trks;
       });
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     }
   }
 
@@ -135,7 +135,7 @@ class _TrackListState extends State<TrackListPage> {
         isStream = tlTrack != null ? tlTrack.track.uri.isStreamUri() : false;
       });
     } catch (e) {
-      Globals.logger.e(e);
+      logger.e(e);
     }
   }
 
@@ -170,7 +170,7 @@ class _TrackListState extends State<TrackListPage> {
         });
       }
     } catch (e) {
-      Globals.logger.e(e);
+      logger.e(e);
     }
   }
 
@@ -231,7 +231,7 @@ class _TrackListState extends State<TrackListPage> {
           await mopidyService.move(start, current);
         }
       } catch (e) {
-        Globals.logger.e(e);
+        logger.e(e);
       }
     }
 
@@ -274,7 +274,7 @@ class _TrackListState extends State<TrackListPage> {
                 (await mopidyService.getTimePosition()) ?? timePosition;
             controller.splitEnabled.value = !splitEnabled;
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         child: Column(children: [
@@ -296,7 +296,7 @@ class _TrackListState extends State<TrackListPage> {
                       (await mopidyService.getTimePosition()) ?? timePosition;
                   controller.splitEnabled.value = !splitEnabled;
                 } catch (e) {
-                  Globals.logger.e(e);
+                  logger.e(e);
                 }
               },
             )),

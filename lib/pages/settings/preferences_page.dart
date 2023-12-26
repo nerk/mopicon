@@ -28,6 +28,7 @@ import 'package:mopicon/components/error_snackbar.dart';
 import 'package:flutter/services.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/components/show_text_dialog.dart';
 import 'preferences_controller.dart';
 
 class PreferencesPage extends StatefulWidget {
@@ -293,6 +294,24 @@ class _PreferencesState extends State<PreferencesPage> {
                                 preferences.showAllMediaCategories = value!;
                               });
                             },
+                          ),
+                          TitledDivider(S.of(context).loggingLbl),
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            trailing: ElevatedButton(
+                                child: Text(S.of(context).showLogButtonLbl),
+                                onPressed: () {
+                                  showTextDialog(S.of(context).logDialogTitle,
+                                      getLogMessages());
+                                }),
+                          ),
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            trailing: ElevatedButton(
+                                child: Text(S.of(context).clearLogButtonLbl),
+                                onPressed: () {
+                                  clearLogMessages();
+                                }),
                           ),
                         ])))));
   }

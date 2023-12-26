@@ -19,6 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/services/initializer_service.dart';
@@ -33,15 +34,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final log = Globals.logger;
-
   void initialize() async {
     final initializer = GetIt.instance<InitializerService>();
-    try {
-      await initializer.initialize();
-      Globals.applicationRoutes.gotoConnecting(0);
-    } catch (e, stackTrace) {
-      log.e('Initialization failed.', error: e, stackTrace: stackTrace);
+    if (!initializer.initialized) {
+      try {
+        await initializer.initialize();
+        Globals.applicationRoutes.gotoConnecting(0);
+      } catch (e, stackTrace) {
+        logger.e('Initialization failed.', error: e, stackTrace: stackTrace);
+      }
     }
   }
 
@@ -65,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          const CircularProgressIndicator(),
+          const CircularProgressIndicator()
         ],
       ),
     );

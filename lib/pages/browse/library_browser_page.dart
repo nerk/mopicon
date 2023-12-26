@@ -123,7 +123,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
         setState(() {});
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     }
   }
 

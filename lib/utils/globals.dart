@@ -22,12 +22,11 @@
 import 'package:flutter/material.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/routes/application_routes.dart';
-import 'logging_utils.dart';
+export 'logging_utils.dart';
 
 class Globals {
   static final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   static final preferences = Preferences();
-  static final logger = getLogger(null);
   static final applicationRoutes = ApplicationRoutes();
 }
 

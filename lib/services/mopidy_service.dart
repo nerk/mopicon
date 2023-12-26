@@ -78,7 +78,9 @@ abstract class MopidyService {
   // Library browser.
   //
   Future<List<Ref>> browse(Ref? parent);
+
   Future<List<SearchResult>> search(SearchCriteria criteria);
+
   Future<Map<String, List<Image>>> getImages(List<String> albumUris);
 
   /// Returns a flattened list for [items].
@@ -93,6 +95,7 @@ abstract class MopidyService {
   // Tracklist methods
   //
   Future<List<TlTrack>> addTracksToTracklist<T>(List<T> tracks);
+
   Future<List<TlTrack>> addTrackToTracklist<T>(T track);
 
   Future<int> getTracklistLength();
@@ -100,8 +103,11 @@ abstract class MopidyService {
   Future<List<TlTrack>> getTracklistTlTracks();
 
   Future<TlTrack?> getCurrentTlTrack();
+
   Future<int?> getPreviousTlid();
+
   Future<int?> getNextTlid();
+
   Future<int> getLastTrackId(Ref track);
 
   Future<void> move(int from, int to);
@@ -114,32 +120,50 @@ abstract class MopidyService {
   // Playback methods
   //
   Future<void> play(Ref track);
+
   Future<void> playback(PlaybackAction action, int? tlId);
+
   Future<void> playNext();
+
   Future<void> playPrevious();
+
   Future<String?> getPlaybackState();
+
   Future<int?> getTimePosition();
+
   Future<bool> seek(int timePosition);
+
   Future<String?> getStreamTitle();
 
   //
   // Playlist methods
   //
   Future<List<Ref>> getPlaylists();
+
   Future<List<Track>> getPlaylistItems(Ref playlist);
+
   Future<Playlist?> createPlaylist(String name);
+
   Future<Playlist?> savePlaylist(Playlist playlist);
+
   Future<void> deletePlaylist(Ref playlist);
-  Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> tracks);
+
+  Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> items);
+
   Future<void> movePlaylistItem(Ref playlist, int from, int to);
+
   Future<Playlist?> deletePlaylistItems(
       Ref playlist, SelectedItemPositions positions);
+
   Future<bool> renamePlaylist(Ref playlist, String name);
 
   // Mixer
   Future<bool> setMute(bool mute);
+
   Future<bool?> isMuted();
+
   Future<bool> setVolume(int volume);
+
   Future<int?> getVolume();
 }
 
@@ -151,7 +175,8 @@ class MopidyServiceImpl extends MopidyService {
   bool _stopped = false;
 
   MopidyServiceImpl() {
-    _mopidy = Mopidy(backoffDelayMin: 500, backoffDelayMax: 6000);
+    _mopidy =
+        Mopidy(logger: logger, backoffDelayMin: 500, backoffDelayMax: 6000);
     _mopidy.clientState$.listen((value) {
       _clientState = value.state;
       connectionNotifier.value = value;
@@ -276,7 +301,7 @@ class MopidyServiceImpl extends MopidyService {
         return result as List<T>;
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     }
     return [];
   }

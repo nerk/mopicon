@@ -41,44 +41,38 @@
   "playlistPageTitle": "Playlist",
   "searchPageTitle": "Search",
   "searchPageNotSupportedMessage": "Search not supported, because Mopidy-Local server extension is not enabled.",
-
   "aboutPageTitle": "About",
-  "aboutPageDescription": "A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk[source code] is available on Github.",
+  "aboutPageDescription": "A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk/mopicon[source code] is available on Github.",
   "aboutPageLicenseSection": "License",
   "aboutPageVersionSection": "Version",
   "aboutPageHelpSection": "Help",
-  "aboutPageHelpDescription": "https://github.com/nerk[Documentation and Help]",
+  "aboutPageHelpDescription": "https://github.com/nerk/mopicon[Documentation and Help]",
   "aboutPageLinkLaunchError": "Could not launch '{url}'.",
-  "@aboutPageLinkLaunchError" : {
+  "@aboutPageLinkLaunchError": {
     "placeholders": {
       "url": {
         "type": "String"
       }
     }
   },
-
   "selectPlaylistDialogTitle": "Select Playlist",
-
   "newPlaylistDialogTitle": "New Playlist",
   "newPlaylistDialogNameLabel": "Name",
   "newPlaylistDialogNameHint": "Enter name of new playlist",
   "newPlaylistDialogSubmitBtn": "OK",
   "newPlaylistDialogCancelBtn": "Cancel",
   "newPlaylistCreateError": "Could not create playlist.",
-
   "renamePlaylistDialogTitle": "Rename Playlist",
   "renamePlaylistDialogNameLabel": "Name",
   "renamePlaylistDialogNameHint": "Enter playlist new name",
   "renamePlaylistDialogSubmitBtn": "OK",
   "renamePlaylistDialogCancelBtn": "Cancel",
   "renamePlaylistCreateError": "Could not rename playlist.",
-
   "playlistAlreadyExistsError": "Playlist already exists.",
   "playlistNameInvalidError": "Please enter a valid playlist name.",
-
   "deletePlaylistDialogTitle": "Delete Playlist",
   "deletePlaylistDialogMessage": "Do you really want to delete playlist '{name}'?",
-  "@deletePlaylistDialogMessage" : {
+  "@deletePlaylistDialogMessage": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -86,7 +80,6 @@
     }
   },
   "deletePlaylistError": "Playlist could not be deleted.",
-
   "newPlaylistStreamDialogTitle": "Add new stream to Playlist",
   "newTracklistStreamDialogTitle": "Add new stream to Tracklist",
   "newStreamDialogUriLabel": "URI",
@@ -96,7 +89,6 @@
   "newStreamUriInvalid": "Please enter a valid URI for the stream.",
   "newStreamCreateError": "Could not create stream.",
   "newStreamAccessError": "Stream cannot be accessed. Invalid URI?",
-
   "menuAddToTracklist": "Add to TrackList",
   "menuAddToPlaylist": "Add to Playlist",
   "menuSettings": "Settings",
@@ -111,7 +103,6 @@
   "menuRemove": "Remove",
   "menuDelete": "Delete",
   "menuClearList": "Clear list",
-
   "nameTranslateFiles": "Files",
   "nameTranslateLocalMedia": "Local Media",
   "nameTranslateAlbums": "Albums",
@@ -123,9 +114,8 @@
   "nameTranslateReleaseYears": "Release Years",
   "nameTranslateLastWeeksUpdates": "Last Week's Updates",
   "nameTranslateLastMonthsUpdates": "Last Month's Updates",
-
   "tracksAddedToTracklistMessage": "{n} tracks added to tracklist.",
-  "@tracksAddedToTracklistMessage" : {
+  "@tracksAddedToTracklistMessage": {
     "placeholders": {
       "n": {
         "type": "int"
@@ -133,9 +123,8 @@
     }
   },
   "trackAddedToTracklistMessage": "Track added to tracklist.",
-
   "tracksAddedToPlaylistMessage": "{n} tracks added to playlist {p}.",
-  "@tracksAddedToPlaylistMessage" : {
+  "@tracksAddedToPlaylistMessage": {
     "placeholders": {
       "n": {
         "type": "int"
@@ -145,31 +134,28 @@
       }
     }
   },
-
   "trackAddedToPlaylistMessage": "Track added to playlist {p}.",
-  "@trackAddedToPlaylistMessage" : {
+  "@trackAddedToPlaylistMessage": {
     "placeholders": {
       "p": {
         "type": "String"
       }
     }
   },
-
   "albumDateLbl": "Year: {date}",
-  "@albumDateLbl" : {
+  "@albumDateLbl": {
     "placeholders": {
       "date": {}
     }
   },
   "albumNumTracksLbl": "Tracks: {numTracks}",
-  "@albumNumTracksLbl" : {
+  "@albumNumTracksLbl": {
     "placeholders": {
       "numTracks": {}
     }
   },
-
   "nowPlayingDiscLbl": "Disc: {discNo}",
-  "@nowPlayingDiscLbl" : {
+  "@nowPlayingDiscLbl": {
     "placeholders": {
       "discNo": {
         "type": "int"
@@ -177,7 +163,7 @@
     }
   },
   "nowPlayingTrackNoLbl": "Track: {trackNo}",
-  "@nowPlayingTrackNoLbl" : {
+  "@nowPlayingTrackNoLbl": {
     "placeholders": {
       "trackNo": {
         "type": "int"
@@ -185,16 +171,20 @@
     }
   },
   "nowPlayingDateLbl": "Year: {date}",
-  "@nowPlayingDateLbl" : {
+  "@nowPlayingDateLbl": {
     "placeholders": {
       "date": {}
     }
   },
   "nowPlayingBitrateLbl": "Bitrate: {bitrate} kbit/s",
-  "@nowPlayingBitrateLbl" : {
+  "@nowPlayingBitrateLbl": {
     "placeholders": {
       "bitrate": {}
     }
-  }
+  },
+  "loggingLbl": "Logging",
+  "logDialogTitle": "Log",
+  "showLogButtonLbl": "Show Log",
+  "clearLogButtonLbl": "Clear Log"
 }
 

@@ -182,7 +182,7 @@ class _PlayButton extends StatelessWidget {
               _mopidyService.playback(PlaybackAction.resume, null);
             }
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.play_arrow));
@@ -201,7 +201,7 @@ class _PauseButton extends StatelessWidget {
           try {
             _mopidyService.playback(PlaybackAction.pause, null);
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.pause));
@@ -220,7 +220,7 @@ class _StopButton extends StatelessWidget {
           try {
             _mopidyService.playback(PlaybackAction.stop, null);
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.stop));
@@ -239,7 +239,7 @@ class _PreviousButton extends StatelessWidget {
           try {
             _mopidyService.playPrevious();
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.skip_previous));
@@ -258,7 +258,7 @@ class _NextButton extends StatelessWidget {
           try {
             _mopidyService.playNext();
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.skip_next));

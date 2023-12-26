@@ -22,7 +22,6 @@
 
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/playlist/select_playlist_dialog.dart';
-import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/error_snackbar.dart';
@@ -67,7 +66,7 @@ mixin PlaylistMethods {
         plst = await _mopidyService.addToPlaylist<T>(playlist, flattened);
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     } finally {
       if (plst != null) {
         if (flattened.length > 1) {

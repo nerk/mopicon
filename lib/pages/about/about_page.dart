@@ -24,7 +24,7 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/titled_divider.dart';
-import 'package:mopicon/utils//globals.dart';
+import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:url_launcher/url_launcher.dart';

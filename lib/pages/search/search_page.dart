@@ -69,7 +69,7 @@ class _SearchPageState extends State<SearchPage> {
         setState(() {});
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     }
   }
 

@@ -470,10 +470,10 @@ class S {
     );
   }
 
-  /// `A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk[source code] is available on Github.`
+  /// `A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk/mopicon[source code] is available on Github.`
   String get aboutPageDescription {
     return Intl.message(
-      'A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk[source code] is available on Github.',
+      'A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk/mopicon[source code] is available on Github.',
       name: 'aboutPageDescription',
       desc: '',
       args: [],
@@ -510,10 +510,10 @@ class S {
     );
   }
 
-  /// `https://github.com/nerk[Documentation and Help]`
+  /// `https://github.com/nerk/mopicon[Documentation and Help]`
   String get aboutPageHelpDescription {
     return Intl.message(
-      'https://github.com/nerk[Documentation and Help]',
+      'https://github.com/nerk/mopicon[Documentation and Help]',
       name: 'aboutPageHelpDescription',
       desc: '',
       args: [],
@@ -1147,6 +1147,46 @@ class S {
       name: 'nowPlayingBitrateLbl',
       desc: '',
       args: [bitrate],
+    );
+  }
+
+  /// `Logging`
+  String get loggingLbl {
+    return Intl.message(
+      'Logging',
+      name: 'loggingLbl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Log`
+  String get logDialogTitle {
+    return Intl.message(
+      'Log',
+      name: 'logDialogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show Log`
+  String get showLogButtonLbl {
+    return Intl.message(
+      'Show Log',
+      name: 'showLogButtonLbl',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Clear Log`
+  String get clearLogButtonLbl {
+    return Intl.message(
+      'Clear Log',
+      name: 'clearLogButtonLbl',
+      desc: '',
+      args: [],
     );
   }
 }

@@ -110,7 +110,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
           await _mopidyService.deletePlaylist(item);
         }
       } catch (e) {
-        Globals.logger.e(e);
+        logger.e(e);
         showError(S.of(rootContext()).deletePlaylistError, null);
       }
     }
@@ -130,7 +130,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
           await _mopidyService.deletePlaylist(item);
         }
       } catch (e) {
-        Globals.logger.e(e);
+        logger.e(e);
         showError(S.of(rootContext()).deletePlaylistError, null);
       }
     }
@@ -149,7 +149,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
         }
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
       showError(S.of(rootContext()).renamePlaylistCreateError, null);
     }
   }

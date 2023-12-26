@@ -30,7 +30,6 @@ import 'package:mopicon/pages/playlist/playlist_view_controller.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
 import 'package:mopicon/utils/globals.dart';
-import 'package:mopicon/utils/logging_utils.dart';
 
 /// Initializes all services and load preferences.
 abstract class InitializerService {
@@ -40,8 +39,6 @@ abstract class InitializerService {
 }
 
 class InitializeServiceImpl extends InitializerService {
-  Logger log = getLogger(null);
-
   bool _initialized = false;
 
   @override
@@ -49,9 +46,13 @@ class InitializeServiceImpl extends InitializerService {
 
   @override
   Future<void> initialize() async {
-    _registerServices();
-    await _loadSettings();
-    _initialized = true;
+    if (!_initialized) {
+      logger.i("initialize");
+      // configure logger
+      _registerServices();
+      await _loadSettings();
+      _initialized = true;
+    }
   }
 
   void _registerServices() {
@@ -59,7 +60,7 @@ class InitializeServiceImpl extends InitializerService {
       return;
     }
     GetIt getIt = GetIt.instance;
-    log.i("starting registering services");
+    logger.i("starting registering services");
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
     getIt.registerLazySingleton<ConnectingScreenController>(
         () => ConnectingScreenControllerImpl());
@@ -72,13 +73,12 @@ class InitializeServiceImpl extends InitializerService {
         () => PlaylistControllerImpl());
     getIt.registerLazySingleton<SearchViewController>(
         () => SearchViewControllerImpl());
-    log.i("finished registering services");
+    logger.i("finished registering services");
   }
 
   static Future<void> _loadSettings() async {
-    Logger log = getLogger(null);
-    log.i("starting loading settings");
+    logger.i("starting loading settings");
     await Globals.preferences.load();
-    log.i("finished loading settings");
+    logger.i("finished loading settings");
   }
 }

@@ -16,14 +16,15 @@ on:
         type: boolean
       environment:
         description: 'Environment to run tests against'
-        type: environment
-        required: true
+        type: string
+        required: false
 
 jobs:
   log-the-inputs:
     runs-on: ubuntu-latest
     steps:
       - run: |
+          echo "${{ secrets.GITHUB_TOKEN }}"
           echo "Log level: $LEVEL"
           echo "Tags: $TAGS"
           echo "Environment: $ENVIRONMENT"

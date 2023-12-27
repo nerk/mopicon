@@ -29,11 +29,21 @@ jobs:
       - name: Build Android application
         run: |
           flutter build apk
-        #    flutter build appbundle
-        #- name: Build Linux application
-        #run: flutter build linux
-      - name: Upload release APK
+          flutter build appbundle
+      - name: Build Linux application
+        run: flutter build linux
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Upload release and debug APKs
+          name: mopicon-apk-latest
           path: build/app/outputs/flutter-apk/*
+      - name: Upload appbundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mopicon-appbundle-latest
+          path: build/app/outputs/bundle/release/*
+      - name: Upload Linux executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mopicon-linux-x64-latest
+          path: build/linux/x64/release/bundle/**

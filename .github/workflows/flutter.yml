@@ -50,6 +50,21 @@ jobs:
           name: mopicon-linux-x64-latest
           retention-days: 1
           path: build/linux/x64/release/bundle/**
+      - uses: vimtor/action-zip@v1.1
+        with:
+          files: build/app/outputs/flutter-apk
+          recursive: true
+          dest: mopicon-latest-apk.zip
+      - uses: vimtor/action-zip@v1.1
+        with:
+          files: build/app/outputs/bundle/release
+          recursive: true
+          dest: mopicon-latest-appbundle.zip
+      - uses: vimtor/action-zip@v1.1
+        with:
+          files: build/linux/x64/release/bundle
+          recursive: true
+          dest: mopicon-latest-linux-x64.zip
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -57,4 +72,6 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            build/app/outputs/flutter-apk/*
+            mopicon-latest-linux-x64.zip
+            mopicon-latest-apk.zip
+            mopicon-latest-appbundle.zip

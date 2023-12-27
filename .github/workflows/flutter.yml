@@ -36,14 +36,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mopicon-apk-latest
+          retention-days: 1
           path: build/app/outputs/flutter-apk/*
       - name: Upload appbundle artifact
         uses: actions/upload-artifact@v4
         with:
           name: mopicon-appbundle-latest
+          retention-days: 1
           path: build/app/outputs/bundle/release/*
       - name: Upload Linux executable artifact
         uses: actions/upload-artifact@v4
         with:
           name: mopicon-linux-x64-latest
+          retention-days: 1
           path: build/linux/x64/release/bundle/**

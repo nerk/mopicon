@@ -99,7 +99,7 @@ jobs:
           prerelease: true
           files: build/windows/x64/runner/Release/mopicon-${{github.ref_name}}-windows-x64.zip
 
-  build-and-release-ubuntu-20.04:
+  build-and-release-ubuntu-20-04:
     runs-on: ubuntu-20.04
 
     steps:
@@ -139,7 +139,7 @@ jobs:
           prerelease: true
           files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-ubuntu-20.04-x64.zip
 
-  build-and-release-ubuntu-22.04:
+  build-and-release-ubuntu-22-04:
     runs-on: ubuntu-22.04
 
     steps:

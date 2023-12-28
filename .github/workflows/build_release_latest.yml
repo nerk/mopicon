@@ -126,7 +126,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-linux-x64.zip
+          filename: mopicon-${{github.ref_name}}-ubuntu-20_04-x64.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
         uses: softprops/action-gh-release@v1
@@ -137,7 +137,7 @@ jobs:
           name: Development Release
           tag_name: latest
           prerelease: true
-          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-ubuntu-20.04-x64.zip
+          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-ubuntu-20_04-x64.zip
 
   build-and-release-ubuntu-22-04:
     runs-on: ubuntu-22.04
@@ -166,7 +166,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-linux-x64.zip
+          filename: mopicon-${{github.ref_name}}-ubuntu-22_04-x64.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
         uses: softprops/action-gh-release@v1
@@ -177,4 +177,4 @@ jobs:
           name: Development Release
           tag_name: latest
           prerelease: true
-          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-ubuntu-22.04-x64.zip
+          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-ubuntu-22_04-x64.zip

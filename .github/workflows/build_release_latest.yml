@@ -28,10 +28,12 @@ jobs:
           directory: build/windows/x64/runner/Release
       - name: Windows Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          name: Dev
+          tag_name: latest
           prerelease: true
           files: build/windows/x64/runner/Release/mopicon-${{github.ref_name}}-windows.zip
 
@@ -66,9 +68,11 @@ jobs:
           directory: build/linux/x64/release/bundle
       - name: Linux Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          name: Dev
+          tag_name: latest
           prerelease: true
           files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-linux.zip

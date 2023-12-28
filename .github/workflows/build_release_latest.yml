@@ -3,6 +3,64 @@ name: Build and release
 on: push
 
 jobs:
+  build-and-release-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install ninja build tools etc.
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ninja-build libgtk-3-dev libblkid-dev
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.3'
+          channel: 'stable'
+      - name: Generate intermediates
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Enable linux build
+        run: flutter config --enable-android
+      - name: Build APK artifacts
+        run: flutter build apk --release
+      - name: Build App Bundle artifacts
+        run: flutter build appbundle --release
+      - name: Archive APK Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: mopicon-${{github.ref_name}}-apk.zip
+          directory: build/app/outputs/flutter-apk
+      - name: Archive App Bundle Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: mopicon-${{github.ref_name}}-appbundle.zip
+          directory: build/app/outputs/bundle/release
+      - name: Android APK Release
+        uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Development Release
+          tag_name: latest
+          prerelease: true
+          files: build/app/outputs/flutter-apk/mopicon-${{github.ref_name}}-apk.zip
+      - name: Android App Bundle Release
+        uses: softprops/action-gh-release@v1
+        #if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Development Release
+          tag_name: latest
+          prerelease: true
+          files: build/app/outputs/bundle/release/mopicon-${{github.ref_name}}-appbundle.zip
+
   build-and-release-windows:
     runs-on: windows-latest
 
@@ -24,7 +82,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-windows.zip
+          filename: mopicon-${{github.ref_name}}-windows-x64.zip
           directory: build/windows/x64/runner/Release
       - name: Windows Release
         uses: softprops/action-gh-release@v1
@@ -32,10 +90,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Dev
+          name: Development Release
           tag_name: latest
           prerelease: true
-          files: build/windows/x64/runner/Release/mopicon-${{github.ref_name}}-windows.zip
+          files: build/windows/x64/runner/Release/mopicon-${{github.ref_name}}-windows-x64.zip
 
   build-and-release-linux:
     runs-on: ubuntu-latest
@@ -64,7 +122,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-linux.zip
+          filename: mopicon-${{github.ref_name}}-linux-x64.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
         uses: softprops/action-gh-release@v1
@@ -72,7 +130,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Dev
+          name: Development Release
           tag_name: latest
           prerelease: true
-          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-linux.zip
+          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-linux-x64.zip

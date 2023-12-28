@@ -19,7 +19,7 @@ jobs:
       - name: Enable windows build
         run: flutter config --enable-windows-desktop
       - name: Build artifacts
-        run: flutter build windows
+        run: flutter build windows --release
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
@@ -57,7 +57,7 @@ jobs:
       - name: Enable linux build
         run: flutter config --enable-linux-desktop
       - name: Build artifacts
-        run: flutter build linux
+        run: flutter build linux --release
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:

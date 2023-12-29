@@ -520,10 +520,11 @@ class MopidyServiceImpl extends MopidyService {
   Future<Playlist?> createPlaylist(String name) async {
     List<Ref> lists = await _mopidy.playlists.asList();
     if (!lists.map((e) => e.name == name).contains(true)) {
-      final result = await _mopidy.playlists.create(name, null);
-      lists.add(Ref(result.uri, result.name, Ref.typePlaylist));
+      final pl = await _mopidy.playlists.create(name, null);
+      lists.add(Ref(pl.uri, pl.name, Ref.typePlaylist));
+      await _mopidy.playlists.refresh(null);
       playlistsChangedNotifier.value = lists;
-      return Future.value(result);
+      return Future.value(pl);
     } else {
       return Future.value(null);
     }

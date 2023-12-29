@@ -405,7 +405,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "1d5442b6a2086c639170f59e63a5edf737587d7f"
+      resolved-ref: "06b6f7869d0778023693513b142cd3bc3fee1868"
       url: "https://github.com/nerk/mopidy_dart_client"
     source: git
     version: "1.0.0"

@@ -35,23 +35,21 @@ void main() {
 }
 
 class AppWidget extends StatelessWidget {
-  final theme = Globals.preferences.theme;
-  final themeChanged = Globals.preferences.themeChanged;
+  final preferences = Globals.preferences;
   final router = Globals.applicationRoutes.router;
-  final appLocale = Globals.preferences.appLocale;
 
   AppWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<AppTheme>(
-        valueListenable: themeChanged,
+        valueListenable: preferences.themeChanged,
         builder: (_, themeData, __) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             scaffoldMessengerKey: Globals.rootScaffoldMessengerKey,
             title: 'Mopicon',
-            theme: theme.data,
+            theme: preferences.theme.data,
             routerConfig: router,
             localizationsDelegates: const [
               S.delegate,
@@ -60,7 +58,7 @@ class AppWidget extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
-            locale: appLocale.locale,
+            locale: preferences.appLocale.locale,
           );
         });
   }

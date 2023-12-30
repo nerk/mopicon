@@ -33,14 +33,19 @@ import 'package:mopicon/components/selected_item_positions.dart';
 
 abstract class LibraryBrowserController with TracklistMethods, PlaylistMethods {
   SelectionModeChangedNotifier get selectionModeChanged;
+
   SelectionChangedNotifier get selectionChanged;
 
   MenuBuilder<Ref> popupMenu(BuildContext? context, Ref? item, int? index);
 
   Future<List<Ref>> browse(Ref? parent);
+
   Future<List<Ref>> getSelectedItems(Ref? parent);
+
   void deleteSelectedPlaylists();
+
   Future<void> renamePlayList(Ref pl, String name);
+
   void unselect();
 }
 
@@ -110,8 +115,8 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
           await _mopidyService.deletePlaylist(item);
         }
       } catch (e) {
-        logger.e(e);
-        showError(S.of(rootContext()).deletePlaylistError, null);
+        Globals.logger.e(e);
+        showError(S.of(context!).deletePlaylistError, null);
       }
     }
   }
@@ -122,16 +127,16 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
     for (var item in selected) {
       try {
         var ret = await showQuestionDialog(
-            S.of(rootContext()).deletePlaylistDialogTitle,
-            S.of(rootContext()).deletePlaylistDialogMessage(item.name),
+            S.of(Globals.rootContext).deletePlaylistDialogTitle,
+            S.of(Globals.rootContext).deletePlaylistDialogMessage(item.name),
             [DialogButtonOption.yes, DialogButtonOption.no],
             defaultOption: DialogButtonOption.no);
         if (ret != null && ret == DialogButtonOption.yes) {
           await _mopidyService.deletePlaylist(item);
         }
       } catch (e) {
-        logger.e(e);
-        showError(S.of(rootContext()).deletePlaylistError, null);
+        Globals.logger.e(e);
+        showError(S.of(Globals.rootContext).deletePlaylistError, null);
       }
     }
     unselect();
@@ -143,14 +148,14 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
       var playlists = await _mopidyService.getPlaylists();
       if (name.isNotEmpty) {
         if (playlists.indexWhere((e) => e.name == name) != -1) {
-          showError(S.of(rootContext()).playlistAlreadyExistsError, null);
+          showError(S.of(Globals.rootContext).playlistAlreadyExistsError, null);
         } else {
           await _mopidyService.renamePlaylist(pl, name);
         }
       }
     } catch (e, s) {
-      logger.e(e, stackTrace: s);
-      showError(S.of(rootContext()).renamePlaylistCreateError, null);
+      Globals.logger.e(e, stackTrace: s);
+      showError(S.of(Globals.rootContext).renamePlaylistCreateError, null);
     }
   }
 

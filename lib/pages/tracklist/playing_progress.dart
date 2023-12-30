@@ -151,7 +151,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
                             PlaybackAction.pause, null);
                       }
                     } catch (e) {
-                      logger.e(e);
+                      Globals.logger.e(e);
                     }
                   },
                   onChanged: widget.playbackState != PlaybackState.stopped
@@ -178,7 +178,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
                         }
                       }
                     } catch (e) {
-                      logger.e(e);
+                      Globals.logger.e(e);
                     }
                   },
                 )

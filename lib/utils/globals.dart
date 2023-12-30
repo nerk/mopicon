@@ -19,17 +19,23 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+library mopicon.globals;
+
 import 'package:flutter/material.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/routes/application_routes.dart';
-export 'logging_utils.dart';
+import 'logging_utils.dart' as lg;
 
 class Globals {
-  static final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
-  static final preferences = Preferences();
-  static final applicationRoutes = ApplicationRoutes();
-}
+  static var rootScaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>(debugLabel: "rootScaffoldMessengerKey");
+  static var preferences = Preferences();
+  static var applicationRoutes = ApplicationRoutes();
+  static var rootContext = rootScaffoldMessengerKey.currentContext!;
+  static var logger = lg.logger;
 
-BuildContext rootContext() {
-  return Globals.rootScaffoldMessengerKey.currentContext!;
+  static String getLogMessages() => lg.getLogMessages();
+
+  static void clearLogMessages() => lg.clearLogMessages();
 }

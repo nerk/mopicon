@@ -62,17 +62,19 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   final mopidyService = GetIt.instance<MopidyService>();
 
   final namesMap = {
-    'Files': S.of(rootContext()).nameTranslateFiles,
-    'Local media': S.of(rootContext()).nameTranslateLocalMedia,
-    'Albums': S.of(rootContext()).nameTranslateAlbums,
-    'Artists': S.of(rootContext()).nameTranslateArtists,
-    'Composers': S.of(rootContext()).nameTranslateComposers,
-    'Genres': S.of(rootContext()).nameTranslateGenres,
-    'Performers': S.of(rootContext()).nameTranslatePerformers,
-    'Release Years': S.of(rootContext()).nameTranslateReleaseYears,
-    'Tracks': S.of(rootContext()).nameTranslateTracks,
-    "Last Week's Updates": S.of(rootContext()).nameTranslateLastWeeksUpdates,
-    "Last Month's Updates": S.of(rootContext()).nameTranslateLastMonthsUpdates
+    'Files': S.of(Globals.rootContext).nameTranslateFiles,
+    'Local media': S.of(Globals.rootContext).nameTranslateLocalMedia,
+    'Albums': S.of(Globals.rootContext).nameTranslateAlbums,
+    'Artists': S.of(Globals.rootContext).nameTranslateArtists,
+    'Composers': S.of(Globals.rootContext).nameTranslateComposers,
+    'Genres': S.of(Globals.rootContext).nameTranslateGenres,
+    'Performers': S.of(Globals.rootContext).nameTranslatePerformers,
+    'Release Years': S.of(Globals.rootContext).nameTranslateReleaseYears,
+    'Tracks': S.of(Globals.rootContext).nameTranslateTracks,
+    "Last Week's Updates":
+        S.of(Globals.rootContext).nameTranslateLastWeeksUpdates,
+    "Last Month's Updates":
+        S.of(Globals.rootContext).nameTranslateLastMonthsUpdates
   };
 
   var extendedCategoriesNames = [
@@ -122,7 +124,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
         images.putIfAbsent(item.uri, () => image);
       }
     } catch (e, s) {
-      logger.e(e, stackTrace: s);
+      Globals.logger.e(e, stackTrace: s);
     } finally {
       if (mounted) {
         showBusy = false;

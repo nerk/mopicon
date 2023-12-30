@@ -51,8 +51,8 @@ class PlaylistAppBarMenu extends StatelessWidget {
   }
 
   void _newStream(BuildContext? context, _, __) async {
-    var uri =
-        await newStreamDialog(S.of(rootContext()).newPlaylistStreamDialogTitle);
+    var uri = await newStreamDialog(
+        S.of(Globals.rootContext).newPlaylistStreamDialogTitle);
     if (uri != null) {
       try {
         // Server looks up a stream by its URI and assigns
@@ -60,8 +60,8 @@ class PlaylistAppBarMenu extends StatelessWidget {
         Ref track = Ref(uri, '', Ref.typeTrack);
         await controller.addItemsToPlaylist<Ref>([track], playlist: playlist);
       } catch (e, s) {
-        logger.e(e, stackTrace: s);
-        showError(S.of(rootContext()).newStreamCreateError, null);
+        Globals.logger.e(e, stackTrace: s);
+        showError(S.of(Globals.rootContext).newStreamCreateError, null);
       }
     }
   }

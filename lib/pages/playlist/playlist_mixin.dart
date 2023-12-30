@@ -66,18 +66,19 @@ mixin PlaylistMethods {
         plst = await _mopidyService.addToPlaylist<T>(playlist, flattened);
       }
     } catch (e, s) {
-      logger.e(e, stackTrace: s);
+      Globals.logger.e(e, stackTrace: s);
     } finally {
       if (plst != null) {
         if (flattened.length > 1) {
           showInfo(
               S
-                  .of(rootContext())
+                  .of(Globals.rootContext)
                   .tracksAddedToPlaylistMessage(flattened.length, plst.name),
               null);
         } else {
           showInfo(
-              S.of(rootContext()).trackAddedToPlaylistMessage(plst.name), null);
+              S.of(Globals.rootContext).trackAddedToPlaylistMessage(plst.name),
+              null);
         }
       }
     }

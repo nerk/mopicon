@@ -98,7 +98,7 @@ class _AlbumDescription extends StatelessWidget {
                   style: const TextStyle(fontSize: 10.0))
               : const SizedBox(),
           date != null
-              ? Text(S.of(rootContext()).albumDateLbl(date!))
+              ? Text(S.of(Globals.rootContext).albumDateLbl(date!))
               : const SizedBox(),
         ],
       ),

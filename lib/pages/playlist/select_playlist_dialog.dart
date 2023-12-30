@@ -28,7 +28,8 @@ import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/globals.dart';
 
 Future<Ref?> selectPlaylistDialog(List<Ref> playlists) {
-  final modalDialogKey = GlobalKey<FormState>();
+  final modalDialogKey =
+      GlobalKey<FormState>(debugLabel: "selectPlaylistDialog");
   Ref? playlist;
 
   return showDialog<Ref>(

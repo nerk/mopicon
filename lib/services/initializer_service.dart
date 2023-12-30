@@ -47,7 +47,7 @@ class InitializeServiceImpl extends InitializerService {
   @override
   Future<void> initialize() async {
     if (!_initialized) {
-      logger.i("initialize");
+      Globals.logger.i("initialize");
       // configure logger
       _registerServices();
       await _loadSettings();
@@ -60,7 +60,7 @@ class InitializeServiceImpl extends InitializerService {
       return;
     }
     GetIt getIt = GetIt.instance;
-    logger.i("starting registering services");
+    Globals.logger.i("starting registering services");
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
     getIt.registerLazySingleton<ConnectingScreenController>(
         () => ConnectingScreenControllerImpl());
@@ -73,12 +73,12 @@ class InitializeServiceImpl extends InitializerService {
         () => PlaylistControllerImpl());
     getIt.registerLazySingleton<SearchViewController>(
         () => SearchViewControllerImpl());
-    logger.i("finished registering services");
+    Globals.logger.i("finished registering services");
   }
 
   static Future<void> _loadSettings() async {
-    logger.i("starting loading settings");
+    Globals.logger.i("starting loading settings");
     await Globals.preferences.load();
-    logger.i("finished loading settings");
+    Globals.logger.i("finished loading settings");
   }
 }

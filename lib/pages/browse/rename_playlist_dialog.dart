@@ -27,7 +27,8 @@ import 'package:mopicon/components/modal_dialog.dart';
 import 'package:mopicon/utils/globals.dart';
 
 Future<String?> renamePlaylistDialog(String currentName) {
-  final modalDialogKey = GlobalKey<FormState>();
+  final modalDialogKey =
+      GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
   String newName = '';
 
   return showDialog<String>(

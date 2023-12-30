@@ -59,10 +59,6 @@ Logger createLogger(Level? level) {
 }
 
 class _LoggerOutput extends LogOutput {
-  _LoggerOutput() {
-    _logBuffer.clear();
-  }
-
   @override
   void output(OutputEvent event) {
     if (kDebugMode && io.stdout.hasTerminal) {

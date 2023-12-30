@@ -22,31 +22,37 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/services/initializer_service.dart';
-import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
+import 'package:mopicon/utils/globals.dart';
 
 void main() {
   GetIt.instance
       .registerLazySingleton<InitializerService>(() => InitializeServiceImpl());
-  return runApp(const AppWidget());
+
+  return runApp(AppWidget());
 }
 
 class AppWidget extends StatelessWidget {
-  const AppWidget({super.key});
+  final theme = Globals.preferences.theme;
+  final themeChanged = Globals.preferences.themeChanged;
+  final router = Globals.applicationRoutes.router;
+  final appLocale = Globals.preferences.appLocale;
+
+  AppWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<AppTheme>(
-        valueListenable: Globals.preferences.themeChanged,
+        valueListenable: themeChanged,
         builder: (_, themeData, __) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             scaffoldMessengerKey: Globals.rootScaffoldMessengerKey,
             title: 'Mopicon',
-            theme: Globals.preferences.theme.data,
-            routerConfig: Globals.applicationRoutes.router,
+            theme: theme.data,
+            routerConfig: router,
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,
@@ -54,7 +60,7 @@ class AppWidget extends StatelessWidget {
               GlobalCupertinoLocalizations.delegate,
             ],
             supportedLocales: S.delegate.supportedLocales,
-            locale: Globals.preferences.appLocale.locale,
+            locale: appLocale.locale,
           );
         });
   }

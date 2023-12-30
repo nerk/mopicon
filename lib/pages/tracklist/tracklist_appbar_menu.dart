@@ -52,7 +52,7 @@ class TracklistAppBarMenu extends StatelessWidget {
 
   void _newStream(BuildContext? context, _, __) async {
     var uri = await newStreamDialog(
-        S.of(rootContext()).newTracklistStreamDialogTitle);
+        S.of(Globals.rootContext).newTracklistStreamDialogTitle);
     if (uri != null) {
       try {
         // Server looks up a stream by its URI and assigns
@@ -60,8 +60,8 @@ class TracklistAppBarMenu extends StatelessWidget {
         Ref track = Ref(uri, '', Ref.typeTrack);
         await controller.addItemsToTracklist<Ref>([track]);
       } catch (e, s) {
-        logger.e(e, stackTrace: s);
-        showError(S.of(rootContext()).newStreamCreateError, null);
+        Globals.logger.e(e, stackTrace: s);
+        showError(S.of(Globals.rootContext).newStreamCreateError, null);
       }
     }
   }

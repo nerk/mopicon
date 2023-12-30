@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
         setState(() {});
       }
     } catch (e, s) {
-      logger.e(e, stackTrace: s);
+      Globals.logger.e(e, stackTrace: s);
     }
   }
 
@@ -148,7 +148,7 @@ class _SearchPageState extends State<SearchPage> {
               await loadImages(trx);
             }
           } catch (e, s) {
-            logger.e(e, stackTrace: s);
+            Globals.logger.e(e, stackTrace: s);
           } finally {
             setState(() {
               showBusy = false;

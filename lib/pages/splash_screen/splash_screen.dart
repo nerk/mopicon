@@ -41,7 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
         await initializer.initialize();
         Globals.applicationRoutes.gotoConnecting(0);
       } catch (e, stackTrace) {
-        logger.e('Initialization failed.', error: e, stackTrace: stackTrace);
+        Globals.logger
+            .e('Initialization failed.', error: e, stackTrace: stackTrace);
       }
     }
   }

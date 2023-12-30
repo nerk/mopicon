@@ -113,11 +113,15 @@ class NowPlaying extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                          Text(S.of(rootContext()).nowPlayingDiscLbl(discNo)),
                           Text(S
-                              .of(rootContext())
+                              .of(Globals.rootContext)
+                              .nowPlayingDiscLbl(discNo)),
+                          Text(S
+                              .of(Globals.rootContext)
                               .nowPlayingTrackNoLbl(trackNo)),
-                          Text(S.of(rootContext()).nowPlayingDateLbl(date)),
+                          Text(S
+                              .of(Globals.rootContext)
+                              .nowPlayingDateLbl(date)),
                         ])
                   : const SizedBox(),
               PlayingProgressIndicator(Duration(milliseconds: length),
@@ -182,7 +186,7 @@ class _PlayButton extends StatelessWidget {
               _mopidyService.playback(PlaybackAction.resume, null);
             }
           } catch (e) {
-            logger.e(e);
+            Globals.logger.e(e);
           }
         },
         icon: const Icon(Icons.play_arrow));
@@ -201,7 +205,7 @@ class _PauseButton extends StatelessWidget {
           try {
             _mopidyService.playback(PlaybackAction.pause, null);
           } catch (e) {
-            logger.e(e);
+            Globals.logger.e(e);
           }
         },
         icon: const Icon(Icons.pause));
@@ -220,7 +224,7 @@ class _StopButton extends StatelessWidget {
           try {
             _mopidyService.playback(PlaybackAction.stop, null);
           } catch (e) {
-            logger.e(e);
+            Globals.logger.e(e);
           }
         },
         icon: const Icon(Icons.stop));
@@ -239,7 +243,7 @@ class _PreviousButton extends StatelessWidget {
           try {
             _mopidyService.playPrevious();
           } catch (e) {
-            logger.e(e);
+            Globals.logger.e(e);
           }
         },
         icon: const Icon(Icons.skip_previous));
@@ -258,7 +262,7 @@ class _NextButton extends StatelessWidget {
           try {
             _mopidyService.playNext();
           } catch (e) {
-            logger.e(e);
+            Globals.logger.e(e);
           }
         },
         icon: const Icon(Icons.skip_next));

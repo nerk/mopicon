@@ -27,7 +27,7 @@ import 'package:mopicon/components/modal_dialog.dart';
 import 'package:mopicon/utils/globals.dart';
 
 Future<String?> newPlaylistDialog() {
-  final modalDialogKey = GlobalKey<FormState>();
+  final modalDialogKey = GlobalKey<FormState>(debugLabel: "newPlaylistDialog");
   String newName = '';
 
   return showDialog<String>(

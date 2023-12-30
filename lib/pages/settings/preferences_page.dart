@@ -40,7 +40,8 @@ class PreferencesPage extends StatefulWidget {
 
 class _PreferencesState extends State<PreferencesPage> {
   final preferences = Globals.preferences;
-  final preferencesFormKey = GlobalKey<FormState>();
+  final preferencesFormKey =
+      GlobalKey<FormState>(debugLabel: "preferencesPage");
   final _connectingScreen = GetIt.instance<ConnectingScreenController>();
 
   AppLocale? newLocale;
@@ -82,8 +83,8 @@ class _PreferencesState extends State<PreferencesPage> {
 
   void postRetryError(_) {
     if (_connectingScreen.retriesExceeded) {
-      showError(S.of(rootContext()).preferencesPageConnectErrorTitle,
-          S.of(rootContext()).preferencesPageConnectErrorDetails);
+      showError(S.of(Globals.rootContext).preferencesPageConnectErrorTitle,
+          S.of(Globals.rootContext).preferencesPageConnectErrorDetails);
     }
   }
 
@@ -119,7 +120,8 @@ class _PreferencesState extends State<PreferencesPage> {
                   S.load(preferences.appLocale.locale);
                   Globals.applicationRoutes.gotoConnecting(0);
                 } catch (e) {
-                  showError(S.of(rootContext()).preferencesPageLoadError, null);
+                  showError(
+                      S.of(Globals.rootContext).preferencesPageLoadError, null);
                 }
               },
             ),
@@ -137,7 +139,8 @@ class _PreferencesState extends State<PreferencesPage> {
                       Globals.applicationRoutes.gotoConnecting(3);
                     } catch (e) {
                       showError(
-                          S.of(rootContext()).preferencesPageSaveError, null);
+                          S.of(Globals.rootContext).preferencesPageSaveError,
+                          null);
                     }
                   }
                 },
@@ -304,7 +307,7 @@ class _PreferencesState extends State<PreferencesPage> {
                                   showTextDialog(
                                       context,
                                       S.of(context).logDialogTitle,
-                                      getLogMessages());
+                                      Globals.getLogMessages());
                                 }),
                           ),
                           ListTile(
@@ -312,7 +315,7 @@ class _PreferencesState extends State<PreferencesPage> {
                             trailing: ElevatedButton(
                                 child: Text(S.of(context).clearLogButtonLbl),
                                 onPressed: () {
-                                  clearLogMessages();
+                                  Globals.clearLogMessages();
                                 }),
                           ),
                         ])))));

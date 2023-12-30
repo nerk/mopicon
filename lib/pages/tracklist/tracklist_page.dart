@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/now_playing.dart';
@@ -110,7 +111,7 @@ class _TrackListState extends State<TrackListPage> {
         }
       }
     } catch (e, s) {
-      logger.e(e, stackTrace: s);
+      Globals.logger.e(e, stackTrace: s);
     } finally {
       setState(() {
         showBusy = false;
@@ -142,7 +143,7 @@ class _TrackListState extends State<TrackListPage> {
         isStream = tlTrack != null ? tlTrack.track.uri.isStreamUri() : false;
       });
     } catch (e) {
-      logger.e(e);
+      Globals.logger.e(e);
     }
   }
 
@@ -177,7 +178,7 @@ class _TrackListState extends State<TrackListPage> {
         });
       }
     } catch (e) {
-      logger.e(e);
+      Globals.logger.e(e);
     }
   }
 
@@ -214,6 +215,17 @@ class _TrackListState extends State<TrackListPage> {
     updateSelection();
     updatePlayback();
     updateSplitMode();
+
+    SystemChannels.lifecycle.setMessageHandler((msg) {
+      // When the app was resumed, update
+      // tracklist state.
+      if (msg == 'AppLifecycleState.resumed') {
+        updateTracks();
+        updateStreamTitle();
+        updatePlayback();
+      }
+      return Future.value(null);
+    });
   }
 
   @override
@@ -238,7 +250,7 @@ class _TrackListState extends State<TrackListPage> {
           await mopidyService.move(start, current);
         }
       } catch (e) {
-        logger.e(e);
+        Globals.logger.e(e);
       }
     }
 
@@ -281,7 +293,7 @@ class _TrackListState extends State<TrackListPage> {
                 (await mopidyService.getTimePosition()) ?? timePosition;
             controller.splitEnabled.value = !splitEnabled;
           } catch (e) {
-            logger.e(e);
+            Globals.logger.e(e);
           }
         },
         child: Column(children: [
@@ -303,7 +315,7 @@ class _TrackListState extends State<TrackListPage> {
                       (await mopidyService.getTimePosition()) ?? timePosition;
                   controller.splitEnabled.value = !splitEnabled;
                 } catch (e) {
-                  logger.e(e);
+                  Globals.logger.e(e);
                 }
               },
             )),
@@ -348,6 +360,7 @@ class _TrackListState extends State<TrackListPage> {
         : [currentlyPlayingPanel];
 
     return BusyWrapper(
+        key: UniqueKey(),
         Scaffold(
             appBar: AppBar(
                 title: Text(S.of(context).trackListPageTitle),

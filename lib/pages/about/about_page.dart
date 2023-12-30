@@ -141,7 +141,7 @@ class AboutPage extends StatelessWidget {
               if (!await launchUrl(url)) {
                 showError(
                     S
-                        .of(rootContext())
+                        .of(Globals.rootContext)
                         .aboutPageLinkLaunchError(url.toString()),
                     null);
               }

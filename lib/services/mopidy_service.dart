@@ -182,8 +182,8 @@ class MopidyServiceImpl extends MopidyService {
   String? _currentConnectionUri;
 
   MopidyServiceImpl() {
-    _mopidy =
-        Mopidy(logger: logger, backoffDelayMin: 500, backoffDelayMax: 6000);
+    _mopidy = Mopidy(
+        logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 6000);
     _mopidy.clientState$.listen((value) {
       if (value.state == ClientState.online) {
         _currentConnectionUri = Globals.preferences.url;
@@ -238,7 +238,7 @@ class MopidyServiceImpl extends MopidyService {
   @override
   void connect() {
     _mopidy.disconnect();
-    logger.i("Connecting to ${Globals.preferences.url}");
+    Globals.logger.i("Connecting to ${Globals.preferences.url}");
     _mopidy.connect(webSocketUrl: Globals.preferences.url);
     _stopped = false;
   }
@@ -317,7 +317,7 @@ class MopidyServiceImpl extends MopidyService {
         return result as List<T>;
       }
     } catch (e, s) {
-      logger.e(e, stackTrace: s);
+      Globals.logger.e(e, stackTrace: s);
     }
     return [];
   }
@@ -557,7 +557,7 @@ class MopidyServiceImpl extends MopidyService {
             pl.addTrack(tr);
             trackAdded = true;
           } else {
-            showError(S.of(rootContext()).newStreamAccessError, tr.uri);
+            showError(S.of(Globals.rootContext).newStreamAccessError, tr.uri);
           }
         } else if (item is TlTrack) {
           pl.addTrack(item.track);

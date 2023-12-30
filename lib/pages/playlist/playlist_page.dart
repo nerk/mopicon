@@ -78,7 +78,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         await loadImages(trx);
       }
     } catch (e, s) {
-      logger.e(e, stackTrace: s);
+      Globals.logger.e(e, stackTrace: s);
     } finally {
       if (mounted) {
         setState(() {
@@ -109,7 +109,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   void initState() {
-    logger.d("initState: playlist $hashCode");
+    Globals.logger.d("initState: playlist $hashCode");
     super.initState();
     controller.playlistChangedNotifier.addListener(loadPlaylistItems);
     controller.selectionModeChanged.addListener(updateSelection);
@@ -120,7 +120,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   void dispose() {
-    logger.d("dispose: playlist $hashCode");
+    Globals.logger.d("dispose: playlist $hashCode");
     controller.playlistChangedNotifier.removeListener(loadPlaylistItems);
     controller.selectionModeChanged.removeListener(updateSelection);
     controller.selectionChanged.removeListener(updateSelection);
@@ -142,7 +142,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           await mopidyService.movePlaylistItem(playlist, start, current);
         }
       } catch (e) {
-        logger.e(e);
+        Globals.logger.e(e);
       }
     }, (Track track, int index) async {
       var r = await showActionDialog([

@@ -28,7 +28,8 @@ import 'package:mopicon/components/modal_dialog.dart';
 import 'package:mopicon/utils/globals.dart';
 
 Future<String?> newStreamDialog(String title) {
-  final modalDialogKey = GlobalKey<FormState>();
+  final modalDialogKey =
+      GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
   String streamUri = '';
 
   return showDialog<String>(

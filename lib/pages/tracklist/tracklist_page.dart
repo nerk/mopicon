@@ -35,6 +35,7 @@ import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
+import 'package:mopicon/components/busy_wrapper.dart';
 import 'tracklist_view_controller.dart';
 import 'tracklist_appbar_menu.dart';
 
@@ -52,6 +53,7 @@ class _TrackListState extends State<TrackListPage> {
   // all tracks on the tracklist
   List<TlTrack> tracks = [];
   var images = <String, Widget>{};
+  bool showBusy = false;
 
   // currently active track
   int? playingTlId;
@@ -93,8 +95,12 @@ class _TrackListState extends State<TrackListPage> {
   // updates track list view from current track list and
   // updates cover thumbnails
   void updateTracks() async {
+    List<TlTrack> trks = [];
     try {
-      var trks = await controller.loadTrackList();
+      setState(() {
+        showBusy = true;
+      });
+      trks = await controller.loadTrackList();
       // load images into local map
 
       for (TlTrack tlt in trks) {
@@ -103,12 +109,13 @@ class _TrackListState extends State<TrackListPage> {
           images.putIfAbsent(tlt.track.uri, () => image);
         }
       }
-
-      setState(() {
-        tracks = trks;
-      });
     } catch (e, s) {
       logger.e(e, stackTrace: s);
+    } finally {
+      setState(() {
+        showBusy = false;
+        tracks = trks;
+      });
     }
   }
 
@@ -340,28 +347,32 @@ class _TrackListState extends State<TrackListPage> {
         ? [Expanded(child: listView), currentlyPlayingPanel]
         : [currentlyPlayingPanel];
 
-    return Scaffold(
-        appBar: AppBar(
-            title: Text(S.of(context).trackListPageTitle),
-            centerTitle: true,
-            leading: ActionButton<SelectedItemPositions>(Icons.arrow_back,
-                valueListenable: controller.selectionChanged, () {
-              controller.unselect();
-            }),
-            actions: [
-              ActionButton<SelectedItemPositions>(
-                  Icons.delete,
-                  valueListenable: controller.selectionChanged,
-                  controller.deleteSelectedTracks),
-              ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-                var selectedItems = await controller.getSelectedItems();
-                await controller.addItemsToPlaylist<Ref>(selectedItems);
-                controller.unselect();
-              }, valueListenable: controller.selectionChanged),
-              VolumeControl(),
-              TracklistAppBarMenu(controller)
-            ]),
-        body: MaterialPageFrame(
-            child: Column(mainAxisSize: MainAxisSize.max, children: children)));
+    return BusyWrapper(
+        Scaffold(
+            appBar: AppBar(
+                title: Text(S.of(context).trackListPageTitle),
+                centerTitle: true,
+                leading: ActionButton<SelectedItemPositions>(Icons.arrow_back,
+                    valueListenable: controller.selectionChanged, () {
+                  controller.unselect();
+                }),
+                actions: [
+                  ActionButton<SelectedItemPositions>(
+                      Icons.delete,
+                      valueListenable: controller.selectionChanged,
+                      controller.deleteSelectedTracks),
+                  ActionButton<SelectedItemPositions>(Icons.playlist_add,
+                      () async {
+                    var selectedItems = await controller.getSelectedItems();
+                    await controller.addItemsToPlaylist<Ref>(selectedItems);
+                    controller.unselect();
+                  }, valueListenable: controller.selectionChanged),
+                  VolumeControl(),
+                  TracklistAppBarMenu(controller)
+                ]),
+            body: MaterialPageFrame(
+                child: Column(
+                    mainAxisSize: MainAxisSize.max, children: children))),
+        showBusy);
   }
 }

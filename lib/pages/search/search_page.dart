@@ -32,6 +32,7 @@ import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/components/action_buttons.dart';
+import 'package:mopicon/components/busy_wrapper.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 
 import 'search_view_controller.dart';
@@ -51,6 +52,7 @@ class _SearchPageState extends State<SearchPage> {
 
   List<Track> tracks = [];
   var images = <String, Widget>{};
+  bool showBusy = false;
 
   // selection mode (single/multiple) of track list view
   SelectionMode selectionMode = SelectionMode.off;
@@ -133,17 +135,26 @@ class _SearchPageState extends State<SearchPage> {
         padding: const MaterialStatePropertyAll<EdgeInsets>(
             EdgeInsets.symmetric(horizontal: 16.0)),
         onSubmitted: (String value) async {
-          List<SearchResult> searchResult =
-              await _mopidyService.search(SearchCriteria().any([value]));
-          var trx = searchResult.first.tracks;
-          if (trx.isNotEmpty) {
-            loadImages(trx);
-          } else {
-            trx = [];
+          List<Track> trx = [];
+          try {
+            setState(() {
+              showBusy = true;
+            });
+
+            List<SearchResult> searchResult =
+                await _mopidyService.search(SearchCriteria().any([value]));
+            trx = searchResult.first.tracks;
+            if (trx.isNotEmpty) {
+              await loadImages(trx);
+            }
+          } catch (e, s) {
+            logger.e(e, stackTrace: s);
+          } finally {
+            setState(() {
+              showBusy = false;
+              tracks = trx;
+            });
           }
-          setState(() {
-            tracks = trx;
-          });
         },
         leading: const Icon(Icons.search),
         trailing: <Widget>[
@@ -151,6 +162,7 @@ class _SearchPageState extends State<SearchPage> {
             onPressed: () {
               textEditingController.clear();
               setState(() {
+                showBusy = false;
                 tracks = [];
               });
             },
@@ -167,34 +179,40 @@ class _SearchPageState extends State<SearchPage> {
         child: Text(S.of(context).searchPageNotSupportedMessage,
             textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)));
 
-    return Scaffold(
-      appBar: AppBar(
-          title: Text(S.of(context).searchPageTitle),
-          centerTitle: true,
-          leading: controller.selectionChanged.value.isNotEmpty
-              ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
+    return BusyWrapper(
+        Scaffold(
+          appBar: AppBar(
+              title: Text(S.of(context).searchPageTitle),
+              centerTitle: true,
+              leading: controller.selectionChanged.value.isNotEmpty
+                  ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
+                      controller.unselect();
+                    })
+                  : null,
+              actions: [
+                ActionButton<SelectedItemPositions>(Icons.queue_music,
+                    () async {
+                  var selectedItems =
+                      controller.selectionChanged.value.filterSelected(tracks);
+                  await controller
+                      .addItemsToTracklist<Ref>(selectedItems.asRef);
                   controller.unselect();
-                })
-              : null,
-          actions: [
-            ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
-              var selectedItems =
-                  controller.selectionChanged.value.filterSelected(tracks);
-              await controller.addItemsToTracklist<Ref>(selectedItems.asRef);
-              controller.unselect();
-            }, valueListenable: controller.selectionChanged),
-            ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-              var selectedItems =
-                  controller.selectionChanged.value.filterSelected(tracks);
-              await controller.addItemsToPlaylist<Ref>(selectedItems.asRef);
-              controller.unselect();
-            }, valueListenable: controller.selectionChanged),
-            VolumeControl(),
-            SearchAppBarMenu(tracks.length, controller)
-          ]),
-      body: MaterialPageFrame(
-          child:
-              Globals.preferences.searchSupported ? pageContent : notSupported),
-    );
+                }, valueListenable: controller.selectionChanged),
+                ActionButton<SelectedItemPositions>(Icons.playlist_add,
+                    () async {
+                  var selectedItems =
+                      controller.selectionChanged.value.filterSelected(tracks);
+                  await controller.addItemsToPlaylist<Ref>(selectedItems.asRef);
+                  controller.unselect();
+                }, valueListenable: controller.selectionChanged),
+                VolumeControl(),
+                SearchAppBarMenu(tracks.length, controller)
+              ]),
+          body: MaterialPageFrame(
+              child: Globals.preferences.searchSupported
+                  ? pageContent
+                  : notSupported),
+        ),
+        showBusy);
   }
 }

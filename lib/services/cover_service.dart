@@ -37,7 +37,7 @@ class CoverServiceImpl extends CoverService {
   final _mopidyService = GetIt.instance<MopidyService>();
 
   // cache Image objects returned from mopidy.
-  final _mImages = Cache<MImage>(100, 500);
+  final _mImages = Cache<MImage>(500, 3000);
 
   @override
   Future<Widget> getImage(String uri) async {

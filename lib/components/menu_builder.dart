@@ -31,7 +31,7 @@ typedef MenuCallbackFunction<T> = void Function(
 typedef MenuItemApplicableCallback<T> = bool Function(T? arg, int? index);
 
 typedef MenuBuilderFunction<T> = MenuBuilder Function(
-    BuildContext? context, T? arg, int? index);
+    BuildContext context, T? arg, int? index);
 
 class MenuItem<T extends Object> {
   final String label;

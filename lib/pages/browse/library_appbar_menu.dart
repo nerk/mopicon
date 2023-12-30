@@ -77,7 +77,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
               showError(S.of(context!).playlistAlreadyExistsError, null);
             }
           }).onError((e, s) {
-            logger.e(e, stackTrace: s);
+            Globals.logger.e(e, stackTrace: s);
             showError(S.of(context!).newPlaylistCreateError, null);
           });
         }

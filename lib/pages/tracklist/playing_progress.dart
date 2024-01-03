@@ -24,7 +24,6 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/extensions/timestring.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/globals.dart';
-import 'package:mopicon/generated/l10n.dart';
 
 class PlayingProgressIndicator extends StatefulWidget {
   final String playbackState;
@@ -34,17 +33,15 @@ class PlayingProgressIndicator extends StatefulWidget {
   final List<Widget> Function()? buttons;
   final bool isStream;
 
-  const PlayingProgressIndicator(this.duration, this.playbackState,
-      this.timePosition, this.bitrate, this.buttons, this.isStream,
+  const PlayingProgressIndicator(
+      this.duration, this.playbackState, this.timePosition, this.bitrate, this.buttons, this.isStream,
       {super.key});
 
   @override
-  State<PlayingProgressIndicator> createState() =>
-      _PlayingProgressIndicatorState();
+  State<PlayingProgressIndicator> createState() => _PlayingProgressIndicatorState();
 }
 
-class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
-    with SingleTickerProviderStateMixin {
+class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> with SingleTickerProviderStateMixin {
   final mopidyService = GetIt.instance<MopidyService>();
 
   late bool isStream;
@@ -52,19 +49,23 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
   late int bitrate;
   late Duration duration;
   late AnimationController controller;
-  String? previousPlaybackState;
 
   @override
   void initState() {
+    super.initState();
     isStream = widget.isStream;
     timePosition = widget.timePosition;
     bitrate = widget.bitrate;
     duration = widget.duration;
-    controller = AnimationController(
-      value: timePosition / duration.inMilliseconds,
+    setupAnimation();
+  }
 
-      /// [AnimationController]s can be created with `vsync: this` because of
-      /// [TickerProviderStateMixin].
+  double calculateValue() {
+    return duration.inMilliseconds > 0 ? timePosition / duration.inMilliseconds : 0;
+  }
+
+  setupAnimation() async {
+    controller = AnimationController(
       vsync: this,
       duration: duration,
     )..addListener(() {
@@ -72,10 +73,10 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
           timePosition = (duration.inMilliseconds * controller.value).toInt();
         });
       });
+
     if (widget.playbackState == PlaybackState.playing) {
-      controller.forward();
+      controller.forward(from: calculateValue());
     }
-    super.initState();
   }
 
   @override
@@ -87,7 +88,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
         controller.stop(canceled: true);
         controller.reset();
       } else if (widget.playbackState == PlaybackState.playing) {
-        controller.forward();
+        controller.forward(from: calculateValue());
       }
     }
     if (widget.duration != oldWidget.duration) {
@@ -96,7 +97,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
       duration = widget.duration;
       timePosition = widget.timePosition;
       if (widget.playbackState == PlaybackState.playing) {
-        controller.forward();
+        controller.forward(from: calculateValue());
       }
     }
 
@@ -111,7 +112,6 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
         isStream = widget.isStream;
       });
     }
-
     super.didUpdateWidget(oldWidget);
   }
 
@@ -126,76 +126,40 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
     String cp = timePosition.millisToTimeString();
     String ep = duration.inMilliseconds.millisToTimeString();
 
-    var buttonChilds =
-        widget.buttons != null ? [...widget.buttons!()] : [const SizedBox()];
-    var buttonRow =
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: buttonChilds);
+    var slider = Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, mainAxisSize: MainAxisSize.max, children: [
+      Text(cp),
+      Expanded(
+          child: Slider(
+        value: calculateValue(),
+        onChanged: (double value) {
+          if (widget.playbackState != PlaybackState.stopped) {
+            controller.value = value;
+          }
+        },
+        onChangeEnd: (double value) async {
+          try {
+            var pos = (duration.inMilliseconds * value).toInt();
+            bool success = await mopidyService.seek(pos);
+            if (success) {
+              setState(() {
+                controller.value = value;
+                timePosition = pos;
+              });
+            }
+          } catch (e) {
+            Globals.logger.e(e);
+          }
+        },
+      )),
+      Text(ep),
+    ]);
 
+    var buttonChilds = widget.buttons != null ? [...widget.buttons!()] : [const SizedBox()];
+    var buttonRow = Row(mainAxisAlignment: MainAxisAlignment.end, children: buttonChilds);
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          !isStream
-              ? Slider(
-                  value: controller.value,
-                  divisions:
-                      duration.inSeconds == 0 ? 5 : duration.inSeconds * 5,
-                  //label: cp,
-                  onChangeStart: (double value) async {
-                    try {
-                      previousPlaybackState =
-                          await mopidyService.getPlaybackState();
-                      if (previousPlaybackState != PlaybackState.stopped) {
-                        await mopidyService.playback(
-                            PlaybackAction.pause, null);
-                      }
-                    } catch (e) {
-                      Globals.logger.e(e);
-                    }
-                  },
-                  onChanged: widget.playbackState != PlaybackState.stopped
-                      ? (double value) {
-                          if (previousPlaybackState != PlaybackState.stopped) {
-                            controller.value = value;
-                          }
-                        }
-                      : null,
-                  onChangeEnd: (double value) async {
-                    try {
-                      if (previousPlaybackState != PlaybackState.stopped) {
-                        var pos = (duration.inMilliseconds * value).toInt();
-                        bool success = await mopidyService.seek(pos);
-                        if (success) {
-                          setState(() {
-                            controller.value = value;
-                            timePosition = pos;
-                          });
-                        }
-                        if (previousPlaybackState == PlaybackState.playing) {
-                          await mopidyService.playback(
-                              PlaybackAction.resume, null);
-                        }
-                      }
-                    } catch (e) {
-                      Globals.logger.e(e);
-                    }
-                  },
-                )
-              : const SizedBox(),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              !isStream ? Text('$cp/$ep min') : const SizedBox(),
-              bitrate > 0
-                  ? Text(S
-                      .of(context)
-                      .nowPlayingBitrateLbl((bitrate / 1000).round()))
-                  : const SizedBox(),
-              buttonRow
-            ],
-          )
-        ]);
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [!isStream ? slider : const SizedBox(), buttonRow]);
   }
 }

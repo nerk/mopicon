@@ -43,15 +43,12 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     late var menuBuilder = MenuBuilder();
     if (items.indexWhere((e) => e.type != Ref.typeTrack) == -1) {
-      menuBuilder.addMenuItem(
-          S.of(context).menuSelectAll, Icons.select_all, _selectAll);
+      menuBuilder.addMenuItem(S.of(context).menuSelectAll, Icons.select_all, _selectAll);
     }
 
     controller.selectionChanged.value.positions.length != 1
-        ? menuBuilder.addMenuItem(
-            S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
-        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist,
-            Icons.drive_file_rename_outline, _renamePlayList);
+        ? menuBuilder.addMenuItem(S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
+        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist, Icons.drive_file_rename_outline, _renamePlayList);
 
     return menuBuilder
         .addDivider()
@@ -63,9 +60,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
   void _selectAll([BuildContext? context, _, __]) async {
     controller.selectionChanged.value = SelectedItemPositions.all(items.length);
     controller.selectionModeChanged.value =
-        controller.selectionModeChanged.value == SelectionMode.off
-            ? SelectionMode.on
-            : controller.selectionModeChanged.value;
+        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.on;
   }
 
   void _newPlayList(BuildContext? context, _, __) {

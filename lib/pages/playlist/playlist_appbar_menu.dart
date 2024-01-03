@@ -37,13 +37,10 @@ class PlaylistAppBarMenu extends StatelessWidget {
 
   void _selectAll(BuildContext? context, _, __) async {
     List<Track> tracks = await controller.getPlaylistItems(playlist);
-    controller.selectionChanged.value =
-        SelectedItemPositions.all(tracks.length);
+    controller.selectionChanged.value = SelectedItemPositions.all(tracks.length);
 
     controller.selectionModeChanged.value =
-        controller.selectionModeChanged.value == SelectionMode.off
-            ? SelectionMode.on
-            : controller.selectionModeChanged.value;
+        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
   }
 
   void _deleteAll([BuildContext? context, _, __]) async {
@@ -51,8 +48,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
   }
 
   void _newStream(BuildContext? context, _, __) async {
-    var uri = await newStreamDialog(
-        S.of(Globals.rootContext).newPlaylistStreamDialogTitle);
+    var uri = await newStreamDialog(S.of(Globals.rootContext).newPlaylistStreamDialogTitle);
     if (uri != null) {
       try {
         // Server looks up a stream by its URI and assigns

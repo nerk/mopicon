@@ -33,9 +33,8 @@ class SearchAppBarMenu extends StatelessWidget {
 
   void _selectAll(BuildContext? context, _, __) async {
     controller.selectionChanged.value = SelectedItemPositions.all(numberTracks);
-    controller.selectionModeChanged.value == SelectionMode.off
-        ? SelectionMode.on
-        : controller.selectionModeChanged.value;
+    controller.selectionModeChanged.value =
+        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
   }
 
   @override

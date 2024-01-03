@@ -39,9 +39,7 @@ class TracklistAppBarMenu extends StatelessWidget {
     int nTracks = controller.getTrackList().length;
     controller.selectionChanged.value = SelectedItemPositions.all(nTracks);
     controller.selectionModeChanged.value =
-        controller.selectionModeChanged.value == SelectionMode.off
-            ? SelectionMode.on
-            : controller.selectionModeChanged.value;
+        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
   }
 
   void _deleteAll([BuildContext? context, _, __]) {
@@ -51,8 +49,7 @@ class TracklistAppBarMenu extends StatelessWidget {
   }
 
   void _newStream(BuildContext? context, _, __) async {
-    var uri = await newStreamDialog(
-        S.of(Globals.rootContext).newTracklistStreamDialogTitle);
+    var uri = await newStreamDialog(S.of(Globals.rootContext).newTracklistStreamDialogTitle);
     if (uri != null) {
       try {
         // Server looks up a stream by its URI and assigns

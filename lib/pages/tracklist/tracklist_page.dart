@@ -202,6 +202,7 @@ class _TrackListState extends State<TrackListPage> {
     updatePlayback();
     updateSplitMode();
 
+    /*
     SystemChannels.lifecycle.setMessageHandler((msg) {
       // When the app was resumed, update
       // tracklist state.
@@ -212,6 +213,7 @@ class _TrackListState extends State<TrackListPage> {
       }
       return Future.value(null);
     });
+     */
   }
 
   @override

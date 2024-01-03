@@ -49,6 +49,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
   late int bitrate;
   late Duration duration;
   late AnimationController controller;
+  String? previousPlaybackState;
 
   @override
   void initState() {
@@ -131,20 +132,33 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
       Expanded(
           child: Slider(
         value: calculateValue(),
+        onChangeStart: (double value) async {
+          try {
+            previousPlaybackState = await mopidyService.getPlaybackState();
+          } catch (e) {
+            Globals.logger.e(e);
+          }
+        },
         onChanged: (double value) {
-          if (widget.playbackState != PlaybackState.stopped) {
+          if (previousPlaybackState != PlaybackState.stopped) {
             controller.value = value;
           }
         },
         onChangeEnd: (double value) async {
           try {
-            var pos = (duration.inMilliseconds * value).toInt();
-            bool success = await mopidyService.seek(pos);
-            if (success) {
-              setState(() {
-                controller.value = value;
-                timePosition = pos;
-              });
+            if (previousPlaybackState != PlaybackState.stopped) {
+              var pos = (duration.inMilliseconds * value).toInt();
+              bool success = await mopidyService.seek(pos);
+              if (success) {
+                setState(() {
+                  controller.value = value;
+                  timePosition = pos;
+                });
+              }
+              // needs restart because 'seek' stops player.
+              if (previousPlaybackState == PlaybackState.playing) {
+                await mopidyService.playback(PlaybackAction.resume, null);
+              }
             }
           } catch (e) {
             Globals.logger.e(e);

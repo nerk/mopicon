@@ -20,7 +20,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/now_playing.dart';
@@ -189,7 +188,7 @@ class _TrackListState extends State<TrackListPage> {
   @override
   void initState() {
     super.initState();
-    mopidyService.trackListChangedNotifier.addListener(updateTracks);
+    mopidyService.tracklistChangedNotifier.addListener(updateTracks);
     mopidyService.trackPlaybackNotifier.addListener(updateTrackPlayback);
     mopidyService.playbackStateNotifier.addListener(updatePlayback);
     mopidyService.streamTitleChangedNotifier.addListener(updateStreamTitle);
@@ -218,7 +217,7 @@ class _TrackListState extends State<TrackListPage> {
 
   @override
   void dispose() {
-    mopidyService.trackListChangedNotifier.removeListener(updateTracks);
+    mopidyService.tracklistChangedNotifier.removeListener(updateTracks);
     mopidyService.trackPlaybackNotifier.removeListener(updateTrackPlayback);
     mopidyService.playbackStateNotifier.removeListener(updatePlayback);
     mopidyService.streamTitleChangedNotifier.removeListener(updateStreamTitle);

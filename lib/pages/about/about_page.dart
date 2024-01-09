@@ -21,12 +21,13 @@
  */
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/titled_divider.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 var license = '''
@@ -55,7 +56,9 @@ DEALINGS IN THE SOFTWARE.
 /// Displays information about this program, with links to sourcecode
 /// and documentation.
 class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
+  final _preferences = GetIt.instance<Preferences>();
+
+  AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -73,20 +76,14 @@ class AboutPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               title('MOPICON'),
-              paragraph('Copyright \u00a9 2023 Thomas Kern',
-                  fontSize: 14, textAlign: TextAlign.center),
-              paragraph(S.of(context).aboutPageDescription,
-                  fontSize: 14, textAlign: TextAlign.center),
+              paragraph('Copyright \u00a9 2023 Thomas Kern', fontSize: 14, textAlign: TextAlign.center),
+              paragraph(S.of(context).aboutPageDescription, fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageVersionSection),
-              paragraph(Preferences.version,
-                  fontSize: 14, textAlign: TextAlign.center),
+              paragraph(_preferences.version, fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageHelpSection),
-              paragraph(S.of(context).aboutPageHelpDescription,
-                  fontSize: 14, textAlign: TextAlign.center),
+              paragraph(S.of(context).aboutPageHelpDescription, fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageLicenseSection),
-              SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: paragraph(license, fontSize: 11))
+              SingleChildScrollView(scrollDirection: Axis.horizontal, child: paragraph(license, fontSize: 11))
             ],
           ),
         )));
@@ -94,14 +91,12 @@ class AboutPage extends StatelessWidget {
 
   Widget paragraph(String text, {TextAlign? textAlign, double? fontSize}) {
     return Padding(
-        padding:
-            const EdgeInsets.only(top: 10), //apply padding to all four sides
+        padding: const EdgeInsets.only(top: 10), //apply padding to all four sides
         child: Text.rich(
             softWrap: true,
             TextSpan(
               children: textSpans(text),
-              style: TextStyle(
-                  fontSize: fontSize ?? 14, fontWeight: FontWeight.normal),
+              style: TextStyle(fontSize: fontSize ?? 14, fontWeight: FontWeight.normal),
             ),
             textAlign: textAlign ?? TextAlign.start));
   }
@@ -109,9 +104,7 @@ class AboutPage extends StatelessWidget {
   Widget title(String text) {
     return Text.rich(
       softWrap: true,
-      TextSpan(
-          text: text,
-          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+      TextSpan(text: text, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
       textAlign: TextAlign.center,
     );
   }
@@ -139,11 +132,7 @@ class AboutPage extends StatelessWidget {
             ..onTap = () async {
               Uri url = Uri.parse('${match[1]}${match[2]}');
               if (!await launchUrl(url)) {
-                showError(
-                    S
-                        .of(Globals.rootContext)
-                        .aboutPageLinkLaunchError(url.toString()),
-                    null);
+                showError(S.of(Globals.rootContext).aboutPageLinkLaunchError(url.toString()), null);
               }
             },
         ));

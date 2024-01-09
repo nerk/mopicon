@@ -30,7 +30,6 @@ import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_page.dart';
 import 'package:mopicon/pages/settings/preferences_page.dart';
 import 'package:mopicon/pages/about/about_page.dart';
-import 'package:mopicon/pages/splash_screen/splash_screen.dart';
 import 'package:mopicon/pages/connecting_screen/connecting_screen.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_page.dart';
@@ -39,8 +38,6 @@ import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 
 class ApplicationRoutes {
-  static const String home = 'home';
-  static const String splashPath = '/splash';
   static const String connecting = 'connecting';
   static const String connectingPath = '/connecting';
   static const String settingsPath = '/settings';
@@ -56,12 +53,12 @@ class ApplicationRoutes {
   static const String search = 'search';
   static const String searchPath = '/search';
 
-  final GlobalKey<NavigatorState> rootNavigatorKey =
-      GlobalKey<NavigatorState>(debugLabel: 'root');
+  final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
   late final GoRouter _router;
 
-  static final ApplicationRoutes _instance =
-      ApplicationRoutes._privateConstructor();
+  static final ApplicationRoutes _instance = ApplicationRoutes._privateConstructor();
+
+  final _mopidyService = GetIt.instance<MopidyService>();
 
   factory ApplicationRoutes() {
     return _instance;
@@ -70,23 +67,32 @@ class ApplicationRoutes {
   ApplicationRoutes._privateConstructor() {
     _router = GoRouter(
         navigatorKey: rootNavigatorKey,
-        initialLocation: splashPath,
+        initialLocation: tracksPath,
         debugLogDiagnostics: true,
+        // redirect to the login page if the user is not logged in
+        redirect: (BuildContext context, GoRouterState state) async {
+          if (state.matchedLocation == settingsPath) {
+            return null;
+          }
+
+          final bool connected = _mopidyService.connected;
+          if (!connected) {
+            return connectingPath;
+          }
+
+          if (connected && state.matchedLocation == connectingPath) {
+            return tracksPath;
+          }
+
+          // no need to redirect at all
+          return null;
+        },
         routes: <RouteBase>[
-          GoRoute(
-            path: splashPath,
-            builder: (BuildContext context, GoRouterState state) {
-              return const SplashScreen();
-            },
-          ),
           GoRoute(
             name: connecting,
             path: connectingPath,
             builder: (BuildContext context, GoRouterState state) {
-              return ConnectingScreen(
-                maxRetries:
-                    int.parse(state.uri.queryParameters['maxRetries'] ?? '0'),
-              );
+              return const ConnectingScreen();
             },
           ),
           GoRoute(
@@ -98,12 +104,11 @@ class ApplicationRoutes {
           GoRoute(
             path: aboutPath,
             builder: (BuildContext context, GoRouterState state) {
-              return const AboutPage();
+              return AboutPage();
             },
           ),
           StatefulShellRoute.indexedStack(
-              builder: (BuildContext context, GoRouterState state,
-                  StatefulNavigationShell navigationShell) {
+              builder: (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
                 return HomeView(navigationShell);
               },
               branches: <StatefulShellBranch>[
@@ -132,15 +137,13 @@ class ApplicationRoutes {
                             // unselect all potentially selected items
                             // and reset selection mode on exit
                             onExit: (BuildContext c) {
-                              final controller =
-                                  GetIt.instance<LibraryBrowserController>();
+                              final controller = GetIt.instance<LibraryBrowserController>();
                               controller.unselect();
                               return true;
                             },
                             name: down,
                             path: downPath,
-                            builder:
-                                (BuildContext context, GoRouterState state) {
+                            builder: (BuildContext context, GoRouterState state) {
                               return LibraryBrowserPage(
                                 title: state.uri.queryParameters['title'],
                                 parent: state.pathParameters['parent'],
@@ -150,15 +153,13 @@ class ApplicationRoutes {
                             // unselect all potentially selected items
                             // and reset selection mode on exit
                             onExit: (BuildContext c) {
-                              final controller =
-                                  GetIt.instance<PlaylistViewController>();
+                              final controller = GetIt.instance<PlaylistViewController>();
                               controller.unselect();
                               return true;
                             },
                             name: playlist,
                             path: playlistPath,
-                            builder:
-                                (BuildContext context, GoRouterState state) {
+                            builder: (BuildContext context, GoRouterState state) {
                               return PlaylistPage(
                                 title: state.uri.queryParameters['title'],
                                 parent: state.pathParameters['parent'],
@@ -171,8 +172,7 @@ class ApplicationRoutes {
                     // unselect all potentially selected items
                     // and reset selection mode on exit
                     onExit: (BuildContext c) {
-                      final controller =
-                          GetIt.instance<TracklistViewController>();
+                      final controller = GetIt.instance<TracklistViewController>();
                       controller.unselect();
                       controller.splitEnabled.value = true;
                       return true;
@@ -189,13 +189,16 @@ class ApplicationRoutes {
   }
 
   void gotoHome() {
-    GoRouter.of(rootNavigatorKey.currentContext!)
-        .goNamed(tracks, queryParameters: <String, String>{'title': 'Tracks'});
+    GoRouter.of(rootNavigatorKey.currentContext!).goNamed(tracks, queryParameters: <String, String>{'title': 'Tracks'});
   }
 
-  void gotoConnecting(int maxRetries) {
-    GoRouter.of(rootNavigatorKey.currentContext!).goNamed(connecting,
-        queryParameters: <String, String>{'maxRetries': maxRetries.toString()});
+  void gotoConnecting([int? maxRetries]) {
+    if (maxRetries != null) {
+      GoRouter.of(rootNavigatorKey.currentContext!)
+          .goNamed(connecting, queryParameters: <String, String>{'maxRetries': maxRetries.toString()});
+    } else {
+      GoRouter.of(rootNavigatorKey.currentContext!).goNamed(connecting);
+    }
   }
 
   void gotoSettings() {
@@ -216,9 +219,8 @@ class ApplicationRoutes {
 extension GoRouterExtension on GoRouter {
   Map<String, String> currentPathParameters() {
     final RouteMatch lastMatch = routerDelegate.currentConfiguration.last;
-    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
-        ? lastMatch.matches
-        : routerDelegate.currentConfiguration;
+    final RouteMatchList matchList =
+        lastMatch is ImperativeRouteMatch ? lastMatch.matches : routerDelegate.currentConfiguration;
     return matchList.pathParameters;
   }
 

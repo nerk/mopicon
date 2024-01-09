@@ -29,6 +29,7 @@ import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/components/action_buttons.dart';
@@ -47,7 +48,8 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final _mopidyService = GetIt.instance<MopidyService>();
+  final mopidyService = GetIt.instance<MopidyService>();
+  final preferences = GetIt.instance<Preferences>();
   final TextEditingController textEditingController = TextEditingController();
 
   List<Track> tracks = [];
@@ -103,21 +105,14 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     var listView = ReorderableTrackListView<Track>(
-        context,
-        tracks,
-        images,
-        controller.selectionChanged,
-        controller.selectionModeChanged,
-        null, (Track track, int index) async {
-      var r = await showActionDialog([
-        ItemActionOption.play,
-        ItemActionOption.addToTracklist,
-        ItemActionOption.addToPlaylist
-      ]);
+        context, tracks, images, controller.selectionChanged, controller.selectionModeChanged, null,
+        (Track track, int index) async {
+      var r = await showActionDialog(
+          [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
       switch (r) {
         case ItemActionOption.play:
           await controller.addItemsToTracklist<Ref>([track.asRef]);
-          _mopidyService.play(track.asRef);
+          mopidyService.play(track.asRef);
           break;
         case ItemActionOption.addToTracklist:
           await controller.addItemsToTracklist<Ref>([track.asRef]);
@@ -132,8 +127,7 @@ class _SearchPageState extends State<SearchPage> {
     var pageContent = Column(mainAxisSize: MainAxisSize.max, children: [
       SearchBar(
         controller: textEditingController,
-        padding: const MaterialStatePropertyAll<EdgeInsets>(
-            EdgeInsets.symmetric(horizontal: 16.0)),
+        padding: const MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 16.0)),
         onSubmitted: (String value) async {
           List<Track> trx = [];
           try {
@@ -141,8 +135,7 @@ class _SearchPageState extends State<SearchPage> {
               showBusy = true;
             });
 
-            List<SearchResult> searchResult =
-                await _mopidyService.search(SearchCriteria().any([value]));
+            List<SearchResult> searchResult = await mopidyService.search(SearchCriteria().any([value]));
             trx = searchResult.first.tracks;
             if (trx.isNotEmpty) {
               await loadImages(trx);
@@ -170,9 +163,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ],
       ),
-      Expanded(
-          child:
-              Padding(padding: const EdgeInsets.only(top: 12), child: listView))
+      Expanded(child: Padding(padding: const EdgeInsets.only(top: 12), child: listView))
     ]);
 
     var notSupported = Expanded(
@@ -190,28 +181,20 @@ class _SearchPageState extends State<SearchPage> {
                     })
                   : null,
               actions: [
-                ActionButton<SelectedItemPositions>(Icons.queue_music,
-                    () async {
-                  var selectedItems =
-                      controller.selectionChanged.value.filterSelected(tracks);
-                  await controller
-                      .addItemsToTracklist<Ref>(selectedItems.asRef);
+                ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+                  var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
+                  await controller.addItemsToTracklist<Ref>(selectedItems.asRef);
                   controller.unselect();
                 }, valueListenable: controller.selectionChanged),
-                ActionButton<SelectedItemPositions>(Icons.playlist_add,
-                    () async {
-                  var selectedItems =
-                      controller.selectionChanged.value.filterSelected(tracks);
+                ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+                  var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
                   await controller.addItemsToPlaylist<Ref>(selectedItems.asRef);
                   controller.unselect();
                 }, valueListenable: controller.selectionChanged),
                 VolumeControl(),
                 SearchAppBarMenu(tracks.length, controller)
               ]),
-          body: MaterialPageFrame(
-              child: Globals.preferences.searchSupported
-                  ? pageContent
-                  : notSupported),
+          body: MaterialPageFrame(child: preferences.searchSupported ? pageContent : notSupported),
         ),
         showBusy);
   }

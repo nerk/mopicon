@@ -20,9 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mopicon/components/titled_divider.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/generated/l10n.dart';
@@ -42,14 +43,10 @@ class LibraryListView {
   final void Function(Ref item, int index)? onTap;
 
   var selectedPositions = SelectedItemPositions();
+  final preferences = GetIt.instance<Preferences>();
 
-  LibraryListView(
-      this.parent,
-      this.items,
-      this.images,
-      this.selectionChangedNotifier,
-      this.selectionModeChangedNotifier,
-      this.onTap) {
+  LibraryListView(this.parent, this.items, this.images, this.selectionChangedNotifier,
+      this.selectionModeChangedNotifier, this.onTap) {
     selectedPositions = selectionChangedNotifier.value.clone();
   }
 
@@ -60,8 +57,7 @@ class LibraryListView {
       return Padding(
         padding: const EdgeInsets.all(3),
         child: CircleAvatar(
-          backgroundColor:
-              Globals.preferences.theme.data.colorScheme.inversePrimary,
+          backgroundColor: preferences.theme.data.colorScheme.inversePrimary,
           child: const Icon(Icons.check),
         ),
       );
@@ -76,8 +72,7 @@ class LibraryListView {
     var listView = ListView.separated(
       shrinkWrap: items.length > 500,
       itemCount: items.length,
-      itemBuilder: (BuildContext context, int index) =>
-          _buildItem(context, index),
+      itemBuilder: (BuildContext context, int index) => _buildItem(context, index),
       separatorBuilder: (BuildContext context, int index) => parent == null &&
               items[index].type == Ref.typeDirectory &&
               index < items.length - 1 &&
@@ -97,28 +92,19 @@ class LibraryListView {
           (item.type == Ref.typeTrack || item.type == Ref.typePlaylist)) {
         selectedPositions.toggle(index);
         selectionChangedNotifier.value = selectedPositions.clone();
-        selectionModeChangedNotifier.value =
-            selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
+        selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
       } else {
         selectedPositions = SelectedItemPositions();
         selectionChangedNotifier.value = SelectedItemPositions();
         selectionModeChangedNotifier.value = SelectionMode.off;
         if (item.type == Ref.typePlaylist) {
           context.pushNamed(ApplicationRoutes.playlist,
-              queryParameters: <String, String>{
-                'title': item.name
-              },
-              pathParameters: <String, String>{
-                'parent': Parameter.toBase64(item.toMap())
-              });
+              queryParameters: <String, String>{'title': item.name},
+              pathParameters: <String, String>{'parent': Parameter.toBase64(item.toMap())});
         } else if (item.type != Ref.typeTrack) {
           context.pushNamed(ApplicationRoutes.down,
-              queryParameters: <String, String>{
-                'title': item.name
-              },
-              pathParameters: <String, String>{
-                'parent': Parameter.toBase64(item.toMap())
-              });
+              queryParameters: <String, String>{'title': item.name},
+              pathParameters: <String, String>{'parent': Parameter.toBase64(item.toMap())});
         } else if (onTap != null) {
           onTap!(item, index);
         }
@@ -155,21 +141,17 @@ class LibraryListView {
       return Dismissible(
           key: Key("$index$item"),
           background: Container(
-            color: Globals.preferences.theme.data.colorScheme.onBackground,
+            color: preferences.theme.data.colorScheme.onBackground,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: _getImage(item, index, true)),
+              child: Padding(padding: const EdgeInsets.only(left: 4), child: _getImage(item, index, true)),
             ),
           ),
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.startToEnd) {
               selectedPositions.toggle(index);
               selectionChangedNotifier.value = selectedPositions;
-              selectionModeChangedNotifier.value = selectedPositions.isEmpty
-                  ? SelectionMode.off
-                  : SelectionMode.on;
+              selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
             }
             return false;
           },
@@ -179,8 +161,7 @@ class LibraryListView {
     }
   }
 
-  Widget _albumItem(
-      BuildContext context, int index, Ref? parent, Function() onTapped) {
+  Widget _albumItem(BuildContext context, int index, Ref? parent, Function() onTapped) {
     Ref item = items[index];
     var artistName = '';
     int? numTracks;
@@ -193,8 +174,8 @@ class LibraryListView {
     return Card(
         child: AlbumListItem(
             item,
-            ImageUtils.roundedCornersWithPadding(images[item.uri],
-                ImageUtils.defaultCoverSize, ImageUtils.defaultCoverSize),
+            ImageUtils.roundedCornersWithPadding(
+                images[item.uri], ImageUtils.defaultCoverSize, ImageUtils.defaultCoverSize),
             item.name,
             artistName,
             numTracks,

@@ -25,9 +25,7 @@ import 'connecting_screen_controller.dart';
 import 'package:mopicon/generated/l10n.dart';
 
 class ConnectingScreen extends StatefulWidget {
-  final int maxRetries;
-
-  const ConnectingScreen({this.maxRetries = 0, Key? key}) : super(key: key);
+  const ConnectingScreen({super.key});
 
   @override
   State<ConnectingScreen> createState() => _ConnectingScreenState();
@@ -39,7 +37,7 @@ class _ConnectingScreenState extends State<ConnectingScreen> {
   @override
   void initState() {
     super.initState();
-    controller.connect(maxRetries: widget.maxRetries);
+    controller.connect(maxRetries: 6);
   }
 
   @override
@@ -56,14 +54,11 @@ class _ConnectingScreenState extends State<ConnectingScreen> {
             ),
           ),
           //const SizedBox(height: 20),
-          Container(
-              padding: const EdgeInsets.all(40),
-              child: const CircularProgressIndicator()),
+          Container(padding: const EdgeInsets.all(40), child: const CircularProgressIndicator()),
           ElevatedButton(
               onPressed: controller.stop,
               child: Text(S.of(context).connectingPageStopBtn,
-                  style: const TextStyle(
-                      fontSize: 32, fontWeight: FontWeight.bold)))
+                  style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)))
         ],
       ),
     );

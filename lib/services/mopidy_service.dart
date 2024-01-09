@@ -27,6 +27,8 @@ import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopidy_client/mopidy_client.dart';
+import 'package:rxdart/rxdart.dart';
+
 import 'package:mopicon/utils/globals.dart';
 export 'package:mopidy_client/mopidy_client.dart' hide Image;
 import 'package:mopicon/generated/l10n.dart';
@@ -34,41 +36,39 @@ import 'package:mopicon/generated/l10n.dart';
 /// Enum to control playback of a track.
 enum PlaybackAction { stop, pause, play, resume }
 
+enum MopidyConnectionState { online, offline, reconnecting }
+
 /// Access layer to Mopidy
 abstract class MopidyService {
   /// Notification about current connection state.
-  final connectionNotifier =
-      ValueNotifier<ClientStateInfo>(ClientStateInfo(ClientState.offline, 0));
+  Stream<MopidyConnectionState> get connectionState$;
 
   /// Notifier if items were added or removed from the tracklist.
-  final trackListChangedNotifier = ValueNotifier<List<TlTrack>>([]);
+  ValueNotifier<List<TlTrack>> get tracklistChangedNotifier;
 
   /// Notifiers about playback state of a track
-  final trackPlaybackNotifier = ValueNotifier<TrackPlaybackInfo?>(null);
-  final playbackStateNotifier = ValueNotifier<PlaybackState?>(null);
+  ValueNotifier<TrackPlaybackInfo?> get trackPlaybackNotifier;
+
+  ValueNotifier<PlaybackState?> get playbackStateNotifier;
 
   /// Notifier for mute or unmute.
-  final muteChangedNotifier = ValueNotifier<bool>(false);
+  ValueNotifier<bool> get muteChangedNotifier;
 
   /// Notification about changes to the volume.
-  final volumeChangedNotifier = ValueNotifier<int>(0);
+  ValueNotifier<int> get volumeChangedNotifier;
 
   /// Whether the title of a stream changed.
-  final streamTitleChangedNotifier = ValueNotifier<String?>(null);
+  ValueNotifier<String?> get streamTitleChangedNotifier;
 
   /// Notification about creation or deletion of a playlist.
-  final playlistsChangedNotifier = ValueNotifier<List<Ref>>(List.empty());
+  ValueNotifier<List<Ref>> get playlistsChangedNotifier;
 
   /// Notification if track was added to or deleted from a playlist.
-  final playlistChangedNotifier = ValueNotifier<Playlist?>(null);
+  ValueNotifier<Playlist?> get playlistChangedNotifier;
 
   // Connection methods
 
-  void connect();
-
-  /// Returns the URI to the currently connected server.
-  /// `null` if the clieng is offline.
-  String? get currentConnectionUri;
+  Future<bool> connect(String uri, {int? maxRetries});
 
   void stop();
 
@@ -151,14 +151,13 @@ abstract class MopidyService {
 
   Future<Playlist?> savePlaylist(Playlist playlist);
 
-  Future<void> deletePlaylist(Ref playlist);
+  Future<bool> deletePlaylist(Ref playlist);
 
   Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> items);
 
   Future<void> movePlaylistItem(Ref playlist, int from, int to);
 
-  Future<Playlist?> deletePlaylistItems(
-      Ref playlist, SelectedItemPositions positions);
+  Future<Playlist?> deletePlaylistItems(Ref playlist, SelectedItemPositions positions);
 
   Future<bool> renamePlaylist(Ref playlist, String name);
 
@@ -173,29 +172,97 @@ abstract class MopidyService {
 }
 
 class MopidyServiceImpl extends MopidyService {
-  late Mopidy _mopidy;
+  /// Notification about current connection state.
+  final _connectionState$ = PublishSubject<MopidyConnectionState>();
 
-  ClientState _clientState = ClientState.offline;
+  /// Notifier if items were added or removed from the tracklist.
+  final _tracklistChangedNotifier = ValueNotifier<List<TlTrack>>([]);
 
+  /// Notifiers about playback state of a track
+  final _trackPlaybackNotifier = ValueNotifier<TrackPlaybackInfo?>(null);
+  final _playbackStateNotifier = ValueNotifier<PlaybackState?>(null);
+
+  /// Notifier for mute or unmute.
+  final _muteChangedNotifier = ValueNotifier<bool>(false);
+
+  /// Notification about changes to the volume.
+  final _volumeChangedNotifier = ValueNotifier<int>(0);
+
+  /// Whether the title of a stream changed.
+  final _streamTitleChangedNotifier = ValueNotifier<String?>(null);
+
+  /// Notification about creation or deletion of a playlist.
+  final _playlistsChangedNotifier = ValueNotifier<List<Ref>>(List.empty());
+
+  /// Notification if track was added to or deleted from a playlist.
+  final _playlistChangedNotifier = ValueNotifier<Playlist?>(null);
+
+  @override
+  Stream<MopidyConnectionState> get connectionState$ => _connectionState$.stream;
+
+  @override
+  ValueNotifier<List<TlTrack>> get tracklistChangedNotifier => _tracklistChangedNotifier;
+
+  @override
+  ValueNotifier<TrackPlaybackInfo?> get trackPlaybackNotifier => _trackPlaybackNotifier;
+
+  @override
+  ValueNotifier<PlaybackState?> get playbackStateNotifier => _playbackStateNotifier;
+
+  @override
+  ValueNotifier<bool> get muteChangedNotifier => _muteChangedNotifier;
+
+  @override
+  ValueNotifier<int> get volumeChangedNotifier => _volumeChangedNotifier;
+
+  @override
+  ValueNotifier<String?> get streamTitleChangedNotifier => _streamTitleChangedNotifier;
+
+  @override
+  ValueNotifier<List<Ref>> get playlistsChangedNotifier => _playlistsChangedNotifier;
+
+  @override
+  ValueNotifier<Playlist?> get playlistChangedNotifier => _playlistChangedNotifier;
+
+  final Mopidy _mopidy;
+
+  bool _connected = false;
   bool _stopped = false;
 
-  String? _currentConnectionUri;
-
-  MopidyServiceImpl() {
-    _mopidy = Mopidy(
-        logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 6000);
-    _mopidy.clientState$.listen((value) {
-      if (value.state == ClientState.online) {
-        _currentConnectionUri = Globals.preferences.url;
-      } else {
-        _currentConnectionUri = null;
+  MopidyServiceImpl() : _mopidy = Mopidy(logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 2000) {
+    /*
+    SystemChannels.lifecycle.setMessageHandler((msg) async {
+      if (msg == 'AppLifecycleState.resumed') {
+        if (_lastConnectedUri == _currentUri) {
+          print("RESUMED");
+          Globals.logger.i("Reonnecting to $_lastConnectedUri");
+          connect(_currentUri);
+        }
       }
-      _clientState = value.state;
-      connectionNotifier.value = value;
+      return Future.value(null);
+    });
+*/
+    _mopidy.clientState$.listen((value) {
+      _connected = false;
+      switch (value.state) {
+        case ClientState.online:
+          _stopped = false;
+          _connected = true;
+          _connectionState$.add(MopidyConnectionState.online);
+          break;
+        case ClientState.offline:
+          _connectionState$.add(MopidyConnectionState.offline);
+          break;
+        case ClientState.reconnecting:
+          _connectionState$.add(MopidyConnectionState.reconnecting);
+          break;
+        default:
+          break;
+      }
     });
 
     _mopidy.tracklistChanged$.listen((_) async {
-      trackListChangedNotifier.value = await getTracklistTlTracks();
+      tracklistChangedNotifier.value = await getTracklistTlTracks();
     });
 
     _mopidy.trackPlayback$.listen((playbackInfo) {
@@ -236,33 +303,28 @@ class MopidyServiceImpl extends MopidyService {
   bool get stopped => _stopped;
 
   @override
-  void connect() {
+  Future<bool> connect(String uri, {int? maxRetries}) async {
     _mopidy.disconnect();
-    Globals.logger.i("Connecting to ${Globals.preferences.url}");
-    _mopidy.connect(webSocketUrl: Globals.preferences.url);
-    _stopped = false;
+    _connected = false;
+    Globals.logger.i("Connecting to $uri");
+    return await _mopidy.connect(webSocketUrl: uri, maxRetries: maxRetries);
   }
 
   @override
-  String? get currentConnectionUri => _currentConnectionUri;
-
-  @override
   void stop() {
+    _connected = false;
     _stopped = true;
     _mopidy.disconnect();
   }
 
   @override
-  bool get connected => _clientState == ClientState.online;
+  bool get connected => _connected;
 
   @override
   Future<List<Ref>> browse(Ref? parent) async {
     var refs = await _mopidy.library.browse(parent?.uri);
     // lookup and add album extra info
-    List<String> uris = refs
-        .map((e) => e.type == Ref.typeAlbum ? e.uri : null)
-        .nonNulls
-        .toList();
+    List<String> uris = refs.map((e) => e.type == Ref.typeAlbum ? e.uri : null).nonNulls.toList();
 
     if (uris.isNotEmpty) {
       Map<String, List<Track>> trackMap = await _mopidy.library.lookup(uris);
@@ -283,8 +345,7 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   Future<List<T>> flatten<T>(List<T> items, {Ref? playlist}) async {
-    assert(
-        items is List<Ref> || items is List<Track> || items is List<TlTrack>);
+    assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
 
     try {
       if (items is List<Ref>) {
@@ -292,11 +353,7 @@ class MopidyServiceImpl extends MopidyService {
         for (Ref track in (items as List<Ref>)) {
           if (track.type == Ref.typeAlbum || track.type == Ref.typeDirectory) {
             final children = await browse(track);
-            final List<Ref> trx = children
-                .map((e) => e.type == Ref.typeTrack ? e : null)
-                .toList()
-                .nonNulls
-                .toList();
+            final List<Ref> trx = children.map((e) => e.type == Ref.typeTrack ? e : null).toList().nonNulls.toList();
             result.addAll(trx);
           } else if (track.type == Ref.typePlaylist) {
             List<Track> children = await getPlaylistItems(track);
@@ -328,20 +385,18 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<Map<String, List<Image>>> getImages(List<String> albumUris) async {
+  Future<Map<String, List<Image>>> getImages(List<String> albumUris) {
     return _mopidy.library.getImages(albumUris);
   }
 
   @override
-  Future<List<TlTrack>> getTracklistTlTracks() async {
+  Future<List<TlTrack>> getTracklistTlTracks() {
     return _mopidy.tracklist.getTlTracks();
   }
 
   @override
   Future<List<TlTrack>> addTracksToTracklist<T>(List<T> tracks) async {
-    assert(tracks is List<Ref> ||
-        tracks is List<Track> ||
-        tracks is List<TlTrack>);
+    assert(tracks is List<Ref> || tracks is List<Track> || tracks is List<TlTrack>);
 
     var uris = List<String>.empty(growable: true);
     for (var track in tracks) {
@@ -352,12 +407,12 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<int> getTracklistLength() async {
+  Future<int> getTracklistLength() {
     return _mopidy.tracklist.getLength();
   }
 
   @override
-  Future<void> move(int from, int to) async {
+  Future<void> move(int from, int to) {
     return _mopidy.tracklist.move(from, from, to);
   }
 
@@ -375,7 +430,7 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<List<TlTrack>> addTrackToTracklist<T>(T track) async {
+  Future<List<TlTrack>> addTrackToTracklist<T>(T track) {
     return addTracksToTracklist([track]);
   }
 
@@ -404,7 +459,7 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<TlTrack?> getCurrentTlTrack() async {
+  Future<TlTrack?> getCurrentTlTrack() {
     return _mopidy.playback.getCurrentTlTrack();
   }
 
@@ -425,31 +480,27 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   static int findIdForTrack(List<TlTrack> tracklist, Ref track) {
-    TlTrack? t = tracklist
-        .map((t) => t.track.uri == track.uri ? t : null)
-        .nonNulls
-        .toList()
-        .lastOrNull;
+    TlTrack? t = tracklist.map((t) => t.track.uri == track.uri ? t : null).nonNulls.toList().lastOrNull;
     return t != null ? t.tlid : -1;
   }
 
   @override
-  Future<int?> getTimePosition() async {
+  Future<int?> getTimePosition() {
     return _mopidy.playback.getTimePosition();
   }
 
   @override
-  Future<String> getPlaybackState() async {
+  Future<String> getPlaybackState() {
     return _mopidy.playback.getState();
   }
 
   @override
-  Future<bool> seek(int timePosition) async {
+  Future<bool> seek(int timePosition) {
     return _mopidy.playback.seek(timePosition);
   }
 
   @override
-  Future<String?> getStreamTitle() async {
+  Future<String?> getStreamTitle() {
     return _mopidy.playback.getStreamTitle();
   }
 
@@ -468,29 +519,29 @@ class MopidyServiceImpl extends MopidyService {
   // Volume control and muting.
 
   @override
-  Future<bool?> isMuted() async {
-    return await _mopidy.mixer.getMute();
+  Future<bool?> isMuted() {
+    return _mopidy.mixer.getMute();
   }
 
   @override
-  Future<bool> setMute(bool mute) async {
-    return await _mopidy.mixer.setMute(mute);
+  Future<bool> setMute(bool mute) {
+    return _mopidy.mixer.setMute(mute);
   }
 
   @override
-  Future<bool> setVolume(int volume) async {
-    return await _mopidy.mixer.setVolume(volume);
+  Future<bool> setVolume(int volume) {
+    return _mopidy.mixer.setVolume(volume);
   }
 
   @override
-  Future<int?> getVolume() async {
-    return await _mopidy.mixer.getVolume();
+  Future<int?> getVolume() {
+    return _mopidy.mixer.getVolume();
   }
 
   // Playlists
 
   @override
-  Future<List<Ref>> getPlaylists() async {
+  Future<List<Ref>> getPlaylists() {
     return _mopidy.playlists.asList();
   }
 
@@ -503,11 +554,8 @@ class MopidyServiceImpl extends MopidyService {
     if (pl != null) {
       for (var track in pl.tracks) {
         if (!track.uri.isStreamUri()) {
-          Map<String, List<Track>> trackMap =
-              await _mopidy.library.lookup([track.uri]);
-          trackMap[track.uri] != null
-              ? result.add(trackMap[track.uri]!.first)
-              : null;
+          Map<String, List<Track>> trackMap = await _mopidy.library.lookup([track.uri]);
+          trackMap[track.uri] != null ? result.add(trackMap[track.uri]!.first) : null;
         } else {
           result.add(track);
         }
@@ -536,15 +584,14 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<void> deletePlaylist(Ref playlist) async {
+  Future<bool> deletePlaylist(Ref playlist) {
     assert(playlist.type == Ref.typePlaylist);
-    await _mopidy.playlists.delete(playlist.uri);
+    return _mopidy.playlists.delete(playlist.uri);
   }
 
   @override
   Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> items) async {
-    assert(
-        items is List<Ref> || items is List<Track> || items is List<TlTrack>);
+    assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
     Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
     bool trackAdded = false;
     if (pl != null) {
@@ -590,8 +637,7 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<Playlist?> deletePlaylistItems(
-      Ref playlist, SelectedItemPositions positions) async {
+  Future<Playlist?> deletePlaylistItems(Ref playlist, SelectedItemPositions positions) async {
     Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
     if (pl != null) {
       var remaining = positions.removeSelected<Track>(pl.tracks);
@@ -623,8 +669,7 @@ class AlbumInfoExtraData {
   late String? date;
 
   AlbumInfoExtraData(Album album) {
-    artistNames =
-        album.artists.map((artist) => artist.name).toList().join(', ');
+    artistNames = album.artists.map((artist) => artist.name).toList().join(', ');
     numTracks = album.numTracks;
     date = album.date;
     albumName = album.name;

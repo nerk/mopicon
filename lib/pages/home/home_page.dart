@@ -48,7 +48,7 @@ class _HomeViewState extends State<HomeView> {
   void updateTrackListCount() {
     if (mounted) {
       setState(() {
-        trackListCount = _mopidyService.trackListChangedNotifier.value.length;
+        trackListCount = _mopidyService.tracklistChangedNotifier.value.length;
       });
     }
   }
@@ -56,14 +56,13 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    _mopidyService.trackListChangedNotifier.addListener(updateTrackListCount);
+    _mopidyService.tracklistChangedNotifier.addListener(updateTrackListCount);
     initTrackListCount();
   }
 
   @override
   void dispose() {
-    _mopidyService.trackListChangedNotifier
-        .removeListener(updateTrackListCount);
+    _mopidyService.tracklistChangedNotifier.removeListener(updateTrackListCount);
     super.dispose();
   }
 

@@ -55,9 +55,7 @@ abstract class TracklistViewController {
   void unselect();
 }
 
-class TracklistViewControllerImpl extends TracklistViewController
-    with PlaylistMethods, TracklistMethods {
-
+class TracklistViewControllerImpl extends TracklistViewController with PlaylistMethods, TracklistMethods {
   final _mopidyService = GetIt.instance<MopidyService>();
 
   @override
@@ -120,7 +118,7 @@ class TracklistViewControllerImpl extends TracklistViewController
 
   @override
   Future<List<TlTrack>> loadTrackList() async {
-    var tr = _mopidyService.trackListChangedNotifier.value;
+    var tr = _mopidyService.tracklistChangedNotifier.value;
     if (tr.isEmpty) {
       tr = await _mopidyService.getTracklistTlTracks();
     }
@@ -133,8 +131,6 @@ class TracklistViewControllerImpl extends TracklistViewController
   @override
   void unselect() {
     selectionModeChanged.value = SelectionMode.off;
-    selectionChanged.value.isNotEmpty
-        ? selectionChanged.value = SelectedItemPositions()
-        : null;
+    selectionChanged.value.isNotEmpty ? selectionChanged.value = SelectedItemPositions() : null;
   }
 }

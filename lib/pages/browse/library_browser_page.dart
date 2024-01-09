@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/busy_wrapper.dart';
@@ -60,6 +61,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
   final libraryController = GetIt.instance<LibraryBrowserController>();
   final mopidyService = GetIt.instance<MopidyService>();
+  final preferences = GetIt.instance<Preferences>();
 
   final namesMap = {
     'Files': S.of(Globals.rootContext).nameTranslateFiles,
@@ -71,18 +73,11 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
     'Performers': S.of(Globals.rootContext).nameTranslatePerformers,
     'Release Years': S.of(Globals.rootContext).nameTranslateReleaseYears,
     'Tracks': S.of(Globals.rootContext).nameTranslateTracks,
-    "Last Week's Updates":
-        S.of(Globals.rootContext).nameTranslateLastWeeksUpdates,
-    "Last Month's Updates":
-        S.of(Globals.rootContext).nameTranslateLastMonthsUpdates
+    "Last Week's Updates": S.of(Globals.rootContext).nameTranslateLastWeeksUpdates,
+    "Last Month's Updates": S.of(Globals.rootContext).nameTranslateLastMonthsUpdates
   };
 
-  var extendedCategoriesNames = [
-    'Performers',
-    'Release Years',
-    "Last Week's Updates",
-    "Last Month's Updates"
-  ];
+  var extendedCategoriesNames = ['Performers', 'Release Years', "Last Week's Updates", "Last Month's Updates"];
 
   _LibraryBrowserPageState() {
     mopidyService.playlistsChangedNotifier.addListener(() {
@@ -98,18 +93,15 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       }
 
       items = await libraryController.browse(parent);
-      if (parent == null && Globals.preferences.hideFileExtension) {
-        items.removeWhere(
-            (item) => item.type == Ref.typeDirectory && item.name == 'Files');
+      if (parent == null && preferences.hideFileExtension) {
+        items.removeWhere((item) => item.type == Ref.typeDirectory && item.name == 'Files');
       }
 
-      if (!Globals.preferences.showAllMediaCategories) {
-        items.removeWhere((item) =>
-            item.type == Ref.typeDirectory &&
-            extendedCategoriesNames.contains(item.name));
+      if (!preferences.showAllMediaCategories) {
+        items.removeWhere((item) => item.type == Ref.typeDirectory && extendedCategoriesNames.contains(item.name));
       }
 
-      if (Globals.preferences.translateServerNames) {
+      if (preferences.translateServerNames) {
         for (int i = 0; i < items.length; i++) {
           String? translated = namesMap[items[i].name];
           if (translated != null) {
@@ -161,16 +153,10 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   @override
   Widget build(BuildContext context) {
     var listView = LibraryListView(
-        parent,
-        items,
-        images,
-        libraryController.selectionChanged,
-        libraryController.selectionModeChanged, (Ref item, int index) async {
-      var r = await showActionDialog([
-        ItemActionOption.play,
-        ItemActionOption.addToTracklist,
-        ItemActionOption.addToPlaylist
-      ]);
+        parent, items, images, libraryController.selectionChanged, libraryController.selectionModeChanged,
+        (Ref item, int index) async {
+      var r = await showActionDialog(
+          [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
       switch (r) {
         case ItemActionOption.play:
           await libraryController.addItemsToTracklist<Ref>([item]);
@@ -189,8 +175,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
     return BusyWrapper(
         Scaffold(
             appBar: AppBar(
-                title:
-                    Text(widget.title ?? S.of(context).libraryBrowserPageTitle),
+                title: Text(widget.title ?? S.of(context).libraryBrowserPageTitle),
                 centerTitle: true,
                 leading: widget.parent != null
                     ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
@@ -203,24 +188,18 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                     : null,
                 actions: [
                   parent == null
-                      ? ActionButton<SelectedItemPositions>(Icons.delete,
-                          () => libraryController.deleteSelectedPlaylists(),
+                      ? ActionButton<SelectedItemPositions>(
+                          Icons.delete, () => libraryController.deleteSelectedPlaylists(),
                           valueListenable: libraryController.selectionChanged)
                       : const SizedBox(),
-                  ActionButton<SelectedItemPositions>(Icons.queue_music,
-                      () async {
-                    var selectedItems =
-                        await libraryController.getSelectedItems(parent);
-                    await libraryController
-                        .addItemsToTracklist<Ref>(selectedItems);
+                  ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+                    var selectedItems = await libraryController.getSelectedItems(parent);
+                    await libraryController.addItemsToTracklist<Ref>(selectedItems);
                     libraryController.unselect();
                   }, valueListenable: libraryController.selectionChanged),
-                  ActionButton<SelectedItemPositions>(Icons.playlist_add,
-                      () async {
-                    var selectedItems =
-                        await libraryController.getSelectedItems(parent);
-                    await libraryController
-                        .addItemsToPlaylist<Ref>(selectedItems);
+                  ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+                    var selectedItems = await libraryController.getSelectedItems(parent);
+                    await libraryController.addItemsToPlaylist<Ref>(selectedItems);
                     libraryController.unselect();
                   }, valueListenable: libraryController.selectionChanged),
                   VolumeControl(),

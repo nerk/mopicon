@@ -22,6 +22,7 @@
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/pages/connecting_screen/connecting_screen_controller.dart';
@@ -31,54 +32,34 @@ import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
 import 'package:mopicon/utils/globals.dart';
 
-/// Initializes all services and load preferences.
-abstract class InitializerService {
-  Future initialize();
+/// Registers all services and loads preferences.
+class Initializer {
+  Initializer._();
 
-  bool get initialized;
-}
-
-class InitializeServiceImpl extends InitializerService {
-  bool _initialized = false;
-
-  @override
-  bool get initialized => _initialized;
-
-  @override
-  Future<void> initialize() async {
-    if (!_initialized) {
-      Globals.logger.i("initialize");
-      // configure logger
-      _registerServices();
-      await _loadSettings();
-      _initialized = true;
-    }
+  static Future<void> initialize() async {
+    Globals.logger.i("initialize");
+    // configure logger
+    _registerServices();
+    await _loadSettings();
   }
 
-  void _registerServices() {
-    if (initialized) {
-      return;
-    }
+  static void _registerServices() {
     GetIt getIt = GetIt.instance;
     Globals.logger.i("starting registering services");
+    getIt.registerLazySingleton<Preferences>(() => PreferencesServiceImpl());
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
-    getIt.registerLazySingleton<ConnectingScreenController>(
-        () => ConnectingScreenControllerImpl());
+    getIt.registerLazySingleton<ConnectingScreenController>(() => ConnectingScreenControllerImpl());
     getIt.registerLazySingleton<CoverService>(() => CoverServiceImpl());
-    getIt.registerLazySingleton<LibraryBrowserController>(
-        () => LibraryBrowserControllerImpl());
-    getIt.registerLazySingleton<TracklistViewController>(
-        () => TracklistViewControllerImpl());
-    getIt.registerLazySingleton<PlaylistViewController>(
-        () => PlaylistControllerImpl());
-    getIt.registerLazySingleton<SearchViewController>(
-        () => SearchViewControllerImpl());
+    getIt.registerLazySingleton<LibraryBrowserController>(() => LibraryBrowserControllerImpl());
+    getIt.registerLazySingleton<TracklistViewController>(() => TracklistViewControllerImpl());
+    getIt.registerLazySingleton<PlaylistViewController>(() => PlaylistControllerImpl());
+    getIt.registerLazySingleton<SearchViewController>(() => SearchViewControllerImpl());
     Globals.logger.i("finished registering services");
   }
 
   static Future<void> _loadSettings() async {
     Globals.logger.i("starting loading settings");
-    await Globals.preferences.load();
+    await GetIt.instance<Preferences>().load();
     Globals.logger.i("finished loading settings");
   }
 }

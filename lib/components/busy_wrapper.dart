@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mopicon/services/preferences_service.dart';
 
 /// Shows a modal busy indicator.
 ///
@@ -13,11 +14,12 @@ class BusyWrapper extends StatefulWidget {
   const BusyWrapper(this.child, this.busy, {super.key});
 
   @override
-  State<BusyWrapper> createState() => BusyWrapperState();
+  State<BusyWrapper> createState() => _BusyWrapperState();
 }
 
-class BusyWrapperState extends State<BusyWrapper>
-    with TickerProviderStateMixin {
+class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin {
+  final preferences = GetIt.instance<Preferences>();
+
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 4),
     vsync: this,
@@ -70,9 +72,7 @@ class BusyWrapperState extends State<BusyWrapper>
         widget.child,
         Opacity(
           opacity: 0.4,
-          child: ModalBarrier(
-              dismissible: false,
-              color: Globals.preferences.theme.data.dialogBackgroundColor),
+          child: ModalBarrier(dismissible: false, color: preferences.theme.data.dialogBackgroundColor),
         ),
         Center(
           child: FadeTransition(

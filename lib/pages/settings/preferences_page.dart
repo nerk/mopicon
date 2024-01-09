@@ -29,7 +29,8 @@ import 'package:flutter/services.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/show_text_dialog.dart';
-import 'preferences_controller.dart';
+import '../../services/preferences_service.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 
 class PreferencesPage extends StatefulWidget {
   const PreferencesPage({super.key});
@@ -39,31 +40,28 @@ class PreferencesPage extends StatefulWidget {
 }
 
 class _PreferencesState extends State<PreferencesPage> {
-  final preferences = Globals.preferences;
-  final preferencesFormKey =
-      GlobalKey<FormState>(debugLabel: "preferencesPage");
-  final _connectingScreen = GetIt.instance<ConnectingScreenController>();
+  final preferences = GetIt.instance<Preferences>();
+  final mopidyService = GetIt.instance<MopidyService>();
+  final preferencesFormKey = GlobalKey<FormState>(debugLabel: "preferencesPage");
+  final _connectingController = GetIt.instance<ConnectingScreenController>();
 
   AppLocale? newLocale;
+  String? originalUri;
 
   Future<void> load() async {
     await preferences.load();
     setState(() {
-      preferences.valid = true;
+      originalUri = preferences.url;
     });
     return Future.value(null);
   }
 
   Future<void> save() async {
-    bool formValid = false;
     if (preferencesFormKey.currentState?.validate() ?? false) {
-      formValid = true;
       if (preferences.hasChanged) {
         await preferences.save();
+        setState(() {});
       }
-      setState(() {
-        preferences.valid = formValid;
-      });
     }
     return Future.value(null);
   }
@@ -82,7 +80,7 @@ class _PreferencesState extends State<PreferencesPage> {
   }
 
   void postRetryError(_) {
-    if (_connectingScreen.retriesExceeded) {
+    if (_connectingController.retriesExceeded) {
       showError(S.of(Globals.rootContext).preferencesPageConnectErrorTitle,
           S.of(Globals.rootContext).preferencesPageConnectErrorDetails);
     }
@@ -90,22 +88,17 @@ class _PreferencesState extends State<PreferencesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuEntry<AppTheme>> themes =
-        <DropdownMenuEntry<AppTheme>>[];
+    final List<DropdownMenuEntry<AppTheme>> themes = <DropdownMenuEntry<AppTheme>>[];
     for (final AppTheme theme in AppThemes().themes) {
       themes.add(
         DropdownMenuEntry<AppTheme>(value: theme, label: theme.name),
       );
     }
 
-    final List<DropdownMenuEntry<AppLocale>> locales =
-        <DropdownMenuEntry<AppLocale>>[];
+    final List<DropdownMenuEntry<AppLocale>> locales = <DropdownMenuEntry<AppLocale>>[];
     for (final AppLocale locale in AppLocales().locales) {
       locales.add(
-        DropdownMenuEntry<AppLocale>(
-            value: locale,
-            label: locale
-                .getLabel(Globals.preferences.appLocale.locale.languageCode)),
+        DropdownMenuEntry<AppLocale>(value: locale, label: locale.getLabel(preferences.appLocale.locale.languageCode)),
       );
     }
 
@@ -118,10 +111,9 @@ class _PreferencesState extends State<PreferencesPage> {
                 try {
                   await load();
                   S.load(preferences.appLocale.locale);
-                  Globals.applicationRoutes.gotoConnecting(0);
+                  Globals.applicationRoutes.gotoHome();
                 } catch (e) {
-                  showError(
-                      S.of(Globals.rootContext).preferencesPageLoadError, null);
+                  showError(S.of(Globals.rootContext).preferencesPageLoadError, null);
                 }
               },
             ),
@@ -132,15 +124,18 @@ class _PreferencesState extends State<PreferencesPage> {
                 onPressed: () async {
                   if (preferencesFormKey.currentState?.validate() ?? false) {
                     try {
-                      preferences.appLocale =
-                          newLocale ?? preferences.appLocale;
+                      preferences.appLocale = newLocale ?? preferences.appLocale;
                       await save();
                       S.load(preferences.appLocale.locale);
-                      Globals.applicationRoutes.gotoConnecting(3);
+                      // disconnect if connection changed
+                      if (originalUri != preferences.url) {
+                        if (mounted) {
+                          mopidyService.stop();
+                        }
+                      }
+                      Globals.applicationRoutes.gotoHome();
                     } catch (e) {
-                      showError(
-                          S.of(Globals.rootContext).preferencesPageSaveError,
-                          null);
+                      showError(S.of(Globals.rootContext).preferencesPageSaveError, null);
                     }
                   }
                 },
@@ -155,19 +150,14 @@ class _PreferencesState extends State<PreferencesPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          TitledDivider(
-                              S.of(context).preferencesPageConnectionLbl),
+                          TitledDivider(S.of(context).preferencesPageConnectionLbl),
                           TextFormField(
                             initialValue: preferences.host,
                             autocorrect: false,
                             decoration: InputDecoration(
                                 icon: const Icon(Icons.lan),
-                                hintText: S
-                                    .of(context)
-                                    .preferencesPageMopidyServerHintText,
-                                labelText: S
-                                    .of(context)
-                                    .preferencesPageMopidyServerLblText),
+                                hintText: S.of(context).preferencesPageMopidyServerHintText,
+                                labelText: S.of(context).preferencesPageMopidyServerLblText),
                             autofillHints: [preferences.host ?? ''],
                             onSaved: (String? value) {
                               // This optional block of code can be used to run
@@ -182,31 +172,19 @@ class _PreferencesState extends State<PreferencesPage> {
                             validator: (String? value) {
                               return value != null && value.isNotEmpty
                                   ? null
-                                  : S
-                                      .of(context)
-                                      .preferencesPageMopidyServerInvalid;
+                                  : S.of(context).preferencesPageMopidyServerInvalid;
                             },
                           ),
                           VerticalSpacer(),
                           TextFormField(
                             keyboardType: TextInputType.number,
-                            initialValue: preferences.port != null
-                                ? preferences.port.toString()
-                                : '',
+                            initialValue: preferences.port != null ? preferences.port.toString() : '',
                             autocorrect: false,
                             decoration: InputDecoration(
                                 icon: const Icon(Icons.input_rounded),
-                                hintText: S
-                                    .of(context)
-                                    .preferencesPageMopidyPortHintText,
-                                labelText: S
-                                    .of(context)
-                                    .preferencesPageMopidyPortLblText),
-                            autofillHints: [
-                              preferences.port != null
-                                  ? preferences.port.toString()
-                                  : ''
-                            ],
+                                hintText: S.of(context).preferencesPageMopidyPortHintText,
+                                labelText: S.of(context).preferencesPageMopidyPortLblText),
+                            autofillHints: [preferences.port != null ? preferences.port.toString() : ''],
                             onSaved: (String? value) {
                               // This optional block of code can be used to run
                               // code when the user saves the form.
@@ -215,23 +193,17 @@ class _PreferencesState extends State<PreferencesPage> {
                               //preferences.save();
                             },
                             onChanged: (String value) {
-                              preferences.port =
-                                  (value.isNotEmpty ? int.parse(value) : null);
+                              preferences.port = (value.isNotEmpty ? int.parse(value) : null);
                             },
                             validator: (String? value) {
                               return value != null && value.isNotEmpty
                                   ? null
-                                  : S
-                                      .of(context)
-                                      .preferencesPageMopidyPortInvalid;
+                                  : S.of(context).preferencesPageMopidyPortInvalid;
                             },
                             maxLength: 5,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                           ),
-                          TitledDivider(
-                              S.of(context).preferencesPageAppearanceLbl),
+                          TitledDivider(S.of(context).preferencesPageAppearanceLbl),
                           DropdownMenu<AppTheme>(
                             initialSelection: preferences.theme,
                             controller: null,
@@ -249,8 +221,7 @@ class _PreferencesState extends State<PreferencesPage> {
                           DropdownMenu<AppLocale>(
                             initialSelection: preferences.appLocale,
                             controller: null,
-                            label:
-                                Text(S.of(context).preferencesPageLanguageLbl),
+                            label: Text(S.of(context).preferencesPageLanguageLbl),
                             dropdownMenuEntries: locales,
                             onSelected: (AppLocale? locale) {
                               if (locale != null) {
@@ -264,9 +235,7 @@ class _PreferencesState extends State<PreferencesPage> {
                           TitledDivider(S.of(context).preferencesPageUiLbl),
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: Text(S
-                                .of(context)
-                                .preferencesPageHideFileExtensionLbl),
+                            title: Text(S.of(context).preferencesPageHideFileExtensionLbl),
                             value: preferences.hideFileExtension,
                             onChanged: (bool? value) {
                               setState(() {
@@ -276,9 +245,7 @@ class _PreferencesState extends State<PreferencesPage> {
                           ),
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: Text(S
-                                .of(context)
-                                .preferencesPageTranslateServerNamesLbl),
+                            title: Text(S.of(context).preferencesPageTranslateServerNamesLbl),
                             value: preferences.translateServerNames,
                             onChanged: (bool? value) {
                               setState(() {
@@ -288,9 +255,7 @@ class _PreferencesState extends State<PreferencesPage> {
                           ),
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
-                            title: Text(S
-                                .of(context)
-                                .preferencesPageShowAllMediaCategoriesLbl),
+                            title: Text(S.of(context).preferencesPageShowAllMediaCategoriesLbl),
                             value: preferences.showAllMediaCategories,
                             onChanged: (bool? value) {
                               setState(() {
@@ -304,10 +269,7 @@ class _PreferencesState extends State<PreferencesPage> {
                             trailing: ElevatedButton(
                                 child: Text(S.of(context).showLogButtonLbl),
                                 onPressed: () {
-                                  showTextDialog(
-                                      context,
-                                      S.of(context).logDialogTitle,
-                                      Globals.getLogMessages());
+                                  showTextDialog(context, S.of(context).logDialogTitle, Globals.getLogMessages());
                                 }),
                           ),
                           ListTile(

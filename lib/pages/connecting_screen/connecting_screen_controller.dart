@@ -22,81 +22,57 @@
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/services/preferences_service.dart';
 
 abstract class ConnectingScreenController {
   void connect({int maxRetries});
 
   void stop();
 
-  bool get connecting;
-
-  bool get connected;
-
   bool get retriesExceeded;
 }
 
 class ConnectingScreenControllerImpl extends ConnectingScreenController {
-  int _maxRetries = 0;
+  int? _maxRetries;
+  int _retries = 0;
 
   final _mopidyService = GetIt.instance<MopidyService>();
-
-  bool _connecting = false;
-  var _retries = 0;
+  final _preferences = GetIt.instance<Preferences>();
 
   ConnectingScreenControllerImpl() {
-    void connectionListener() async {
-      if (_mopidyService.stopped) {
-        return;
-      }
-
-      ClientStateInfo stateInfo = _mopidyService.connectionNotifier.value;
-      if (stateInfo.state == ClientState.reconnecting) {
-        if (_maxRetries > 0) {
-          _retries++;
-          if (_retries > _maxRetries) {
-            stop();
-          }
-        }
-      } else if (stateInfo.state == ClientState.offline) {
-        _retries = 0;
-      }
-
-      if (stateInfo.state == ClientState.online) {
+    void connectionListener(MopidyConnectionState state) async {
+      if (state == MopidyConnectionState.reconnecting) {
+        _retries++;
+      } else if (state == MopidyConnectionState.online) {
         // Search is only supported if the Mopidy-Local extension is
         // enabled for the server. Just set a flag we can
         // check later.
-        Globals.preferences.searchSupported =
-            (await _mopidyService.getUriSchemes()).contains('local');
-        _connecting = false;
+        _preferences.searchSupported = (await _mopidyService.getUriSchemes()).contains('local');
         Globals.applicationRoutes.gotoHome();
-      } else if (stateInfo.state == ClientState.offline && !_connecting) {
-        _connecting = true;
-        Globals.applicationRoutes.gotoConnecting(_maxRetries);
+      } else {
+        Globals.applicationRoutes.gotoConnecting();
       }
     }
 
-    _mopidyService.connectionNotifier.addListener(connectionListener);
+    _mopidyService.connectionState$.listen(connectionListener);
   }
 
   @override
-  bool get connecting => _connecting;
+  bool get retriesExceeded => _maxRetries != null && _retries >= _maxRetries!;
 
   @override
-  bool get retriesExceeded => _maxRetries != 0 && _retries > _maxRetries;
-
-  @override
-  void connect({int maxRetries = 0}) {
+  void connect({int? maxRetries}) async {
     _maxRetries = maxRetries;
+    _retries = 0;
     _mopidyService.stop();
-    _mopidyService.connect();
+    bool success = await _mopidyService.connect(_preferences.url, maxRetries: maxRetries);
+    if (!success) {
+      Globals.applicationRoutes.gotoSettings();
+    }
   }
-
-  @override
-  bool get connected => _mopidyService.connected;
 
   @override
   void stop() async {
-    _connecting = false;
     _mopidyService.stop();
     Globals.applicationRoutes.gotoSettings();
   }

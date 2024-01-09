@@ -23,8 +23,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'mopidy_service.dart';
 import 'package:mopicon/utils/cache.dart';
-import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/utils/image_utils.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 
 abstract class CoverService {
@@ -35,6 +35,7 @@ abstract class CoverService {
 
 class CoverServiceImpl extends CoverService {
   final _mopidyService = GetIt.instance<MopidyService>();
+  final _preferences = GetIt.instance<Preferences>();
 
   // cache Image objects returned from mopidy.
   final _mImages = Cache<MImage>(500, 3000);
@@ -45,8 +46,7 @@ class CoverServiceImpl extends CoverService {
     if (image != null) {
       return Future.value(ImageUtils.pad(image, 3));
     } else if (uri.isStreamUri()) {
-      return Future.value(
-          ImageUtils.pad(ImageUtils.getIconForType(uri, Ref.typeTrack), 3));
+      return Future.value(ImageUtils.pad(ImageUtils.getIconForType(uri, Ref.typeTrack), 3));
     }
     return Future.value(ImageUtils.pad(CoverService.defaultImage, 3));
   }
@@ -55,8 +55,7 @@ class CoverServiceImpl extends CoverService {
     if (uri != null) {
       var mImage = _mImages.get(uri);
       if (mImage == null) {
-        Map<String, List<MImage>> images =
-            await _mopidyService.getImages([uri]);
+        Map<String, List<MImage>> images = await _mopidyService.getImages([uri]);
         if (images[uri] != null && images[uri]!.isNotEmpty) {
           mImage = images[uri]!.first;
           _mImages.put(uri, mImage);
@@ -64,8 +63,7 @@ class CoverServiceImpl extends CoverService {
       }
       if (mImage != null) {
         // images loaded from network are internally cached
-        Image img =
-            Image.network(Globals.preferences.computeNetworkUrl(mImage));
+        Image img = Image.network(_preferences.computeNetworkUrl(mImage));
         return Future.value(img);
       }
     }

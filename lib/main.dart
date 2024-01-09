@@ -19,38 +19,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/services/initializer_service.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/initializer.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
-import 'package:mopicon/utils/globals.dart';
 
-void main() {
-  GetIt.instance
-      .registerLazySingleton<InitializerService>(() => InitializeServiceImpl());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Initializer.initialize();
 
   return runApp(AppWidget());
 }
 
 class AppWidget extends StatelessWidget {
-  final preferences = Globals.preferences;
-  final router = Globals.applicationRoutes.router;
-
   AppWidget({super.key});
+
+  final preferences = GetIt.instance<Preferences>();
+  final applicationRoutes = Globals.applicationRoutes;
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<AppTheme>(
-        valueListenable: preferences.themeChanged,
-        builder: (_, themeData, __) {
+    return StreamBuilder<void>(
+        stream: preferences.preferencesChanged$,
+        builder: (_, saved) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
             scaffoldMessengerKey: Globals.rootScaffoldMessengerKey,
             title: 'Mopicon',
             theme: preferences.theme.data,
-            routerConfig: router,
+            routerConfig: applicationRoutes.router,
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,

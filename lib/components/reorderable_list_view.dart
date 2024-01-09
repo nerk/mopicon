@@ -20,9 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/services/preferences_service.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'selected_item_positions.dart';
 
@@ -30,6 +31,8 @@ typedef OnReorderCallback = void Function(int start, int current);
 typedef OnTapCallback<T> = void Function(T item, int index);
 
 class ReorderableTrackListView<T extends Object> {
+  final _preferences = GetIt.instance<Preferences>();
+
   // uri/image map
   final BuildContext context;
   final List<T> items;
@@ -42,14 +45,8 @@ class ReorderableTrackListView<T extends Object> {
 
   var selectedPositions = SelectedItemPositions();
 
-  ReorderableTrackListView(
-      this.context,
-      this.items,
-      this.images,
-      this.selectionChangedNotifier,
-      this.selectionModeChangedNotifier,
-      this.onReorder,
-      this.onTap,
+  ReorderableTrackListView(this.context, this.items, this.images, this.selectionChangedNotifier,
+      this.selectionModeChangedNotifier, this.onReorder, this.onTap,
       {this.markedItemIndex}) {
     assert(items is List<Track> || items is List<TlTrack>);
     selectedPositions = selectionChangedNotifier.value.clone();
@@ -62,8 +59,7 @@ class ReorderableTrackListView<T extends Object> {
       return Padding(
         padding: const EdgeInsets.all(3),
         child: CircleAvatar(
-          backgroundColor:
-              Globals.preferences.theme.data.colorScheme.inversePrimary,
+          backgroundColor: _preferences.theme.data.colorScheme.inversePrimary,
           child: const Icon(Icons.check),
         ),
       );
@@ -77,8 +73,7 @@ class ReorderableTrackListView<T extends Object> {
         buildDefaultDragHandles: false,
         shrinkWrap: items.length > 500,
         itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) =>
-            _listItem(items[index], index),
+        itemBuilder: (BuildContext context, int index) => _listItem(items[index], index),
         onReorder: (int start, int current) {
           if (onReorder != null) {
             selectedPositions.move(start, current, items.length);
@@ -94,16 +89,12 @@ class ReorderableTrackListView<T extends Object> {
 
     var listTile = ListTile(
         contentPadding: const EdgeInsets.all(0),
-        tileColor: index == markedItemIndex
-            ? Globals.preferences.theme.data.colorScheme.inversePrimary
-            : null,
+        tileColor: index == markedItemIndex ? _preferences.theme.data.colorScheme.inversePrimary : null,
         onTap: () async {
           if (selectionModeChangedNotifier.value == SelectionMode.on) {
             selectedPositions.toggle(index);
             selectionChangedNotifier.value = selectedPositions;
-            selectionModeChangedNotifier.value = selectedPositions.isEmpty
-                ? SelectionMode.off
-                : SelectionMode.on;
+            selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
           } else if (onTap != null) {
             onTap!(item, index);
           }
@@ -121,21 +112,17 @@ class ReorderableTrackListView<T extends Object> {
     return Dismissible(
         key: Key("$index$item"),
         background: Container(
-          color: Globals.preferences.theme.data.colorScheme.onBackground,
+          color: _preferences.theme.data.colorScheme.onBackground,
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: _getImage(item, index, true)),
+            child: Padding(padding: const EdgeInsets.only(left: 4), child: _getImage(item, index, true)),
           ),
         ),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.startToEnd) {
             selectedPositions.toggle(index);
             selectionChangedNotifier.value = selectedPositions;
-            selectionModeChangedNotifier.value = selectedPositions.isEmpty
-                ? SelectionMode.off
-                : SelectionMode.on;
+            selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
           }
           return false;
         },

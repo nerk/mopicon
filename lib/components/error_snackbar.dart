@@ -22,17 +22,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:mopicon/utils/globals.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mopicon/services/preferences_service.dart';
 
 /// Displays a [SnackBar] with error icon, [title] and [detail].
 void showError(String title, String? detail) {
-  Globals.rootScaffoldMessengerKey.currentState!
-      .showSnackBar(_ErrorSnackBar(title: title, detail: detail));
+  Globals.rootScaffoldMessengerKey.currentState!.showSnackBar(_ErrorSnackBar(title: title, detail: detail));
 }
 
 /// Displays a [SnackBar] with info icon, [title] and [detail].
 void showInfo(String title, String? detail) {
-  Globals.rootScaffoldMessengerKey.currentState!
-      .showSnackBar(_InfoSnackBar(title: title, detail: detail));
+  Globals.rootScaffoldMessengerKey.currentState!.showSnackBar(_InfoSnackBar(title: title, detail: detail));
 }
 
 /// Closes the current [SnackBar].
@@ -62,7 +62,6 @@ class _InfoSnackBar extends SnackBar {
               subtitle: detail != null ? Text(detail) : null,
             ),
             duration: const Duration(seconds: 4),
-            backgroundColor:
-                Globals.preferences.theme.data.colorScheme.onInverseSurface,
+            backgroundColor: GetIt.instance<Preferences>().theme.data.colorScheme.onInverseSurface,
             showCloseIcon: false);
 }

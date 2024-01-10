@@ -42,23 +42,25 @@ class TracklistAppBarMenu extends StatelessWidget {
         controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
   }
 
-  void _deleteAll([BuildContext? context, _, __]) {
+  void _deleteAll(BuildContext context, _, __) {
     final mopidyService = GetIt.instance<MopidyService>();
     controller.selectionModeChanged.value = SelectionMode.off;
     mopidyService.clearTracklist();
   }
 
-  void _newStream(BuildContext? context, _, __) async {
-    var uri = await newStreamDialog(S.of(Globals.rootContext).newTracklistStreamDialogTitle);
-    if (uri != null) {
+  void _newStream(BuildContext context, _, __) async {
+    var uri = await newStreamDialog(S.of(context).newTracklistStreamDialogTitle);
+    if (uri != null && context.mounted) {
       try {
         // Server looks up a stream by its URI and assigns
         // the correct name. We therefore just pass an empty name.
         Ref track = Ref(uri, '', Ref.typeTrack);
-        await controller.addItemsToTracklist<Ref>([track]);
+        await controller.addItemsToTracklist<Ref>(context, [track]);
       } catch (e, s) {
         Globals.logger.e(e, stackTrace: s);
-        showError(S.of(Globals.rootContext).newStreamCreateError, null);
+        if (context.mounted) {
+          showError(S.of(context).newStreamCreateError, null);
+        }
       }
     }
   }

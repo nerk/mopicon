@@ -28,7 +28,8 @@ import 'logging_utils.dart' as lg;
 
 class Globals {
   static var rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>(debugLabel: "rootScaffoldMessengerKey");
-  static var rootContext = rootScaffoldMessengerKey.currentContext!;
+  static var rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "rootNavigatorKey");
+
   static var applicationRoutes = ApplicationRoutes();
   static var logger = lg.logger;
 

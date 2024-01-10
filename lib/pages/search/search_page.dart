@@ -109,16 +109,17 @@ class _SearchPageState extends State<SearchPage> {
         (Track track, int index) async {
       var r = await showActionDialog(
           [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
+      if (!context.mounted) return;
       switch (r) {
         case ItemActionOption.play:
-          await controller.addItemsToTracklist<Ref>([track.asRef]);
+          await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
           mopidyService.play(track.asRef);
           break;
         case ItemActionOption.addToTracklist:
-          await controller.addItemsToTracklist<Ref>([track.asRef]);
+          await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
           break;
         case ItemActionOption.addToPlaylist:
-          await controller.addItemsToPlaylist<Ref>([track.asRef]);
+          await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
           break;
         default:
       }
@@ -183,12 +184,12 @@ class _SearchPageState extends State<SearchPage> {
               actions: [
                 ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
                   var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-                  await controller.addItemsToTracklist<Ref>(selectedItems.asRef);
+                  await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
                   controller.unselect();
                 }, valueListenable: controller.selectionChanged),
                 ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
                   var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-                  await controller.addItemsToPlaylist<Ref>(selectedItems.asRef);
+                  await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
                   controller.unselect();
                 }, valueListenable: controller.selectionChanged),
                 VolumeControl(),

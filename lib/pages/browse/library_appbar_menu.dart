@@ -80,13 +80,15 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
     });
   }
 
-  void _renamePlayList(BuildContext? context, _, __) async {
+  void _renamePlayList(BuildContext context, _, __) async {
     if (controller.selectionChanged.value.positions.length == 1) {
       var ref = items[controller.selectionChanged.value.positions.first];
       controller.unselect();
       var name = await renamePlaylistDialog(ref.name);
       if (name != null) {
-        await controller.renamePlayList(ref, name);
+        if (context.mounted) {
+          await controller.renamePlayList(context, ref, name);
+        }
       }
     }
   }

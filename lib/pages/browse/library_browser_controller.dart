@@ -42,9 +42,9 @@ abstract class LibraryBrowserController with TracklistMethods, PlaylistMethods {
 
   Future<List<Ref>> getSelectedItems(Ref? parent);
 
-  void deleteSelectedPlaylists();
+  void deleteSelectedPlaylists(BuildContext context);
 
-  Future<void> renamePlayList(Ref pl, String name);
+  Future<void> renamePlayList(BuildContext context, Ref pl, String name);
 
   void unselect();
 }
@@ -76,86 +76,88 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
   MenuBuilder<Ref> albumPopupMenu(BuildContext context) {
     return MenuBuilder<Ref>()
         .addMenuItem(S.of(context).menuAddToTracklist, Icons.queue_music,
-            (_, track, index) => addItemsToTracklist<Ref>([track!]))
+            (_, track, index) => addItemsToTracklist<Ref>(context, [track!]))
         .addMenuItem(S.of(context).menuAddToPlaylist, Icons.playlist_add,
-            (_, track, index) => addItemsToPlaylist<Ref>([track!]))
+            (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]))
         .addMenuItem(S.of(context).menuDelete, Icons.delete, deletePlaylist,
-            applicableCallback: (track, index) =>
-                track.type == Ref.typePlaylist);
+            applicableCallback: (track, index) => track.type == Ref.typePlaylist);
   }
 
   MenuBuilder<Ref> trackPopupMenu(BuildContext context) {
     return MenuBuilder<Ref>()
         .addMenuItem(S.of(context).menuAddToTracklist, Icons.queue_music,
-            (_, track, index) => addItemsToTracklist<Ref>([track!]))
+            (_, track, index) => addItemsToTracklist<Ref>(context, [track!]))
         .addMenuItem(S.of(context).menuAddToPlaylist, Icons.playlist_add,
-            (_, track, index) => addItemsToPlaylist<Ref>([track!]))
+            (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]))
         .addMenuItem(S.of(context).menuDelete, Icons.delete, deletePlaylist,
-            applicableCallback: (track, index) =>
-                track.type == Ref.typePlaylist);
+            applicableCallback: (track, index) => track.type == Ref.typePlaylist);
   }
 
   MenuBuilder<Ref> playlistPopupMenu(BuildContext context) {
     return MenuBuilder<Ref>()
         .addMenuItem(S.of(context).menuAddToTracklist, Icons.queue_music,
-            (_, track, index) => addItemsToTracklist<Ref>([track!]))
+            (_, track, index) => addItemsToTracklist<Ref>(context, [track!]))
         .addMenuItem(S.of(context).menuDelete, Icons.delete, deletePlaylist);
   }
 
-  void deletePlaylist(BuildContext? context, Ref? item, int? index) async {
-    assert(context != null);
+  void deletePlaylist(BuildContext context, Ref? item, int? index) async {
     if (item != null && item.type == Ref.typePlaylist) {
       try {
-        var ret = await showQuestionDialog(
-            S.of(context!).deletePlaylistDialogTitle,
-            S.of(context).deletePlaylistDialogMessage(item.name),
-            [DialogButtonOption.yes, DialogButtonOption.no],
+        var ret = await showQuestionDialog(S.of(context).deletePlaylistDialogTitle,
+            S.of(context).deletePlaylistDialogMessage(item.name), [DialogButtonOption.yes, DialogButtonOption.no],
             defaultOption: DialogButtonOption.no);
         if (ret != null && ret == DialogButtonOption.yes) {
           await _mopidyService.deletePlaylist(item);
         }
       } catch (e) {
         Globals.logger.e(e);
-        showError(S.of(context!).deletePlaylistError, null);
+        if (context.mounted) {
+          showError(S.of(context).deletePlaylistError, null);
+        }
       }
     }
   }
 
   @override
-  void deleteSelectedPlaylists() async {
+  void deleteSelectedPlaylists(BuildContext context) async {
     List<Ref> selected = await getSelectedItems(null);
+    if (!context.mounted) return;
     for (var item in selected) {
       try {
-        var ret = await showQuestionDialog(
-            S.of(Globals.rootContext).deletePlaylistDialogTitle,
-            S.of(Globals.rootContext).deletePlaylistDialogMessage(item.name),
-            [DialogButtonOption.yes, DialogButtonOption.no],
+        var ret = await showQuestionDialog(S.of(context).deletePlaylistDialogTitle,
+            S.of(context).deletePlaylistDialogMessage(item.name), [DialogButtonOption.yes, DialogButtonOption.no],
             defaultOption: DialogButtonOption.no);
         if (ret != null && ret == DialogButtonOption.yes) {
           await _mopidyService.deletePlaylist(item);
         }
       } catch (e) {
         Globals.logger.e(e);
-        showError(S.of(Globals.rootContext).deletePlaylistError, null);
+        if (context.mounted) {
+          showError(S.of(context).deletePlaylistError, null);
+        }
       }
     }
     unselect();
   }
 
   @override
-  Future<void> renamePlayList(Ref pl, String name) async {
+  Future<void> renamePlayList(BuildContext context, Ref pl, String name) async {
     try {
       var playlists = await _mopidyService.getPlaylists();
       if (name.isNotEmpty) {
         if (playlists.indexWhere((e) => e.name == name) != -1) {
-          showError(S.of(Globals.rootContext).playlistAlreadyExistsError, null);
+          if (context.mounted) {
+            showError(S.of(context).playlistAlreadyExistsError, null);
+          }
         } else {
           await _mopidyService.renamePlaylist(pl, name);
         }
       }
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
-      showError(S.of(Globals.rootContext).renamePlaylistCreateError, null);
+      if (context.mounted) {
+        showError(S.of(context).renamePlaylistCreateError, null);
+      }
     }
   }
 
@@ -185,8 +187,6 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
   @override
   void unselect() {
     selectionModeChanged.value = SelectionMode.off;
-    selectionChanged.value.isNotEmpty
-        ? selectionChanged.value = SelectedItemPositions()
-        : null;
+    selectionChanged.value.isNotEmpty ? selectionChanged.value = SelectedItemPositions() : null;
   }
 }

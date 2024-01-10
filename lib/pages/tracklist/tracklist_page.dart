@@ -248,7 +248,9 @@ class _TrackListState extends State<TrackListPage> {
           mopidyService.play(track.asRef);
           break;
         case ItemActionOption.addToPlaylist:
-          await controller.addItemsToPlaylist<Ref>([track.asRef]);
+          if (context.mounted) {
+            await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
+          }
           break;
         default:
       }
@@ -340,7 +342,9 @@ class _TrackListState extends State<TrackListPage> {
                   Icons.delete, valueListenable: controller.selectionChanged, controller.deleteSelectedTracks),
               ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
                 var selectedItems = await controller.getSelectedItems();
-                await controller.addItemsToPlaylist<Ref>(selectedItems);
+                if (context.mounted) {
+                  await controller.addItemsToPlaylist<Ref>(context, selectedItems);
+                }
                 controller.unselect();
               }, valueListenable: controller.selectionChanged),
               VolumeControl(),

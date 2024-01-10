@@ -22,7 +22,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart' show ValueNotifier;
+import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
@@ -153,7 +153,7 @@ abstract class MopidyService {
 
   Future<bool> deletePlaylist(Ref playlist);
 
-  Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> items);
+  Future<Playlist?> addToPlaylist<T>(BuildContext context, Ref playlist, List<T> items);
 
   Future<void> movePlaylistItem(Ref playlist, int from, int to);
 
@@ -590,7 +590,7 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<Playlist?> addToPlaylist<T>(Ref playlist, List<T> items) async {
+  Future<Playlist?> addToPlaylist<T>(BuildContext context, Ref playlist, List<T> items) async {
     assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
     Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
     bool trackAdded = false;
@@ -604,7 +604,9 @@ class MopidyServiceImpl extends MopidyService {
             pl.addTrack(tr);
             trackAdded = true;
           } else {
-            showError(S.of(Globals.rootContext).newStreamAccessError, tr.uri);
+            if (context.mounted) {
+              showError(S.of(context).newStreamAccessError, tr.uri);
+            }
           }
         } else if (item is TlTrack) {
           pl.addTrack(item.track);

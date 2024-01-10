@@ -35,7 +35,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
 
   const PlaylistAppBarMenu(this.controller, this.playlist, {super.key});
 
-  void _selectAll(BuildContext? context, _, __) async {
+  void _selectAll(BuildContext context, _, __) async {
     List<Track> tracks = await controller.getPlaylistItems(playlist);
     controller.selectionChanged.value = SelectedItemPositions.all(tracks.length);
 
@@ -43,21 +43,23 @@ class PlaylistAppBarMenu extends StatelessWidget {
         controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
   }
 
-  void _deleteAll([BuildContext? context, _, __]) async {
+  void _deleteAll(BuildContext context, _, __) async {
     await controller.deleteAllPlaylistItems(playlist);
   }
 
-  void _newStream(BuildContext? context, _, __) async {
-    var uri = await newStreamDialog(S.of(Globals.rootContext).newPlaylistStreamDialogTitle);
-    if (uri != null) {
+  void _newStream(BuildContext context, _, __) async {
+    var uri = await newStreamDialog(S.of(context).newPlaylistStreamDialogTitle);
+    if (uri != null && context.mounted) {
       try {
         // Server looks up a stream by its URI and assigns
         // the correct name. We therefore just pass an empty name.
         Ref track = Ref(uri, '', Ref.typeTrack);
-        await controller.addItemsToPlaylist<Ref>([track], playlist: playlist);
+        await controller.addItemsToPlaylist<Ref>(context, [track], playlist: playlist);
       } catch (e, s) {
         Globals.logger.e(e, stackTrace: s);
-        showError(S.of(Globals.rootContext).newStreamCreateError, null);
+        if (context.mounted) {
+          showError(S.of(context).newStreamCreateError, null);
+        }
       }
     }
   }

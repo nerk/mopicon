@@ -63,20 +63,6 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   final mopidyService = GetIt.instance<MopidyService>();
   final preferences = GetIt.instance<Preferences>();
 
-  final namesMap = {
-    'Files': S.of(Globals.rootContext).nameTranslateFiles,
-    'Local media': S.of(Globals.rootContext).nameTranslateLocalMedia,
-    'Albums': S.of(Globals.rootContext).nameTranslateAlbums,
-    'Artists': S.of(Globals.rootContext).nameTranslateArtists,
-    'Composers': S.of(Globals.rootContext).nameTranslateComposers,
-    'Genres': S.of(Globals.rootContext).nameTranslateGenres,
-    'Performers': S.of(Globals.rootContext).nameTranslatePerformers,
-    'Release Years': S.of(Globals.rootContext).nameTranslateReleaseYears,
-    'Tracks': S.of(Globals.rootContext).nameTranslateTracks,
-    "Last Week's Updates": S.of(Globals.rootContext).nameTranslateLastWeeksUpdates,
-    "Last Month's Updates": S.of(Globals.rootContext).nameTranslateLastMonthsUpdates
-  };
-
   var extendedCategoriesNames = ['Performers', 'Release Years', "Last Week's Updates", "Last Month's Updates"];
 
   _LibraryBrowserPageState() {
@@ -99,15 +85,6 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
       if (!preferences.showAllMediaCategories) {
         items.removeWhere((item) => item.type == Ref.typeDirectory && extendedCategoriesNames.contains(item.name));
-      }
-
-      if (preferences.translateServerNames) {
-        for (int i = 0; i < items.length; i++) {
-          String? translated = namesMap[items[i].name];
-          if (translated != null) {
-            items[i] = Ref(items[i].uri, translated, items[i].type);
-          }
-        }
       }
 
       // load images into local map
@@ -152,21 +129,26 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (preferences.translateServerNames) {
+      translateNames(context);
+    }
+
     var listView = LibraryListView(
         parent, items, images, libraryController.selectionChanged, libraryController.selectionModeChanged,
         (Ref item, int index) async {
       var r = await showActionDialog(
           [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
+      if (!context.mounted) return;
       switch (r) {
         case ItemActionOption.play:
-          await libraryController.addItemsToTracklist<Ref>([item]);
+          await libraryController.addItemsToTracklist<Ref>(context, [item]);
           mopidyService.play(item);
           break;
         case ItemActionOption.addToTracklist:
-          await libraryController.addItemsToTracklist<Ref>([item]);
+          await libraryController.addItemsToTracklist<Ref>(context, [item]);
           break;
         case ItemActionOption.addToPlaylist:
-          await libraryController.addItemsToPlaylist<Ref>([item]);
+          await libraryController.addItemsToPlaylist<Ref>(context, [item]);
           break;
         default:
       }
@@ -189,17 +171,21 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                 actions: [
                   parent == null
                       ? ActionButton<SelectedItemPositions>(
-                          Icons.delete, () => libraryController.deleteSelectedPlaylists(),
+                          Icons.delete, () => libraryController.deleteSelectedPlaylists(context),
                           valueListenable: libraryController.selectionChanged)
                       : const SizedBox(),
                   ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
                     var selectedItems = await libraryController.getSelectedItems(parent);
-                    await libraryController.addItemsToTracklist<Ref>(selectedItems);
+                    if (context.mounted) {
+                      await libraryController.addItemsToTracklist<Ref>(context, selectedItems);
+                    }
                     libraryController.unselect();
                   }, valueListenable: libraryController.selectionChanged),
                   ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
                     var selectedItems = await libraryController.getSelectedItems(parent);
-                    await libraryController.addItemsToPlaylist<Ref>(selectedItems);
+                    if (context.mounted) {
+                      await libraryController.addItemsToPlaylist<Ref>(context, selectedItems);
+                    }
                     libraryController.unselect();
                   }, valueListenable: libraryController.selectionChanged),
                   VolumeControl(),
@@ -207,5 +193,29 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                 ]),
             body: MaterialPageFrame(child: listView)),
         showBusy);
+  }
+
+  void translateNames(BuildContext context) {
+    final namesMap = {
+      'Files': S.of(context).nameTranslateFiles,
+      'Local media': S.of(context).nameTranslateLocalMedia,
+      'Albums': S.of(context).nameTranslateAlbums,
+      'Artists': S.of(context).nameTranslateArtists,
+      'Composers': S.of(context).nameTranslateComposers,
+      'Genres': S.of(context).nameTranslateGenres,
+      'Performers': S.of(context).nameTranslatePerformers,
+      'Release Years': S.of(context).nameTranslateReleaseYears,
+      'Tracks': S.of(context).nameTranslateTracks,
+      "Last Week's Updates": S.of(context).nameTranslateLastWeeksUpdates,
+      "Last Month's Updates": S.of(context).nameTranslateLastMonthsUpdates
+    };
+    for (int i = 0; i < items.length; i++) {
+      if (items[i].type == Ref.typeDirectory) {
+        String? translated = namesMap[items[i].name];
+        if (translated != null) {
+          items[i] = Ref(items[i].uri, translated, items[i].type);
+        }
+      }
+    }
   }
 }

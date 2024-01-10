@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/services/mopidy_service.dart';
@@ -34,9 +35,8 @@ mixin TracklistMethods {
   /// Adds all [items] to the tracklist and returns the resulting added
   /// [TlTrack] objects. If an item on [items] has children, add its children
   /// instead of the item itself.
-  Future<List<TlTrack>> addItemsToTracklist<T>(List<T> items) async {
-    assert(
-        items is List<Ref> || items is List<Track> || items is List<TlTrack>);
+  Future<List<TlTrack>> addItemsToTracklist<T>(BuildContext context, List<T> items) async {
+    assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
 
     List<T> flattened = await _mopidyService.flatten<T>(items);
     var tl = <TlTrack>[];
@@ -45,12 +45,12 @@ mixin TracklistMethods {
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
     } finally {
-      if (tl.length > 1) {
-        showInfo(
-            S.of(Globals.rootContext).tracksAddedToTracklistMessage(tl.length),
-            null);
-      } else {
-        showInfo(S.of(Globals.rootContext).trackAddedToTracklistMessage, null);
+      if (context.mounted) {
+        if (tl.length > 1) {
+          showInfo(S.of(context).tracksAddedToTracklistMessage(tl.length), null);
+        } else {
+          showInfo(S.of(context).trackAddedToTracklistMessage, null);
+        }
       }
     }
     return tl;

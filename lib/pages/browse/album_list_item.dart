@@ -25,7 +25,6 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopidy_client/mopidy_client.dart' hide Image;
 import 'package:mopicon/generated/l10n.dart';
-import 'package:mopicon/utils/globals.dart';
 
 class AlbumListItem extends StatelessWidget {
   final _controller = GetIt.instance<LibraryBrowserController>();
@@ -38,8 +37,7 @@ class AlbumListItem extends StatelessWidget {
   final int? numTracks;
   final void Function()? onTap;
 
-  AlbumListItem(this.albumRef, this.thumbnail, this.title, this.artist,
-      this.numTracks, this.date, this.onTap,
+  AlbumListItem(this.albumRef, this.thumbnail, this.title, this.artist, this.numTracks, this.date, this.onTap,
       {super.key});
 
   @override
@@ -56,9 +54,7 @@ class AlbumListItem extends StatelessWidget {
             Expanded(
               child: _AlbumDescription(title, artist, numTracks, date),
             ),
-            _controller
-                .popupMenu(context, albumRef, null)
-                .build(context, albumRef, null)
+            _controller.popupMenu(context, albumRef, null).build(context, albumRef, null)
           ],
         ),
       ),
@@ -93,13 +89,8 @@ class _AlbumDescription extends StatelessWidget {
             artist,
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
-          numTracks != null
-              ? Text('$numTracks Tracks',
-                  style: const TextStyle(fontSize: 10.0))
-              : const SizedBox(),
-          date != null
-              ? Text(S.of(Globals.rootContext).albumDateLbl(date!))
-              : const SizedBox(),
+          numTracks != null ? Text('$numTracks Tracks', style: const TextStyle(fontSize: 10.0)) : const SizedBox(),
+          date != null && context.mounted ? Text(S.of(context).albumDateLbl(date!)) : const SizedBox(),
         ],
       ),
     );

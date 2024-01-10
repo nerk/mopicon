@@ -45,9 +45,10 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<void>(
         stream: preferences.preferencesChanged$,
-        builder: (_, saved) {
+        builder: (_, __) {
           return MaterialApp.router(
             debugShowCheckedModeBanner: false,
+            key: Globals.rootNavigatorKey,
             scaffoldMessengerKey: Globals.rootScaffoldMessengerKey,
             title: 'Mopicon',
             theme: preferences.theme.data,

@@ -77,11 +77,12 @@ class NowPlaying extends StatelessWidget {
     if (splitPage) {
       return _small(title, artistName, albumName, length, bitrate);
     } else {
-      return _big(title, artistName, albumName, length, date, discNo, trackNo, bitrate);
+      return _big(context, title, artistName, albumName, length, date, discNo, trackNo, bitrate);
     }
   }
 
-  Widget _big(String title, String artistName, String albumName, length, date, discNo, trackNo, int bitrate) {
+  Widget _big(BuildContext context, String title, String artistName, String albumName, length, date, discNo, trackNo,
+      int bitrate) {
     return Expanded(
         flex: 1,
         child: Column(
@@ -96,9 +97,9 @@ class NowPlaying extends StatelessWidget {
             Column(children: [
               !isStream
                   ? Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                      Text(S.of(Globals.rootContext).nowPlayingDiscLbl(discNo)),
-                      Text(S.of(Globals.rootContext).nowPlayingTrackNoLbl(trackNo)),
-                      Text(S.of(Globals.rootContext).nowPlayingDateLbl(date)),
+                      Text(S.of(context).nowPlayingDiscLbl(discNo)),
+                      Text(S.of(context).nowPlayingTrackNoLbl(trackNo)),
+                      Text(S.of(context).nowPlayingDateLbl(date)),
                     ])
                   : const SizedBox(),
               PlayingProgressIndicator(

@@ -25,7 +25,6 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/titled_divider.dart';
-import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/preferences_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -76,26 +75,26 @@ class AboutPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               title('MOPICON'),
-              paragraph('Copyright \u00a9 2023 Thomas Kern', fontSize: 14, textAlign: TextAlign.center),
-              paragraph(S.of(context).aboutPageDescription, fontSize: 14, textAlign: TextAlign.center),
+              paragraph(context, 'Copyright \u00a9 2023 Thomas Kern', fontSize: 14, textAlign: TextAlign.center),
+              paragraph(context, S.of(context).aboutPageDescription, fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageVersionSection),
-              paragraph(_preferences.version, fontSize: 14, textAlign: TextAlign.center),
+              paragraph(context, _preferences.version, fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageHelpSection),
-              paragraph(S.of(context).aboutPageHelpDescription, fontSize: 14, textAlign: TextAlign.center),
+              paragraph(context, S.of(context).aboutPageHelpDescription, fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageLicenseSection),
-              SingleChildScrollView(scrollDirection: Axis.horizontal, child: paragraph(license, fontSize: 11))
+              SingleChildScrollView(scrollDirection: Axis.horizontal, child: paragraph(context, license, fontSize: 11))
             ],
           ),
         )));
   }
 
-  Widget paragraph(String text, {TextAlign? textAlign, double? fontSize}) {
+  Widget paragraph(BuildContext context, String text, {TextAlign? textAlign, double? fontSize}) {
     return Padding(
         padding: const EdgeInsets.only(top: 10), //apply padding to all four sides
         child: Text.rich(
             softWrap: true,
             TextSpan(
-              children: textSpans(text),
+              children: textSpans(context, text),
               style: TextStyle(fontSize: fontSize ?? 14, fontWeight: FontWeight.normal),
             ),
             textAlign: textAlign ?? TextAlign.start));
@@ -109,7 +108,7 @@ class AboutPage extends StatelessWidget {
     );
   }
 
-  List<InlineSpan> textSpans(String text) {
+  List<InlineSpan> textSpans(BuildContext context, String text) {
     var spans = List<InlineSpan>.empty(growable: true);
 
     // Find links within the text and convert parts
@@ -132,7 +131,9 @@ class AboutPage extends StatelessWidget {
             ..onTap = () async {
               Uri url = Uri.parse('${match[1]}${match[2]}');
               if (!await launchUrl(url)) {
-                showError(S.of(Globals.rootContext).aboutPageLinkLaunchError(url.toString()), null);
+                if (context.mounted) {
+                  showError(S.of(context).aboutPageLinkLaunchError(url.toString()), null);
+                }
               }
             },
         ));

@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/playlist/select_playlist_dialog.dart';
 import 'package:mopicon/utils/globals.dart';
@@ -33,8 +34,7 @@ mixin PlaylistMethods {
   Ref? recentPlaylist;
 
   Future<List<Track>> getPlaylistTracks<T>(T playlist) async {
-    assert((playlist is Ref && playlist.type == Ref.typePlaylist) ||
-        playlist is Playlist);
+    assert((playlist is Ref && playlist.type == Ref.typePlaylist) || playlist is Playlist);
     if (playlist is Ref) {
       return await _mopidyService.getPlaylistItems(playlist);
     } else {
@@ -42,10 +42,8 @@ mixin PlaylistMethods {
     }
   }
 
-  Future<void> addItemsToPlaylist<T>(List<T> tracks, {Ref? playlist}) async {
-    assert(tracks is List<Ref> ||
-        tracks is List<Track> ||
-        tracks is List<TlTrack>);
+  Future<void> addItemsToPlaylist<T>(BuildContext context, List<T> tracks, {Ref? playlist}) async {
+    assert(tracks is List<Ref> || tracks is List<Track> || tracks is List<TlTrack>);
     Playlist? plst;
     List<T> flattened = await _mopidyService.flatten<T>(tracks);
     try {
@@ -60,25 +58,23 @@ mixin PlaylistMethods {
         Ref? pl = await selectPlaylistDialog(playlists);
         if (pl != null) {
           recentPlaylist = pl;
-          plst = await _mopidyService.addToPlaylist<T>(pl, flattened);
+          if (!context.mounted) return;
+          plst = await _mopidyService.addToPlaylist<T>(context, pl, flattened);
         }
       } else {
-        plst = await _mopidyService.addToPlaylist<T>(playlist, flattened);
+        if (!context.mounted) return;
+        plst = await _mopidyService.addToPlaylist<T>(context, playlist, flattened);
       }
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
     } finally {
-      if (plst != null) {
-        if (flattened.length > 1) {
-          showInfo(
-              S
-                  .of(Globals.rootContext)
-                  .tracksAddedToPlaylistMessage(flattened.length, plst.name),
-              null);
-        } else {
-          showInfo(
-              S.of(Globals.rootContext).trackAddedToPlaylistMessage(plst.name),
-              null);
+      if (context.mounted) {
+        if (plst != null) {
+          if (flattened.length > 1) {
+            showInfo(S.of(context).tracksAddedToPlaylistMessage(flattened.length, plst.name), null);
+          } else {
+            showInfo(S.of(context).trackAddedToPlaylistMessage(plst.name), null);
+          }
         }
       }
     }

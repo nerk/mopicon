@@ -24,14 +24,12 @@ import 'package:flutter/foundation.dart';
 import 'package:mopicon/utils/globals.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
 
-typedef MenuCallbackFunction<T> = void Function(
-    BuildContext? context, T? arg, int? index);
+typedef MenuCallbackFunction<T> = void Function(BuildContext context, T? arg, int? index);
 
 // Check if menu item is applicable to current item
 typedef MenuItemApplicableCallback<T> = bool Function(T? arg, int? index);
 
-typedef MenuBuilderFunction<T> = MenuBuilder Function(
-    BuildContext context, T? arg, int? index);
+typedef MenuBuilderFunction<T> = MenuBuilder Function(BuildContext context, T? arg, int? index);
 
 class MenuItem<T extends Object> {
   final String label;
@@ -40,8 +38,7 @@ class MenuItem<T extends Object> {
   final ValueListenable<T>? valueListenable;
   final MenuItemApplicableCallback<T>? applicable;
 
-  MenuItem(this.label,
-      {this.iconData, this.callback, this.valueListenable, this.applicable});
+  MenuItem(this.label, {this.iconData, this.callback, this.valueListenable, this.applicable});
 
   bool isApplicable(T? arg, int? index) {
     return applicable == null || applicable!(arg, index);
@@ -60,15 +57,10 @@ class MenuBuilder<T extends Object> {
     return this;
   }
 
-  MenuBuilder<T> addMenuItem(
-      String label, IconData? iconData, MenuCallbackFunction<T>? callback,
-      {ValueListenable<T>? valueListenable,
-      MenuItemApplicableCallback? applicableCallback}) {
+  MenuBuilder<T> addMenuItem(String label, IconData? iconData, MenuCallbackFunction<T>? callback,
+      {ValueListenable<T>? valueListenable, MenuItemApplicableCallback? applicableCallback}) {
     menuItems.add(MenuItem(label,
-        iconData: iconData,
-        callback: callback,
-        valueListenable: valueListenable,
-        applicable: applicableCallback));
+        iconData: iconData, callback: callback, valueListenable: valueListenable, applicable: applicableCallback));
     return this;
   }
 
@@ -90,23 +82,17 @@ class MenuBuilder<T extends Object> {
 
   Widget build(BuildContext context, T? arg, int? index) {
     if (applicableCallback == null || applicableCallback!(arg, index)) {
-      var menuEntries =
-          List<PopupMenuEntry<MenuCallbackFunction>>.empty(growable: true);
+      var menuEntries = List<PopupMenuEntry<MenuCallbackFunction>>.empty(growable: true);
       for (var menuItem in menuItems) {
         if (menuItem == null) {
           menuEntries.add(const PopupMenuDivider());
         } else if (menuItem.isApplicable(arg, index)) {
           menuEntries.add(PopupMenuItem<MenuCallbackFunction>(
-            value: (BuildContext? context, arg, index) {
-              menuItem.callback != null
-                  ? menuItem.callback!(context, arg, index)
-                  : null;
+            value: (BuildContext context, arg, index) {
+              menuItem.callback != null ? menuItem.callback!(context, arg, index) : null;
             },
-            enabled: menuItem.valueListenable != null
-                ? _shouldEnable(menuItem.valueListenable!.value)
-                : true,
-            child: ListTile(
-                leading: Icon(menuItem.iconData), title: Text(menuItem.label)),
+            enabled: menuItem.valueListenable != null ? _shouldEnable(menuItem.valueListenable!.value) : true,
+            child: ListTile(leading: Icon(menuItem.iconData), title: Text(menuItem.label)),
           ));
         }
       }
@@ -117,8 +103,7 @@ class MenuBuilder<T extends Object> {
           itemBuilder: (BuildContext context) {
             return menuEntries;
           },
-          onSelected: (MenuCallbackFunction<T>? callback) =>
-              {callback != null ? callback(context, arg, index) : null},
+          onSelected: (MenuCallbackFunction<T>? callback) => {callback != null ? callback(context, arg, index) : null},
         );
       }
     }

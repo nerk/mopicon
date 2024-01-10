@@ -81,8 +81,9 @@ class _PreferencesState extends State<PreferencesPage> {
 
   void postRetryError(_) {
     if (_connectingController.retriesExceeded) {
-      showError(S.of(Globals.rootContext).preferencesPageConnectErrorTitle,
-          S.of(Globals.rootContext).preferencesPageConnectErrorDetails);
+      if (context.mounted) {
+        showError(S.of(context).preferencesPageConnectErrorTitle, S.of(context).preferencesPageConnectErrorDetails);
+      }
     }
   }
 
@@ -113,7 +114,9 @@ class _PreferencesState extends State<PreferencesPage> {
                   S.load(preferences.appLocale.locale);
                   Globals.applicationRoutes.gotoHome();
                 } catch (e) {
-                  showError(S.of(Globals.rootContext).preferencesPageLoadError, null);
+                  if (context.mounted) {
+                    showError(S.of(context).preferencesPageLoadError, null);
+                  }
                 }
               },
             ),
@@ -135,7 +138,9 @@ class _PreferencesState extends State<PreferencesPage> {
                       }
                       Globals.applicationRoutes.gotoHome();
                     } catch (e) {
-                      showError(S.of(Globals.rootContext).preferencesPageSaveError, null);
+                      if (context.mounted) {
+                        showError(S.of(context).preferencesPageSaveError, null);
+                      }
                     }
                   }
                 },

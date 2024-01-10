@@ -130,11 +130,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     var listView = ReorderableTrackListView<Track>(
-        context,
-        tracks,
-        images,
-        controller.selectionChanged,
-        controller.selectionModeChanged, (int start, int current) async {
+        context, tracks, images, controller.selectionChanged, controller.selectionModeChanged,
+        (int start, int current) async {
       try {
         if (start < current) {
           await mopidyService.movePlaylistItem(playlist, start, current - 1);
@@ -145,21 +142,19 @@ class _PlaylistPageState extends State<PlaylistPage> {
         Globals.logger.e(e);
       }
     }, (Track track, int index) async {
-      var r = await showActionDialog([
-        ItemActionOption.play,
-        ItemActionOption.addToTracklist,
-        ItemActionOption.addToPlaylist
-      ]);
+      var r = await showActionDialog(
+          [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
+      if (!context.mounted) return;
       switch (r) {
         case ItemActionOption.play:
-          await controller.addItemsToTracklist<Ref>([track.asRef]);
+          await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
           mopidyService.play(track.asRef);
           break;
         case ItemActionOption.addToTracklist:
-          await controller.addItemsToTracklist<Ref>([track.asRef]);
+          await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
           break;
         case ItemActionOption.addToPlaylist:
-          await controller.addItemsToPlaylist<Ref>([track.asRef]);
+          await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
           break;
         default:
       }
@@ -171,8 +166,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               title: Text(widget.title ?? S.of(context).playlistPageTitle),
               centerTitle: true,
               //automaticallyImplyLeading: true,
-              leading:
-                  ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
+              leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
                 if (controller.selectionChanged.value.isEmpty) {
                   Navigator.of(context).pop();
                 } else {
@@ -184,19 +178,18 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     Icons.delete,
                     valueListenable: controller.selectionChanged,
                     () => controller.deleteSelectedPlaylistItems(playlist)),
-                ActionButton<SelectedItemPositions>(Icons.queue_music,
-                    () async {
-                  var selectedItems =
-                      await controller.getSelectedItems(playlist);
-                  await controller
-                      .addItemsToTracklist<Ref>(selectedItems.asRef);
+                ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+                  var selectedItems = await controller.getSelectedItems(playlist);
+                  if (context.mounted) {
+                    await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+                  }
                   controller.unselect();
                 }, valueListenable: controller.selectionChanged),
-                ActionButton<SelectedItemPositions>(Icons.playlist_add,
-                    () async {
-                  var selectedItems =
-                      await controller.getSelectedItems(playlist);
-                  await controller.addItemsToPlaylist<Ref>(selectedItems.asRef);
+                ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+                  var selectedItems = await controller.getSelectedItems(playlist);
+                  if (context.mounted) {
+                    await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+                  }
                   controller.unselect();
                 }, valueListenable: controller.selectionChanged),
                 VolumeControl(),

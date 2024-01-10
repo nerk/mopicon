@@ -33,6 +33,7 @@ import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 abstract class TracklistViewController {
   // toggle selection mode
   SelectionModeChangedNotifier get selectionModeChanged;
+
   SelectionChangedNotifier get selectionChanged;
 
   // Whether window is split between list of tracks and NowPlaying section.
@@ -42,15 +43,19 @@ abstract class TracklistViewController {
   Future<List<TlTrack>> loadTrackList();
 
   Future<List<Ref>> getSelectedItems();
+
   Future<void> deleteSelectedTracks();
+
   Future<void> deleteTrack(int position);
 
   //Future<List<Track>> getTracks();
   List<TlTrack> getTrackList();
+
   List<TlTrack> getSelectedTracks();
 
-  Future<void> addItemsToPlaylist<T>(List<T> tracks, {Ref? playlist});
-  Future<void> addItemsToTracklist<T>(List<T> tracks);
+  Future<void> addItemsToPlaylist<T>(BuildContext context, List<T> tracks, {Ref? playlist});
+
+  Future<void> addItemsToTracklist<T>(BuildContext context, List<T> tracks);
 
   void unselect();
 }
@@ -87,8 +92,8 @@ class TracklistViewControllerImpl extends TracklistViewController with PlaylistM
   }
 
   @override
-  Future<void> deleteTrack(int tlid) async {
-    _deleteTracks([tlid]);
+  Future<void> deleteTrack(int position) async {
+    _deleteTracks([position]);
   }
 
   Future<void> _deleteTracks(List<int> tlids) async {

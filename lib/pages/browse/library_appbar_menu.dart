@@ -51,6 +51,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
         : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist, Icons.drive_file_rename_outline, _renamePlayList);
 
     return menuBuilder
+        .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
         .addDivider()
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
@@ -91,5 +92,9 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
         }
       }
     }
+  }
+
+  void _refresh(BuildContext context, _, __) {
+    controller.triggerRefresh();
   }
 }

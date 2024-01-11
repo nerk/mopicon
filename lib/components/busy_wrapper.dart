@@ -36,7 +36,7 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
 
   set busy(bool b) {
     setState(() {
-      b ? _controller.forward() : _controller.reset();
+      b ? _controller.forward(from: 0) : _controller.reset();
       _busy = b;
     });
   }
@@ -45,7 +45,7 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
   initState() {
     super.initState();
     _busy = widget.busy;
-    _controller.forward();
+    _controller.forward(from: 0);
   }
 
   @override
@@ -57,7 +57,7 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
   @override
   void didUpdateWidget(covariant BusyWrapper oldWidget) {
     _controller.reset();
-    _controller.forward();
+    _controller.forward(from: 0);
     super.didUpdateWidget(oldWidget);
   }
 

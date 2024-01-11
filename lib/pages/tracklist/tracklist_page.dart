@@ -19,8 +19,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/now_playing.dart';
 import 'package:mopicon/components/action_buttons.dart';
@@ -37,6 +40,7 @@ import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 import 'tracklist_view_controller.dart';
 import 'tracklist_appbar_menu.dart';
+import 'package:mopicon/components/busy_wrapper.dart';
 
 class TrackListPage extends StatefulWidget {
   const TrackListPage({super.key});
@@ -75,6 +79,8 @@ class _TrackListState extends State<TrackListPage> {
   // If false, NowPlaying covers whole window and is showing more details.
   bool splitEnabled = true;
 
+  bool showBusy = false;
+
   TlTrack? getTrackByTlid(int? tlid) {
     return tracks.firstWhereOrNull((element) => tlid == element.tlid);
   }
@@ -92,8 +98,12 @@ class _TrackListState extends State<TrackListPage> {
   // updates track list view from current track list and
   // updates cover thumbnails
   void updateTracks() async {
+    List<TlTrack> trks = [];
     try {
-      var trks = await controller.loadTrackList();
+      setState(() {
+        showBusy = true;
+      });
+      trks = await controller.loadTrackList();
       // load images into local map
 
       for (TlTrack tlt in trks) {
@@ -102,12 +112,13 @@ class _TrackListState extends State<TrackListPage> {
           images.putIfAbsent(tlt.track.uri, () => image);
         }
       }
-
-      setState(() {
-        tracks = trks;
-      });
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
+    } finally {
+      setState(() {
+        tracks = trks;
+        showBusy = false;
+      });
     }
   }
 
@@ -201,18 +212,17 @@ class _TrackListState extends State<TrackListPage> {
     updatePlayback();
     updateSplitMode();
 
-    /*
-    SystemChannels.lifecycle.setMessageHandler((msg) {
-      // When the app was resumed, update
-      // tracklist state.
-      if (msg == 'AppLifecycleState.resumed') {
-        updateTracks();
-        updateStreamTitle();
-        updatePlayback();
-      }
-      return Future.value(null);
-    });
-     */
+    if (Platform.isAndroid) {
+      SystemChannels.lifecycle.setMessageHandler((msg) {
+        // When the app was resumed, update
+        // tracklist state.
+        if (msg == 'AppLifecycleState.resumed') {
+          updateTracks();
+          updatePlayback();
+        }
+        return Future.value(null);
+      });
+    }
   }
 
   @override
@@ -329,27 +339,29 @@ class _TrackListState extends State<TrackListPage> {
 
     var children = splitEnabled ? [Expanded(child: listView), currentlyPlayingPanel] : [currentlyPlayingPanel];
 
-    return Scaffold(
-        appBar: AppBar(
-            title: Text(S.of(context).trackListPageTitle),
-            centerTitle: true,
-            leading:
-                ActionButton<SelectedItemPositions>(Icons.arrow_back, valueListenable: controller.selectionChanged, () {
-              controller.unselect();
-            }),
-            actions: [
-              ActionButton<SelectedItemPositions>(
-                  Icons.delete, valueListenable: controller.selectionChanged, controller.deleteSelectedTracks),
-              ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-                var selectedItems = await controller.getSelectedItems();
-                if (context.mounted) {
-                  await controller.addItemsToPlaylist<Ref>(context, selectedItems);
-                }
-                controller.unselect();
-              }, valueListenable: controller.selectionChanged),
-              VolumeControl(),
-              TracklistAppBarMenu(controller)
-            ]),
-        body: MaterialPageFrame(child: Column(mainAxisSize: MainAxisSize.max, children: children)));
+    return BusyWrapper(
+        Scaffold(
+            appBar: AppBar(
+                title: Text(S.of(context).trackListPageTitle),
+                centerTitle: true,
+                leading: ActionButton<SelectedItemPositions>(Icons.arrow_back,
+                    valueListenable: controller.selectionChanged, () {
+                  controller.unselect();
+                }),
+                actions: [
+                  ActionButton<SelectedItemPositions>(
+                      Icons.delete, valueListenable: controller.selectionChanged, controller.deleteSelectedTracks),
+                  ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+                    var selectedItems = await controller.getSelectedItems();
+                    if (context.mounted) {
+                      await controller.addItemsToPlaylist<Ref>(context, selectedItems);
+                    }
+                    controller.unselect();
+                  }, valueListenable: controller.selectionChanged),
+                  VolumeControl(),
+                  TracklistAppBarMenu(controller)
+                ]),
+            body: MaterialPageFrame(child: Column(mainAxisSize: MainAxisSize.max, children: children))),
+        showBusy);
   }
 }

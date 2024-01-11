@@ -63,17 +63,15 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   final mopidyService = GetIt.instance<MopidyService>();
   final preferences = GetIt.instance<Preferences>();
 
-  var extendedCategoriesNames = ['Performers', 'Release Years', "Last Week's Updates", "Last Month's Updates"];
+  StreamSubscription? refreshSubscription;
 
-  _LibraryBrowserPageState() {
-    mopidyService.playlistsChangedNotifier.addListener(() {
-      updateItems();
-    });
-  }
+  var extendedCategoriesNames = ['Performers', 'Release Years', "Last Week's Updates", "Last Month's Updates"];
 
   Future updateItems() async {
     try {
-      showBusy = true;
+      setState(() {
+        showBusy = true;
+      });
       if (widget.parent != null) {
         parent = Ref.fromMap(Parameter.fromBase64(widget.parent!));
       }
@@ -96,8 +94,9 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       Globals.logger.e(e, stackTrace: s);
     } finally {
       if (mounted) {
-        showBusy = false;
-        setState(() {});
+        setState(() {
+          showBusy = false;
+        });
       }
     }
   }
@@ -113,6 +112,11 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   @override
   void initState() {
     super.initState();
+    refreshSubscription = libraryController.refresh$.listen((_) async {
+      await updateItems();
+    });
+
+    mopidyService.playlistsChangedNotifier.addListener(updateItems);
     libraryController.selectionModeChanged.addListener(updateSelection);
     libraryController.selectionChanged.addListener(updateSelection);
     updateSelection();
@@ -121,7 +125,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
   @override
   void dispose() {
-    mopidyService.playlistsChangedNotifier.removeListener(updateItems);
+    refreshSubscription?.cancel();
     libraryController.selectionModeChanged.removeListener(updateSelection);
     libraryController.selectionChanged.removeListener(updateSelection);
     super.dispose();

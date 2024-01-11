@@ -900,6 +900,16 @@ class S {
     );
   }
 
+  /// `Refresh`
+  String get menuRefresh {
+    return Intl.message(
+      'Refresh',
+      name: 'menuRefresh',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Remove selected`
   String get menuRemoveSelected {
     return Intl.message(

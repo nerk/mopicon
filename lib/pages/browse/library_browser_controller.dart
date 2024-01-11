@@ -21,6 +21,7 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/menu_builder.dart';
@@ -32,6 +33,9 @@ import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/selected_item_positions.dart';
 
 abstract class LibraryBrowserController with TracklistMethods, PlaylistMethods {
+  /// Notification to trigger refresh.
+  Stream<void> get refresh$;
+
   SelectionModeChangedNotifier get selectionModeChanged;
 
   SelectionChangedNotifier get selectionChanged;
@@ -47,9 +51,14 @@ abstract class LibraryBrowserController with TracklistMethods, PlaylistMethods {
   Future<void> renamePlayList(BuildContext context, Ref pl, String name);
 
   void unselect();
+
+  void triggerRefresh();
 }
 
 class LibraryBrowserControllerImpl extends LibraryBrowserController {
+  /// Notification for refresh
+  final _refresh$ = PublishSubject<void>();
+
   final _mopidyService = GetIt.instance<MopidyService>();
 
   @override
@@ -57,6 +66,9 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
 
   @override
   final selectionChanged = SelectionChangedNotifier(SelectedItemPositions());
+
+  @override
+  Stream<void> get refresh$ => _refresh$.stream;
 
   @override
   MenuBuilder<Ref> popupMenu(BuildContext? context, Ref? item, int? index) {
@@ -101,6 +113,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
   }
 
   void deletePlaylist(BuildContext context, Ref? item, int? index) async {
+    var deletePlaylistError = S.of(context).deletePlaylistError;
     if (item != null && item.type == Ref.typePlaylist) {
       try {
         var ret = await showQuestionDialog(S.of(context).deletePlaylistDialogTitle,
@@ -111,15 +124,14 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
         }
       } catch (e) {
         Globals.logger.e(e);
-        if (context.mounted) {
-          showError(S.of(context).deletePlaylistError, null);
-        }
+        showError(deletePlaylistError, null);
       }
     }
   }
 
   @override
   void deleteSelectedPlaylists(BuildContext context) async {
+    var deletePlaylistError = S.of(context).deletePlaylistError;
     List<Ref> selected = await getSelectedItems(null);
     if (!context.mounted) return;
     for (var item in selected) {
@@ -132,9 +144,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
         }
       } catch (e) {
         Globals.logger.e(e);
-        if (context.mounted) {
-          showError(S.of(context).deletePlaylistError, null);
-        }
+        showError(deletePlaylistError, null);
       }
     }
     unselect();
@@ -142,22 +152,20 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
 
   @override
   Future<void> renamePlayList(BuildContext context, Ref pl, String name) async {
+    var playlistAlreadyExistsError = S.of(context).playlistAlreadyExistsError;
+    var renamePlaylistCreateError = S.of(context).renamePlaylistCreateError;
     try {
       var playlists = await _mopidyService.getPlaylists();
       if (name.isNotEmpty) {
         if (playlists.indexWhere((e) => e.name == name) != -1) {
-          if (context.mounted) {
-            showError(S.of(context).playlistAlreadyExistsError, null);
-          }
+          showError(playlistAlreadyExistsError, null);
         } else {
           await _mopidyService.renamePlaylist(pl, name);
         }
       }
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
-      if (context.mounted) {
-        showError(S.of(context).renamePlaylistCreateError, null);
-      }
+      showError(renamePlaylistCreateError, null);
     }
   }
 
@@ -188,5 +196,11 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
   void unselect() {
     selectionModeChanged.value = SelectionMode.off;
     selectionChanged.value.isNotEmpty ? selectionChanged.value = SelectedItemPositions() : null;
+  }
+
+  @override
+  triggerRefresh() {
+    unselect();
+    _refresh$.add(null);
   }
 }

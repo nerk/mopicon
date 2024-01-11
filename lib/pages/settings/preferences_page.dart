@@ -81,9 +81,7 @@ class _PreferencesState extends State<PreferencesPage> {
 
   void postRetryError(_) {
     if (_connectingController.retriesExceeded) {
-      if (context.mounted) {
-        showError(S.of(context).preferencesPageConnectErrorTitle, S.of(context).preferencesPageConnectErrorDetails);
-      }
+      showError(S.of(context).preferencesPageConnectErrorTitle, S.of(context).preferencesPageConnectErrorDetails);
     }
   }
 
@@ -126,6 +124,7 @@ class _PreferencesState extends State<PreferencesPage> {
               TextButton(
                 onPressed: () async {
                   if (preferencesFormKey.currentState?.validate() ?? false) {
+                    var preferencesPageSaveError = S.of(context).preferencesPageSaveError;
                     try {
                       preferences.appLocale = newLocale ?? preferences.appLocale;
                       await save();
@@ -138,9 +137,7 @@ class _PreferencesState extends State<PreferencesPage> {
                       }
                       Globals.applicationRoutes.gotoHome();
                     } catch (e) {
-                      if (context.mounted) {
-                        showError(S.of(context).preferencesPageSaveError, null);
-                      }
+                      showError(preferencesPageSaveError, null);
                     }
                   }
                 },

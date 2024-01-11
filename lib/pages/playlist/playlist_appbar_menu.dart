@@ -64,12 +64,19 @@ class PlaylistAppBarMenu extends StatelessWidget {
     }
   }
 
+  void _refresh(BuildContext context, _, __) async {
+    controller.unselect();
+    List<Track> tracks = await controller.getPlaylistItems(playlist);
+    controller.playlistChangedNotifier.value = Playlist(playlist.uri, playlist.name, tracks, 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MenuBuilder()
         .addMenuItem(S.of(context).menuSelectAll, Icons.select_all, _selectAll)
         .addMenuItem(S.of(context).menuNewStream, Icons.cell_tower, _newStream)
         .addMenuItem(S.of(context).menuClearList, Icons.delete, _deleteAll)
+        .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
         .addDivider()
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)

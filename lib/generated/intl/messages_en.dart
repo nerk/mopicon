@@ -90,6 +90,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Create Playlist"),
         "menuNewStream": MessageLookupByLibrary.simpleMessage("New Stream"),
         "menuPlayNow": MessageLookupByLibrary.simpleMessage("Play now"),
+        "menuRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
         "menuRemove": MessageLookupByLibrary.simpleMessage("Remove"),
         "menuRemoveSelected":
             MessageLookupByLibrary.simpleMessage("Remove selected"),

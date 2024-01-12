@@ -20,26 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/components/question_dialog.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
+import 'package:mopicon/common/base_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 import 'package:mopicon/generated/l10n.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
 
-abstract class LibraryBrowserController with TracklistMethods, PlaylistMethods {
-  /// Notification to trigger refresh.
-  Stream<void> get refresh$;
-
-  SelectionModeChangedNotifier get selectionModeChanged;
-
-  SelectionChangedNotifier get selectionChanged;
-
+abstract class LibraryBrowserController extends BaseController with TracklistMethods, PlaylistMethods {
   MenuBuilder<Ref> popupMenu(BuildContext? context, Ref? item, int? index);
 
   Future<List<Ref>> browse(Ref? parent);
@@ -49,27 +40,9 @@ abstract class LibraryBrowserController with TracklistMethods, PlaylistMethods {
   void deleteSelectedPlaylists(BuildContext context);
 
   Future<void> renamePlayList(BuildContext context, Ref pl, String name);
-
-  void unselect();
-
-  void triggerRefresh();
 }
 
 class LibraryBrowserControllerImpl extends LibraryBrowserController {
-  /// Notification for refresh
-  final _refresh$ = PublishSubject<void>();
-
-  final _mopidyService = GetIt.instance<MopidyService>();
-
-  @override
-  final selectionModeChanged = SelectionModeChangedNotifier(SelectionMode.off);
-
-  @override
-  final selectionChanged = SelectionChangedNotifier(SelectedItemPositions());
-
-  @override
-  Stream<void> get refresh$ => _refresh$.stream;
-
   @override
   MenuBuilder<Ref> popupMenu(BuildContext? context, Ref? item, int? index) {
     assert(context != null);
@@ -120,7 +93,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
             S.of(context).deletePlaylistDialogMessage(item.name), [DialogButtonOption.yes, DialogButtonOption.no],
             defaultOption: DialogButtonOption.no);
         if (ret != null && ret == DialogButtonOption.yes) {
-          await _mopidyService.deletePlaylist(item);
+          await mopidyService.deletePlaylist(item);
         }
       } catch (e) {
         Globals.logger.e(e);
@@ -140,14 +113,14 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
             S.of(context).deletePlaylistDialogMessage(item.name), [DialogButtonOption.yes, DialogButtonOption.no],
             defaultOption: DialogButtonOption.no);
         if (ret != null && ret == DialogButtonOption.yes) {
-          await _mopidyService.deletePlaylist(item);
+          await mopidyService.deletePlaylist(item);
         }
       } catch (e) {
         Globals.logger.e(e);
         showError(deletePlaylistError, null);
       }
     }
-    unselect();
+    notifyUnselect();
   }
 
   @override
@@ -155,12 +128,12 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
     var playlistAlreadyExistsError = S.of(context).playlistAlreadyExistsError;
     var renamePlaylistCreateError = S.of(context).renamePlaylistCreateError;
     try {
-      var playlists = await _mopidyService.getPlaylists();
+      var playlists = await mopidyService.getPlaylists();
       if (name.isNotEmpty) {
         if (playlists.indexWhere((e) => e.name == name) != -1) {
           showError(playlistAlreadyExistsError, null);
         } else {
-          await _mopidyService.renamePlaylist(pl, name);
+          await mopidyService.renamePlaylist(pl, name);
         }
       }
     } catch (e, s) {
@@ -171,9 +144,9 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
 
   @override
   Future<List<Ref>> getSelectedItems(Ref? parent) async {
-    var refs = await _mopidyService.browse(parent);
+    var refs = await mopidyService.browse(parent);
     if (parent == null) {
-      refs.addAll(await _mopidyService.getPlaylists());
+      refs.addAll(await mopidyService.getPlaylists());
     }
     return Future.value(selectionChanged.value.filterSelected(refs));
   }
@@ -183,24 +156,12 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
     late List<Ref> items;
     if (parent == null) {
       // toplevel: show both, media and playlists
-      items = await _mopidyService.browse(null);
-      var playlists = await _mopidyService.getPlaylists();
+      items = await mopidyService.browse(null);
+      var playlists = await mopidyService.getPlaylists();
       items.addAll(playlists);
     } else {
-      items = await _mopidyService.browse(parent);
+      items = await mopidyService.browse(parent);
     }
     return items;
-  }
-
-  @override
-  void unselect() {
-    selectionModeChanged.value = SelectionMode.off;
-    selectionChanged.value.isNotEmpty ? selectionChanged.value = SelectedItemPositions() : null;
-  }
-
-  @override
-  triggerRefresh() {
-    unselect();
-    _refresh$.add(null);
   }
 }

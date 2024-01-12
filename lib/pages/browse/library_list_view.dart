@@ -23,9 +23,9 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/components/titled_divider.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mopicon/pages/browse/album_list_item.dart';
@@ -43,7 +43,7 @@ class LibraryListView {
   final void Function(Ref item, int index)? onTap;
 
   var selectedPositions = SelectedItemPositions();
-  final preferences = GetIt.instance<Preferences>();
+  final preferences = GetIt.instance<PreferencesController>();
 
   LibraryListView(this.parent, this.items, this.images, this.selectionChangedNotifier,
       this.selectionModeChangedNotifier, this.onTap) {

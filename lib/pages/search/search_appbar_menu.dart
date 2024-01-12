@@ -22,7 +22,6 @@
 import 'package:flutter/material.dart';
 import 'search_view_controller.dart';
 import 'package:mopicon/components/menu_builder.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/generated/l10n.dart';
 
 class SearchAppBarMenu extends StatelessWidget {
@@ -32,9 +31,7 @@ class SearchAppBarMenu extends StatelessWidget {
   const SearchAppBarMenu(this.numberTracks, this.controller, {super.key});
 
   void _selectAll(BuildContext context, _, __) async {
-    controller.selectionChanged.value = SelectedItemPositions.all(numberTracks);
-    controller.selectionModeChanged.value =
-        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
+    controller.notifySelectAll(numberTracks);
   }
 
   @override

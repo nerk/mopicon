@@ -25,11 +25,11 @@ import 'dart:async';
 import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopidy_client/mopidy_client.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 export 'package:mopidy_client/mopidy_client.dart' hide Image;
 import 'package:mopicon/generated/l10n.dart';
 

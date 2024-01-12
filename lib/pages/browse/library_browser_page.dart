@@ -26,18 +26,18 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/busy_wrapper.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 
 import 'library_browser_controller.dart';
 import 'library_list_view.dart';
 import 'library_appbar_menu.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 
 class LibraryBrowserPage extends StatefulWidget {
@@ -61,7 +61,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
   final libraryController = GetIt.instance<LibraryBrowserController>();
   final mopidyService = GetIt.instance<MopidyService>();
-  final preferences = GetIt.instance<Preferences>();
+  final preferences = GetIt.instance<PreferencesController>();
 
   StreamSubscription? refreshSubscription;
 
@@ -104,7 +104,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   void updateSelection() {
     if (mounted) {
       setState(() {
-        selectionMode = libraryController.selectionModeChanged.value;
+        selectionMode = libraryController.selectionMode;
       });
     }
   }
@@ -165,10 +165,10 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                 centerTitle: true,
                 leading: widget.parent != null
                     ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
-                        if (libraryController.selectionChanged.value.isEmpty) {
+                        if (libraryController.isSelectionEmpty) {
                           Navigator.of(context).pop();
                         } else {
-                          libraryController.unselect();
+                          libraryController.notifyUnselect();
                         }
                       })
                     : null,
@@ -183,14 +183,14 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                     if (context.mounted) {
                       await libraryController.addItemsToTracklist<Ref>(context, selectedItems);
                     }
-                    libraryController.unselect();
+                    libraryController.notifyUnselect();
                   }, valueListenable: libraryController.selectionChanged),
                   ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
                     var selectedItems = await libraryController.getSelectedItems(parent);
                     if (context.mounted) {
                       await libraryController.addItemsToPlaylist<Ref>(context, selectedItems);
                     }
-                    libraryController.unselect();
+                    libraryController.notifyUnselect();
                   }, valueListenable: libraryController.selectionChanged),
                   VolumeControl(),
                   LibraryBrowserAppBarMenu(items, libraryController)

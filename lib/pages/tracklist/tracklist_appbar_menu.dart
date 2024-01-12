@@ -22,10 +22,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'tracklist_view_controller.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/pages/playlist/new_stream_dialog.dart';
 import 'package:mopicon/components/menu_builder.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/generated/l10n.dart';
@@ -37,14 +36,12 @@ class TracklistAppBarMenu extends StatelessWidget {
 
   void _selectAll([BuildContext? context, _, __]) async {
     int nTracks = controller.getTrackList().length;
-    controller.selectionChanged.value = SelectedItemPositions.all(nTracks);
-    controller.selectionModeChanged.value =
-        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
+    controller.notifySelectAll(nTracks);
   }
 
   void _deleteAll(BuildContext context, _, __) {
     final mopidyService = GetIt.instance<MopidyService>();
-    controller.selectionModeChanged.value = SelectionMode.off;
+    controller.notifyUnselect();
     mopidyService.clearTracklist();
   }
 
@@ -66,11 +63,7 @@ class TracklistAppBarMenu extends StatelessWidget {
   }
 
   void _refresh(BuildContext context, _, __) async {
-    controller.unselect();
-    final mopidyService = GetIt.instance<MopidyService>();
-    mopidyService.tracklistChangedNotifier.value = await mopidyService.getTracklistTlTracks();
-    String? newState = await mopidyService.getPlaybackState();
-    mopidyService.playbackStateNotifier.value = PlaybackState('', newState!);
+    controller.notifyRefresh();
   }
 
   @override

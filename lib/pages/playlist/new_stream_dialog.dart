@@ -25,16 +25,14 @@ import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 Future<String?> newStreamDialog(String title) {
-  final modalDialogKey =
-      GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
+  final modalDialogKey = GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
   String streamUri = '';
 
   return showDialog<String>(
-    context: Globals
-        .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
+    context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
       return ModalDialog(
         Text(title),
@@ -52,9 +50,7 @@ Future<String?> newStreamDialog(String title) {
                 streamUri = value.trim();
               },
               validator: (String? value) {
-                return value != null &&
-                        value.isNotEmpty &&
-                        value.trim().isStreamUri()
+                return value != null && value.isNotEmpty && value.trim().isStreamUri()
                     ? null
                     : S.of(context).newStreamUriInvalid;
               },

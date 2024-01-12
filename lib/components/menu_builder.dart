@@ -21,8 +21,8 @@
  */
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mopicon/utils/globals.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 
 typedef MenuCallbackFunction<T> = void Function(BuildContext context, T? arg, int? index);
 

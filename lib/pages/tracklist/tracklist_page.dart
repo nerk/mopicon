@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -29,14 +30,14 @@ import 'package:mopicon/pages/tracklist/now_playing.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/components/material_page_frame.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 import 'tracklist_view_controller.dart';
 import 'tracklist_appbar_menu.dart';
@@ -80,6 +81,8 @@ class _TrackListState extends State<TrackListPage> {
   bool splitEnabled = true;
 
   bool showBusy = false;
+
+  StreamSubscription? refreshSubscription;
 
   TlTrack? getTrackByTlid(int? tlid) {
     return tracks.firstWhereOrNull((element) => tlid == element.tlid);
@@ -180,7 +183,7 @@ class _TrackListState extends State<TrackListPage> {
 
   void updateSelection() {
     setState(() {
-      selectionMode = controller.selectionModeChanged.value;
+      selectionMode = controller.selectionMode;
     });
   }
 
@@ -199,6 +202,11 @@ class _TrackListState extends State<TrackListPage> {
   @override
   void initState() {
     super.initState();
+    refreshSubscription = controller.refresh$.listen((_) {
+      updateTracks();
+      updatePlayback();
+    });
+
     mopidyService.tracklistChangedNotifier.addListener(updateTracks);
     mopidyService.trackPlaybackNotifier.addListener(updateTrackPlayback);
     mopidyService.playbackStateNotifier.addListener(updatePlayback);
@@ -227,6 +235,7 @@ class _TrackListState extends State<TrackListPage> {
 
   @override
   void dispose() {
+    refreshSubscription?.cancel();
     mopidyService.tracklistChangedNotifier.removeListener(updateTracks);
     mopidyService.trackPlaybackNotifier.removeListener(updateTrackPlayback);
     mopidyService.playbackStateNotifier.removeListener(updatePlayback);
@@ -346,7 +355,7 @@ class _TrackListState extends State<TrackListPage> {
                 centerTitle: true,
                 leading: ActionButton<SelectedItemPositions>(Icons.arrow_back,
                     valueListenable: controller.selectionChanged, () {
-                  controller.unselect();
+                  controller.notifyUnselect();
                 }),
                 actions: [
                   ActionButton<SelectedItemPositions>(
@@ -356,7 +365,7 @@ class _TrackListState extends State<TrackListPage> {
                     if (context.mounted) {
                       await controller.addItemsToPlaylist<Ref>(context, selectedItems);
                     }
-                    controller.unselect();
+                    controller.notifyUnselect();
                   }, valueListenable: controller.selectionChanged),
                   VolumeControl(),
                   TracklistAppBarMenu(controller)

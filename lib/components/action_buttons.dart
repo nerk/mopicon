@@ -22,7 +22,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 
 /// An IconButton with additional ValueListenable to control whether the button is shown.
 ///
@@ -43,8 +43,7 @@ class ActionButton<T> extends StatelessWidget {
   /// The [ValueListenable] to control whether the button is displayed.
   final ValueListenable<T>? valueListenable;
 
-  const ActionButton(this.iconData, this.onPressed,
-      {this.valueListenable, super.key});
+  const ActionButton(this.iconData, this.onPressed, {this.valueListenable, super.key});
 
   bool _shouldEnable(T value) {
     if (value == null) {

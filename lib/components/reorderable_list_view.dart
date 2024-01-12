@@ -23,15 +23,15 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'selected_item_positions.dart';
+import '../common/selected_item_positions.dart';
 
 typedef OnReorderCallback = void Function(int start, int current);
 typedef OnTapCallback<T> = void Function(T item, int index);
 
 class ReorderableTrackListView<T extends Object> {
-  final _preferences = GetIt.instance<Preferences>();
+  final _preferences = GetIt.instance<PreferencesController>();
 
   // uri/image map
   final BuildContext context;

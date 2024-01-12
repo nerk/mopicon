@@ -28,8 +28,7 @@ import 'package:mopicon/pages/browse/new_playlist_dialog.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/menu_builder.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 class LibraryBrowserAppBarMenu extends StatelessWidget {
   final mopidyService = GetIt.instance<MopidyService>();
@@ -59,9 +58,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
   }
 
   void _selectAll([BuildContext? context, _, __]) async {
-    controller.selectionChanged.value = SelectedItemPositions.all(items.length);
-    controller.selectionModeChanged.value =
-        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.on;
+    controller.notifySelectAll(items.length);
   }
 
   void _newPlayList(BuildContext? context, _, __) {
@@ -84,7 +81,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
   void _renamePlayList(BuildContext context, _, __) async {
     if (controller.selectionChanged.value.positions.length == 1) {
       var ref = items[controller.selectionChanged.value.positions.first];
-      controller.unselect();
+      controller.notifyUnselect();
       var name = await renamePlaylistDialog(ref.name);
       if (name != null) {
         if (context.mounted) {
@@ -95,6 +92,6 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
   }
 
   void _refresh(BuildContext context, _, __) {
-    controller.triggerRefresh();
+    controller.notifyRefresh();
   }
 }

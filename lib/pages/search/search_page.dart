@@ -26,12 +26,12 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/volume_control.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/busy_wrapper.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
@@ -49,7 +49,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final mopidyService = GetIt.instance<MopidyService>();
-  final preferences = GetIt.instance<Preferences>();
+  final preferences = GetIt.instance<PreferencesController>();
   final TextEditingController textEditingController = TextEditingController();
 
   List<Track> tracks = [];
@@ -80,7 +80,7 @@ class _SearchPageState extends State<SearchPage> {
   void updateSelection() {
     if (mounted) {
       setState(() {
-        selectionMode = controller.selectionModeChanged.value;
+        selectionMode = controller.selectionMode;
       });
     }
     //WidgetsBinding.instance.addPostFrameCallback((_) => setState(() { }));
@@ -178,19 +178,19 @@ class _SearchPageState extends State<SearchPage> {
               centerTitle: true,
               leading: controller.selectionChanged.value.isNotEmpty
                   ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
-                      controller.unselect();
+                      controller.notifyUnselect();
                     })
                   : null,
               actions: [
                 ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
                   var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
                   await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
-                  controller.unselect();
+                  controller.notifyUnselect();
                 }, valueListenable: controller.selectionChanged),
                 ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
                   var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
                   await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
-                  controller.unselect();
+                  controller.notifyUnselect();
                 }, valueListenable: controller.selectionChanged),
                 VolumeControl(),
                 SearchAppBarMenu(tracks.length, controller)

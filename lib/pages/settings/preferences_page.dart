@@ -26,10 +26,10 @@ import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/titled_divider.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:flutter/services.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/show_text_dialog.dart';
-import '../../services/preferences_service.dart';
+import 'preferences_controller.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 
 class PreferencesPage extends StatefulWidget {
@@ -40,7 +40,7 @@ class PreferencesPage extends StatefulWidget {
 }
 
 class _PreferencesState extends State<PreferencesPage> {
-  final preferences = GetIt.instance<Preferences>();
+  final preferences = GetIt.instance<PreferencesController>();
   final mopidyService = GetIt.instance<MopidyService>();
   final preferencesFormKey = GlobalKey<FormState>(debugLabel: "preferencesPage");
   final _connectingController = GetIt.instance<ConnectingScreenController>();

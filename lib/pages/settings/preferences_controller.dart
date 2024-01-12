@@ -23,12 +23,12 @@ import 'dart:async';
 import 'package:mopidy_client/mopidy_client.dart' hide Image;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/rxdart.dart';
-import '../pages/settings/app_themes.dart';
-export '../pages/settings/app_themes.dart';
-import '../pages/settings/app_locales.dart';
-export '../pages/settings/app_locales.dart';
+import 'app_themes.dart';
+export 'app_themes.dart';
+import 'app_locales.dart';
+export 'app_locales.dart';
 
-abstract class Preferences {
+abstract class PreferencesController {
   /// Notification about current connection state.
   Stream<void> get preferencesChanged$;
 
@@ -77,7 +77,7 @@ abstract class Preferences {
   set searchSupported(bool v);
 }
 
-class PreferencesServiceImpl extends Preferences {
+class PreferencesControllerImpl extends PreferencesController {
   static const _version = '1.0.0';
 
   final _preferencesChanged$ = PublishSubject<void>();
@@ -85,7 +85,7 @@ class PreferencesServiceImpl extends Preferences {
   @override
   Stream<void> get preferencesChanged$ => _preferencesChanged$.stream;
 
-  PreferencesServiceImpl() {
+  PreferencesControllerImpl() {
     SharedPreferences.setPrefix('$_version-');
   }
 

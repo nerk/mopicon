@@ -22,20 +22,13 @@ import 'package:flutter/material.dart';
  */
 
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
-
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/pages/playlist/playlist_mixin.dart';
+import 'package:mopicon/common/base_controller.dart';
 
-abstract class TracklistViewController {
-  // toggle selection mode
-  SelectionModeChangedNotifier get selectionModeChanged;
-
-  SelectionChangedNotifier get selectionChanged;
-
+abstract class TracklistViewController extends BaseController {
   // Whether window is split between list of tracks and NowPlaying section.
   // If false, NowPlaying covers whole window and is showing more details.
   ValueNotifier<bool> get splitEnabled;
@@ -56,19 +49,9 @@ abstract class TracklistViewController {
   Future<void> addItemsToPlaylist<T>(BuildContext context, List<T> tracks, {Ref? playlist});
 
   Future<void> addItemsToTracklist<T>(BuildContext context, List<T> tracks);
-
-  void unselect();
 }
 
 class TracklistViewControllerImpl extends TracklistViewController with PlaylistMethods, TracklistMethods {
-  final _mopidyService = GetIt.instance<MopidyService>();
-
-  @override
-  final selectionModeChanged = SelectionModeChangedNotifier(SelectionMode.off);
-
-  @override
-  final selectionChanged = SelectionChangedNotifier(SelectedItemPositions());
-
   @override
   final splitEnabled = ValueNotifier(true);
 
@@ -87,8 +70,7 @@ class TracklistViewControllerImpl extends TracklistViewController with PlaylistM
       tlids.add(_tracks[i].tlid);
     }
     await _deleteTracks(tlids);
-    selectionChanged.value = SelectedItemPositions();
-    selectionModeChanged.value = SelectionMode.off;
+    notifyUnselect();
   }
 
   @override
@@ -97,11 +79,11 @@ class TracklistViewControllerImpl extends TracklistViewController with PlaylistM
   }
 
   Future<void> _deleteTracks(List<int> tlids) async {
-    int? tlid = (await _mopidyService.getCurrentTlTrack())?.tlid;
+    int? tlid = (await mopidyService.getCurrentTlTrack())?.tlid;
     if (tlid != null && tlids.contains(tlid)) {
-      await _mopidyService.playback(PlaybackAction.stop, null);
+      await mopidyService.playback(PlaybackAction.stop, null);
     }
-    _mopidyService.deleteFromTracklist(tlids);
+    mopidyService.deleteFromTracklist(tlids);
   }
 
   @override
@@ -123,19 +105,13 @@ class TracklistViewControllerImpl extends TracklistViewController with PlaylistM
 
   @override
   Future<List<TlTrack>> loadTrackList() async {
-    var tr = _mopidyService.tracklistChangedNotifier.value;
+    var tr = mopidyService.tracklistChangedNotifier.value;
     if (tr.isEmpty) {
-      tr = await _mopidyService.getTracklistTlTracks();
+      tr = await mopidyService.getTracklistTlTracks();
     }
     _tracks.clear();
     _tracks.addAll(tr);
     //WidgetsBinding.instance.addPostFrameCallback((_) => setState(() { }));
     return Future.value(_tracks);
-  }
-
-  @override
-  void unselect() {
-    selectionModeChanged.value = SelectionMode.off;
-    selectionChanged.value.isNotEmpty ? selectionChanged.value = SelectedItemPositions() : null;
   }
 }

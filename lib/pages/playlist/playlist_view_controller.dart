@@ -21,41 +21,31 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/pages/playlist/playlist_mixin.dart';
+import 'package:mopicon/common/base_controller.dart';
 
-abstract class PlaylistViewController with TracklistMethods, PlaylistMethods {
+abstract class PlaylistViewController extends BaseController with TracklistMethods, PlaylistMethods {
   ValueNotifier<Playlist?> get playlistChangedNotifier;
-  // toggle selection mode
-  SelectionModeChangedNotifier get selectionModeChanged;
-  SelectionChangedNotifier get selectionChanged;
 
   Future<List<Track>> getPlaylistItems(Ref playlist);
+
   Future<void> deletePlaylistItem(Ref playlist, int position);
+
   Future<void> deleteSelectedPlaylistItems(Ref playlist);
+
   Future<void> deleteAllPlaylistItems(Ref playlist);
+
   Future<List<Track>> getSelectedItems(Ref playlist);
 
   Ref? currentPlaylist;
-
-  void unselect();
 }
 
 class PlaylistControllerImpl extends PlaylistViewController {
-  final mopidyService = GetIt.instance<MopidyService>();
-
   @override
-  final selectionModeChanged = SelectionModeChangedNotifier(SelectionMode.off);
-
-  @override
-  final selectionChanged = SelectionChangedNotifier(SelectedItemPositions());
-
-  @override
-  ValueNotifier<Playlist?> get playlistChangedNotifier =>
-      mopidyService.playlistChangedNotifier;
+  ValueNotifier<Playlist?> get playlistChangedNotifier => mopidyService.playlistChangedNotifier;
 
   @override
   Future<List<Track>> getPlaylistItems(Ref playlist) async {
@@ -64,8 +54,7 @@ class PlaylistControllerImpl extends PlaylistViewController {
 
   @override
   Future<Playlist?> deleteSelectedPlaylistItems(Ref playlist) async {
-    Playlist? pl = await mopidyService.deletePlaylistItems(
-        playlist, selectionChanged.value);
+    Playlist? pl = await mopidyService.deletePlaylistItems(playlist, selectionChanged.value);
     selectionChanged.value = SelectedItemPositions();
     return pl;
   }
@@ -73,9 +62,8 @@ class PlaylistControllerImpl extends PlaylistViewController {
   @override
   Future<void> deleteAllPlaylistItems(Ref playlist) async {
     var items = await mopidyService.getPlaylistItems(playlist);
-    await mopidyService.deletePlaylistItems(
-        playlist, SelectedItemPositions.all(items.length));
-    unselect();
+    await mopidyService.deletePlaylistItems(playlist, SelectedItemPositions.all(items.length));
+    notifyUnselect();
   }
 
   @override
@@ -93,13 +81,5 @@ class PlaylistControllerImpl extends PlaylistViewController {
   Future<List<Track>> getSelectedItems(Ref playlist) async {
     var items = await mopidyService.getPlaylistItems(playlist);
     return selectionChanged.value.filterSelected<Track>(items);
-  }
-
-  @override
-  void unselect() {
-    selectionModeChanged.value = SelectionMode.off;
-    selectionChanged.value.isNotEmpty
-        ? selectionChanged.value = SelectedItemPositions()
-        : null;
   }
 }

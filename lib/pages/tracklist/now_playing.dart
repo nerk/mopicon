@@ -25,7 +25,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/playing_progress.dart';
 
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 
 class NowPlaying extends StatelessWidget {

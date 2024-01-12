@@ -25,16 +25,14 @@ import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 Future<Ref?> selectPlaylistDialog(List<Ref> playlists) {
-  final modalDialogKey =
-      GlobalKey<FormState>(debugLabel: "selectPlaylistDialog");
+  final modalDialogKey = GlobalKey<FormState>(debugLabel: "selectPlaylistDialog");
   Ref? playlist;
 
   return showDialog<Ref>(
-    context: Globals
-        .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
+    context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext ctx1) {
       return ModalDialog(
         constrainSize: true,

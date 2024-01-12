@@ -27,13 +27,13 @@ import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/busy_wrapper.dart';
 import 'package:mopicon/components/volume_control.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 
 import 'playlist_view_controller.dart';
@@ -56,6 +56,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   List<Track> tracks = [];
   var images = <String, Widget>{};
   bool showBusy = false;
+
+  StreamSubscription? refreshSubscription;
 
   // selection mode (single/multiple) of track list view
   SelectionMode selectionMode = SelectionMode.off;
@@ -101,7 +103,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void updateSelection() {
     if (mounted) {
       setState(() {
-        selectionMode = controller.selectionModeChanged.value;
+        selectionMode = controller.selectionMode;
       });
     }
     //WidgetsBinding.instance.addPostFrameCallback((_) => setState(() { }));
@@ -111,6 +113,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
   void initState() {
     Globals.logger.d("initState: playlist $hashCode");
     super.initState();
+    refreshSubscription = controller.refresh$.listen((_) {
+      loadPlaylistItems();
+    });
     controller.playlistChangedNotifier.addListener(loadPlaylistItems);
     controller.selectionModeChanged.addListener(updateSelection);
     controller.selectionChanged.addListener(updateSelection);
@@ -121,6 +126,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   void dispose() {
     Globals.logger.d("dispose: playlist $hashCode");
+    refreshSubscription?.cancel();
     controller.playlistChangedNotifier.removeListener(loadPlaylistItems);
     controller.selectionModeChanged.removeListener(updateSelection);
     controller.selectionChanged.removeListener(updateSelection);
@@ -167,10 +173,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
               centerTitle: true,
               //automaticallyImplyLeading: true,
               leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
-                if (controller.selectionChanged.value.isEmpty) {
+                if (controller.isSelectionEmpty) {
                   Navigator.of(context).pop();
                 } else {
-                  controller.unselect();
+                  controller.notifyUnselect();
                 }
               }),
               actions: [
@@ -183,14 +189,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   if (context.mounted) {
                     await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
                   }
-                  controller.unselect();
+                  controller.notifyUnselect();
                 }, valueListenable: controller.selectionChanged),
                 ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
                   var selectedItems = await controller.getSelectedItems(playlist);
                   if (context.mounted) {
                     await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
                   }
-                  controller.unselect();
+                  controller.notifyUnselect();
                 }, valueListenable: controller.selectionChanged),
                 VolumeControl(),
                 PlaylistAppBarMenu(controller, playlist)

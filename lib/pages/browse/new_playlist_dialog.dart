@@ -24,15 +24,14 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 Future<String?> newPlaylistDialog() {
   final modalDialogKey = GlobalKey<FormState>(debugLabel: "newPlaylistDialog");
   String newName = '';
 
   return showDialog<String>(
-    context: Globals
-        .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
+    context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
       return ModalDialog(
         Text(S.of(context).newPlaylistDialogTitle),
@@ -50,9 +49,7 @@ Future<String?> newPlaylistDialog() {
                 newName = value;
               },
               validator: (String? value) {
-                return value != null && value.isNotEmpty
-                    ? null
-                    : S.of(context).playlistNameInvalidError;
+                return value != null && value.isNotEmpty ? null : S.of(context).playlistNameInvalidError;
               },
               maxLength: 30,
             )),

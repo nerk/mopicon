@@ -19,12 +19,13 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+import 'package:mopicon/common/base_controller.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/utils/globals.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 
-abstract class ConnectingScreenController {
+abstract class ConnectingScreenController extends BaseController {
   void connect({int maxRetries});
 
   void stop();
@@ -36,8 +37,7 @@ class ConnectingScreenControllerImpl extends ConnectingScreenController {
   int? _maxRetries;
   int _retries = 0;
 
-  final _mopidyService = GetIt.instance<MopidyService>();
-  final _preferences = GetIt.instance<Preferences>();
+  final _preferences = GetIt.instance<PreferencesController>();
 
   ConnectingScreenControllerImpl() {
     void connectionListener(MopidyConnectionState state) async {
@@ -47,14 +47,14 @@ class ConnectingScreenControllerImpl extends ConnectingScreenController {
         // Search is only supported if the Mopidy-Local extension is
         // enabled for the server. Just set a flag we can
         // check later.
-        _preferences.searchSupported = (await _mopidyService.getUriSchemes()).contains('local');
+        _preferences.searchSupported = (await mopidyService.getUriSchemes()).contains('local');
         Globals.applicationRoutes.gotoHome();
       } else {
         Globals.applicationRoutes.gotoConnecting();
       }
     }
 
-    _mopidyService.connectionState$.listen(connectionListener);
+    mopidyService.connectionState$.listen(connectionListener);
   }
 
   @override
@@ -64,8 +64,8 @@ class ConnectingScreenControllerImpl extends ConnectingScreenController {
   void connect({int? maxRetries}) async {
     _maxRetries = maxRetries;
     _retries = 0;
-    _mopidyService.stop();
-    bool success = await _mopidyService.connect(_preferences.url, maxRetries: maxRetries);
+    mopidyService.stop();
+    bool success = await mopidyService.connect(_preferences.url, maxRetries: maxRetries);
     if (!success) {
       Globals.applicationRoutes.gotoSettings();
     }
@@ -73,7 +73,7 @@ class ConnectingScreenControllerImpl extends ConnectingScreenController {
 
   @override
   void stop() async {
-    _mopidyService.stop();
+    mopidyService.stop();
     Globals.applicationRoutes.gotoSettings();
   }
 }

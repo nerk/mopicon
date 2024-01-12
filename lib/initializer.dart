@@ -22,7 +22,7 @@
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/pages/connecting_screen/connecting_screen_controller.dart';
@@ -30,7 +30,7 @@ import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_view_controller.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 /// Registers all services and loads preferences.
 class Initializer {
@@ -46,7 +46,7 @@ class Initializer {
   static void _registerServices() {
     GetIt getIt = GetIt.instance;
     Globals.logger.i("starting registering services");
-    getIt.registerLazySingleton<Preferences>(() => PreferencesServiceImpl());
+    getIt.registerLazySingleton<PreferencesController>(() => PreferencesControllerImpl());
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
     getIt.registerLazySingleton<ConnectingScreenController>(() => ConnectingScreenControllerImpl());
     getIt.registerLazySingleton<CoverService>(() => CoverServiceImpl());
@@ -59,7 +59,7 @@ class Initializer {
 
   static Future<void> _loadSettings() async {
     Globals.logger.i("starting loading settings");
-    await GetIt.instance<Preferences>().load();
+    await GetIt.instance<PreferencesController>().load();
     Globals.logger.i("finished loading settings");
   }
 }

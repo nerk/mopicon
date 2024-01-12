@@ -21,7 +21,7 @@
  */
 import 'package:flutter/material.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:get_it/get_it.dart';
 
 /// Volume control an muting for Mopidy server.
@@ -93,9 +93,7 @@ class _VolumeControlState extends State<VolumeControl> {
               menuChildren: <Widget>[
                 Row(children: <Widget>[
                   IconButton(
-                    icon: muted
-                        ? const Icon(Icons.volume_off)
-                        : const Icon(Icons.volume_up),
+                    icon: muted ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
                     focusNode: _buttonFocusNode,
                     onPressed: () async {
                       var m = !muted;
@@ -133,12 +131,9 @@ class _VolumeControlState extends State<VolumeControl> {
                   )
                 ])
               ],
-              builder: (BuildContext context, MenuController controller,
-                  Widget? child) {
+              builder: (BuildContext context, MenuController controller, Widget? child) {
                 return IconButton(
-                  icon: muted
-                      ? const Icon(Icons.volume_off)
-                      : const Icon(Icons.volume_up),
+                  icon: muted ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
                   focusNode: _buttonFocusNode,
                   onPressed: () {
                     if (controller.isOpen) {

@@ -21,7 +21,7 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 /// Available options for [showActionDialog].
 enum ItemActionOption { play, addToTracklist, addToPlaylist }
@@ -32,8 +32,7 @@ enum ItemActionOption { play, addToTracklist, addToPlaylist }
 /// respective [ItemActionOption].
 Future<ItemActionOption?> showActionDialog(List<ItemActionOption> buttons) {
   return showDialog<ItemActionOption>(
-    context: Globals
-        .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
+    context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
       var actions = List<Widget>.empty(growable: true);
       for (var button in buttons) {
@@ -66,8 +65,7 @@ Future<ItemActionOption?> showActionDialog(List<ItemActionOption> buttons) {
       }
 
       return AlertDialog(
-        actionsPadding:
-            const EdgeInsets.only(left: 40, top: 50, bottom: 50, right: 40),
+        actionsPadding: const EdgeInsets.only(left: 40, top: 50, bottom: 50, right: 40),
         actions: actions,
         actionsAlignment: MainAxisAlignment.spaceBetween,
       );

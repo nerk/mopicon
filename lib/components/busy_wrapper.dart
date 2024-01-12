@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 /// Shows a modal busy indicator.
 ///
@@ -18,7 +18,7 @@ class BusyWrapper extends StatefulWidget {
 }
 
 class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin {
-  final preferences = GetIt.instance<Preferences>();
+  final preferences = GetIt.instance<PreferencesController>();
 
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 4),

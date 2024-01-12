@@ -22,7 +22,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mopicon/components/dialog_button.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 /// Confirmation options for question dialogs.
 enum DialogButtonOption { yes, no, ok, cancel, retry, abort, submit, save }
@@ -31,12 +31,10 @@ enum DialogButtonOption { yes, no, ok, cancel, retry, abort, submit, save }
 /// If [defaultOption] is provided, the corresponding button gets the autofocus.
 /// Upon closing, either the pressed dialog option is returned or `null` if
 /// no button was pressed.
-Future<DialogButtonOption?> showQuestionDialog(
-    String title, String message, List<DialogButtonOption> buttons,
+Future<DialogButtonOption?> showQuestionDialog(String title, String message, List<DialogButtonOption> buttons,
     {DialogButtonOption? defaultOption}) {
   return showDialog<DialogButtonOption>(
-    context: Globals
-        .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
+    context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
       var actions = List<Widget>.empty(growable: true);
       for (var button in buttons) {
@@ -84,8 +82,7 @@ Future<DialogButtonOption?> showQuestionDialog(
         }
       }
 
-      return AlertDialog(
-          title: Text(title), content: Text(message), actions: actions);
+      return AlertDialog(title: Text(title), content: Text(message), actions: actions);
     },
   );
 }

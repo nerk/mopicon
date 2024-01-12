@@ -24,7 +24,7 @@ library mopicon.globals;
 
 import 'package:flutter/material.dart';
 import 'package:mopicon/routes/application_routes.dart';
-import 'logging_utils.dart' as lg;
+import '../utils/logging_utils.dart' as lg;
 
 class Globals {
   static var rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>(debugLabel: "rootScaffoldMessengerKey");

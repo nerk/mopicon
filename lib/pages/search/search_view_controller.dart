@@ -20,31 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 import 'package:mopicon/pages/playlist/playlist_mixin.dart';
+import 'package:mopicon/common/base_controller.dart';
 
-abstract class SearchViewController with TracklistMethods, PlaylistMethods {
-  // toggle selection mode
-  SelectionModeChangedNotifier get selectionModeChanged;
-  SelectionChangedNotifier get selectionChanged;
+abstract class SearchViewController extends BaseController with TracklistMethods, PlaylistMethods {}
 
-  void unselect();
-}
-
-class SearchViewControllerImpl extends SearchViewController {
-
-  @override
-  final selectionModeChanged = SelectionModeChangedNotifier(SelectionMode.off);
-
-  @override
-  final selectionChanged = SelectionChangedNotifier(SelectedItemPositions());
-
-  @override
-  void unselect() {
-    selectionModeChanged.value = SelectionMode.off;
-    selectionChanged.value.isNotEmpty
-        ? selectionChanged.value = SelectedItemPositions()
-        : null;
-  }
-}
+class SearchViewControllerImpl extends SearchViewController {}

@@ -26,7 +26,7 @@ import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/titled_divider.dart';
 import 'package:mopicon/generated/l10n.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 var license = '''
@@ -55,7 +55,7 @@ DEALINGS IN THE SOFTWARE.
 /// Displays information about this program, with links to sourcecode
 /// and documentation.
 class AboutPage extends StatelessWidget {
-  final _preferences = GetIt.instance<Preferences>();
+  final _preferences = GetIt.instance<PreferencesController>();
 
   AboutPage({super.key});
 

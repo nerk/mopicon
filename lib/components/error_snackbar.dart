@@ -21,9 +21,9 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 /// Displays a [SnackBar] with error icon, [title] and [detail].
 void showError(String title, String? detail) {
@@ -62,6 +62,6 @@ class _InfoSnackBar extends SnackBar {
               subtitle: detail != null ? Text(detail) : null,
             ),
             duration: const Duration(seconds: 4),
-            backgroundColor: GetIt.instance<Preferences>().theme.data.colorScheme.onInverseSurface,
+            backgroundColor: GetIt.instance<PreferencesController>().theme.data.colorScheme.onInverseSurface,
             showCloseIcon: false);
 }

@@ -24,7 +24,7 @@ import 'package:get_it/get_it.dart';
 import 'mopidy_service.dart';
 import 'package:mopicon/utils/cache.dart';
 import 'package:mopicon/utils/image_utils.dart';
-import 'package:mopicon/services/preferences_service.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 
 abstract class CoverService {
@@ -35,7 +35,7 @@ abstract class CoverService {
 
 class CoverServiceImpl extends CoverService {
   final _mopidyService = GetIt.instance<MopidyService>();
-  final _preferences = GetIt.instance<Preferences>();
+  final _preferences = GetIt.instance<PreferencesController>();
 
   // cache Image objects returned from mopidy.
   final _mImages = Cache<MImage>(500, 3000);

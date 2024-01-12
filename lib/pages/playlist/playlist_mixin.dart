@@ -23,7 +23,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/playlist/select_playlist_dialog.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/generated/l10n.dart';

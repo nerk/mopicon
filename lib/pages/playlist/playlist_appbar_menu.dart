@@ -20,10 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 import 'playlist_view_controller.dart';
 import 'package:mopicon/components/menu_builder.dart';
-import 'package:mopicon/components/selected_item_positions.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/generated/l10n.dart';
@@ -37,10 +36,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
 
   void _selectAll(BuildContext context, _, __) async {
     List<Track> tracks = await controller.getPlaylistItems(playlist);
-    controller.selectionChanged.value = SelectedItemPositions.all(tracks.length);
-
-    controller.selectionModeChanged.value =
-        controller.selectionChanged.value.isNotEmpty ? SelectionMode.on : SelectionMode.off;
+    controller.notifySelectAll(tracks.length);
   }
 
   void _deleteAll(BuildContext context, _, __) async {
@@ -65,9 +61,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
   }
 
   void _refresh(BuildContext context, _, __) async {
-    controller.unselect();
-    List<Track> tracks = await controller.getPlaylistItems(playlist);
-    controller.playlistChangedNotifier.value = Playlist(playlist.uri, playlist.name, tracks, 0);
+    controller.notifyRefresh();
   }
 
   @override

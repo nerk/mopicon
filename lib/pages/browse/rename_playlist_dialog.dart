@@ -24,16 +24,14 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
-import 'package:mopicon/utils/globals.dart';
+import 'package:mopicon/common/globals.dart';
 
 Future<String?> renamePlaylistDialog(String currentName) {
-  final modalDialogKey =
-      GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
+  final modalDialogKey = GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
   String newName = '';
 
   return showDialog<String>(
-    context: Globals
-        .applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
+    context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
       return ModalDialog(
         Text(S.of(context).renamePlaylistDialogTitle),
@@ -51,9 +49,7 @@ Future<String?> renamePlaylistDialog(String currentName) {
                 newName = value;
               },
               validator: (String? value) {
-                return value != null && value.isNotEmpty
-                    ? null
-                    : S.of(context).playlistNameInvalidError;
+                return value != null && value.isNotEmpty ? null : S.of(context).playlistNameInvalidError;
               },
               maxLength: 30,
             )),

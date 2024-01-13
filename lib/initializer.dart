@@ -25,7 +25,6 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/services/cover_service.dart';
-import 'package:mopicon/pages/connecting_screen/connecting_screen_controller.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_view_controller.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
@@ -48,7 +47,6 @@ class Initializer {
     Globals.logger.i("starting registering services");
     getIt.registerLazySingleton<PreferencesController>(() => PreferencesControllerImpl());
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
-    getIt.registerLazySingleton<ConnectingScreenController>(() => ConnectingScreenControllerImpl());
     getIt.registerLazySingleton<CoverService>(() => CoverServiceImpl());
     getIt.registerLazySingleton<LibraryBrowserController>(() => LibraryBrowserControllerImpl());
     getIt.registerLazySingleton<TracklistViewController>(() => TracklistViewControllerImpl());

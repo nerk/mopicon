@@ -62,7 +62,8 @@ class LibraryListView {
         ),
       );
     } else if (item.type == Ref.typeTrack) {
-      return images[getUri(item)]!;
+      Widget? w = images[getUri(item)];
+      return w ?? ImageUtils.getIconForType(item.uri, item.type);
     } else {
       return ImageUtils.getIconForType(item.uri, item.type);
     }

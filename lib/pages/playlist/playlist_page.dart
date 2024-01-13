@@ -50,8 +50,6 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  final mopidyService = GetIt.instance<MopidyService>();
-
   late Ref playlist;
   List<Track> tracks = [];
   var images = <String, Widget>{};
@@ -140,9 +138,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
         (int start, int current) async {
       try {
         if (start < current) {
-          await mopidyService.movePlaylistItem(playlist, start, current - 1);
+          await controller.mopidyService.movePlaylistItem(playlist, start, current - 1);
         } else {
-          await mopidyService.movePlaylistItem(playlist, start, current);
+          await controller.mopidyService.movePlaylistItem(playlist, start, current);
         }
       } catch (e) {
         Globals.logger.e(e);
@@ -154,7 +152,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       switch (r) {
         case ItemActionOption.play:
           await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
-          mopidyService.play(track.asRef);
+          controller.mopidyService.play(track.asRef);
           break;
         case ItemActionOption.addToTracklist:
           await controller.addItemsToTracklist<Ref>(context, [track.asRef]);

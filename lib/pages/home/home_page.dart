@@ -19,14 +19,20 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/components/busy_wrapper.dart';
 import 'package:get_it/get_it.dart';
+
+import '../settings/preferences_controller.dart';
 
 class HomeView extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
+
   const HomeView(this.navigationShell, {super.key});
 
   @override
@@ -37,12 +43,18 @@ class _HomeViewState extends State<HomeView> {
   final _mopidyService = GetIt.instance<MopidyService>();
 
   int trackListCount = 0;
+  bool _showBusy = true;
+
+  StreamSubscription? connectionSubscription;
+  StreamSubscription? busySubscription;
 
   void initTrackListCount() async {
     int count = await _mopidyService.getTracklistLength();
-    setState(() {
-      trackListCount = count;
-    });
+    if (mounted) {
+      setState(() {
+        trackListCount = count;
+      });
+    }
   }
 
   void updateTrackListCount() {
@@ -56,49 +68,65 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    GetIt.instance<MopidyService>().connect(GetIt.instance<PreferencesController>().url);
+    _showBusy = true;
+    connectionSubscription = _mopidyService.connectionState$.listen((MopidyConnectionState state) {
+      setState(() {
+        _showBusy = state != MopidyConnectionState.online;
+      });
+    });
+    busySubscription = _mopidyService.busyState$.listen((bool busy) {
+      setState(() {
+        _showBusy = busy ? true : !(!busy && _mopidyService.connected);
+      });
+    });
     _mopidyService.tracklistChangedNotifier.addListener(updateTrackListCount);
     initTrackListCount();
   }
 
   @override
   void dispose() {
+    connectionSubscription?.cancel();
+    busySubscription?.cancel();
     _mopidyService.tracklistChangedNotifier.removeListener(updateTrackListCount);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: widget.navigationShell,
-        bottomNavigationBar: BottomNavigationBar(
-            items: [
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.search),
-                label: S.of(context).homePageSearchLbl,
-              ),
-              BottomNavigationBarItem(
-                icon: const Icon(Icons.library_music),
-                label: S.of(context).homePageBrowseLbl,
-              ),
-              BottomNavigationBarItem(
-                icon: Badge(
-                  isLabelVisible: trackListCount > 0,
-                  label: Text('$trackListCount'),
-                  child: const Icon(Icons.queue_music),
-                ),
-                label: S.of(context).homePageTracksLbl,
-              ),
-            ],
-            currentIndex: widget.navigationShell.currentIndex,
-            onTap: (int index) {
-              widget.navigationShell.goBranch(
-                index,
-                // A common pattern when using bottom navigation bars is to support
-                // navigating to the initial location when tapping the item that is
-                // already active. This example demonstrates how to support this behavior,
-                // using the initialLocation parameter of goBranch.
-                initialLocation: index == widget.navigationShell.currentIndex,
-              );
-            }));
+    return BusyWrapper(
+        Scaffold(
+            body: widget.navigationShell,
+            bottomNavigationBar: BottomNavigationBar(
+                items: [
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.search),
+                    label: S.of(context).homePageSearchLbl,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: const Icon(Icons.library_music),
+                    label: S.of(context).homePageBrowseLbl,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Badge(
+                      isLabelVisible: trackListCount > 0,
+                      label: Text('$trackListCount'),
+                      child: const Icon(Icons.queue_music),
+                    ),
+                    label: S.of(context).homePageTracksLbl,
+                  ),
+                ],
+                currentIndex: widget.navigationShell.currentIndex,
+                onTap: (int index) {
+                  widget.navigationShell.goBranch(
+                    index,
+                    // A common pattern when using bottom navigation bars is to support
+                    // navigating to the initial location when tapping the item that is
+                    // already active. This example demonstrates how to support this behavior,
+                    // using the initialLocation parameter of goBranch.
+                    initialLocation: index == widget.navigationShell.currentIndex,
+                  );
+                })),
+        _showBusy);
   }
 }

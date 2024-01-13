@@ -30,7 +30,6 @@ import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_page.dart';
 import 'package:mopicon/pages/settings/preferences_page.dart';
 import 'package:mopicon/pages/about/about_page.dart';
-import 'package:mopicon/pages/connecting_screen/connecting_screen.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_page.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
@@ -58,8 +57,6 @@ class ApplicationRoutes {
 
   static final ApplicationRoutes _instance = ApplicationRoutes._privateConstructor();
 
-  final _mopidyService = GetIt.instance<MopidyService>();
-
   factory ApplicationRoutes() {
     return _instance;
   }
@@ -69,32 +66,16 @@ class ApplicationRoutes {
         navigatorKey: rootNavigatorKey,
         initialLocation: tracksPath,
         debugLogDiagnostics: true,
-        // redirect to the login page if the user is not logged in
-        redirect: (BuildContext context, GoRouterState state) async {
-          if (state.matchedLocation == settingsPath) {
-            return null;
-          }
-
-          final bool connected = _mopidyService.connected;
-          if (!connected) {
-            return connectingPath;
-          }
-
-          if (connected && state.matchedLocation == connectingPath) {
-            return tracksPath;
-          }
-
-          // no need to redirect at all
-          return null;
-        },
         routes: <RouteBase>[
-          GoRoute(
-            name: connecting,
-            path: connectingPath,
-            builder: (BuildContext context, GoRouterState state) {
+          /**
+              GoRoute(
+              name: connecting,
+              path: connectingPath,
+              builder: (BuildContext context, GoRouterState state) {
               return const ConnectingScreen();
-            },
-          ),
+              },
+              ),
+           */
           GoRoute(
             path: settingsPath,
             builder: (BuildContext context, GoRouterState state) {
@@ -190,15 +171,6 @@ class ApplicationRoutes {
 
   void gotoHome() {
     GoRouter.of(rootNavigatorKey.currentContext!).goNamed(tracks, queryParameters: <String, String>{'title': 'Tracks'});
-  }
-
-  void gotoConnecting([int? maxRetries]) {
-    if (maxRetries != null) {
-      GoRouter.of(rootNavigatorKey.currentContext!)
-          .goNamed(connecting, queryParameters: <String, String>{'maxRetries': maxRetries.toString()});
-    } else {
-      GoRouter.of(rootNavigatorKey.currentContext!).goNamed(connecting);
-    }
   }
 
   void gotoSettings() {

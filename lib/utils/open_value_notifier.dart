@@ -24,7 +24,7 @@ import 'package:flutter/material.dart' show ValueNotifier;
 // A ValueNotifier which allows to unconditionally trigger
 // its listeners with notify().
 class OpenValueNotifier<T> extends ValueNotifier<T> {
-  OpenValueNotifier(value) : super(value);
+  OpenValueNotifier(super.value);
 
   void notify() => notifyListeners();
 }

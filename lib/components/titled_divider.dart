@@ -39,9 +39,7 @@ class TitledDivider extends StatelessWidget {
         child: Row(children: <Widget>[
           Text(title),
           Expanded(
-            child: Container(
-                margin: const EdgeInsets.only(left: 10.0),
-                child: const Divider()),
+            child: Container(margin: const EdgeInsets.only(left: 10.0), child: const Divider()),
           ),
         ]));
   }
@@ -54,24 +52,22 @@ class SpacedDivider extends StatelessWidget {
 
   @override
   build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.only(top: _defaultTop, bottom: _defaultBottom),
-        child: const Divider());
+    return Container(margin: EdgeInsets.only(top: _defaultTop, bottom: _defaultBottom), child: const Divider());
   }
 }
 
 /// A vertical spaced.
 class VerticalSpacer extends StatelessWidget {
-  double? space;
+  final double? space;
 
   /// Creates a [Divider] with additional vertical spacing.
-  VerticalSpacer({this.space, super.key});
+  const VerticalSpacer({this.space, super.key});
 
   @override
   build(BuildContext context) {
-    space = space ?? _defaultTop + _defaultBottom;
+    var vsp = space ?? _defaultTop + _defaultBottom;
     return Container(
-      margin: EdgeInsets.only(top: space! / 2.0, bottom: space! / 2),
+      margin: EdgeInsets.only(top: vsp / 2.0, bottom: vsp / 2),
     );
   }
 }

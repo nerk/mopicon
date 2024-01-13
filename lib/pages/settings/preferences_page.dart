@@ -21,7 +21,6 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/pages/connecting_screen/connecting_screen_controller.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/titled_divider.dart';
 import 'package:mopicon/components/error_snackbar.dart';
@@ -43,7 +42,6 @@ class _PreferencesState extends State<PreferencesPage> {
   final preferences = GetIt.instance<PreferencesController>();
   final mopidyService = GetIt.instance<MopidyService>();
   final preferencesFormKey = GlobalKey<FormState>(debugLabel: "preferencesPage");
-  final _connectingController = GetIt.instance<ConnectingScreenController>();
 
   AppLocale? newLocale;
   String? originalUri;
@@ -69,7 +67,6 @@ class _PreferencesState extends State<PreferencesPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(postRetryError);
     load();
   }
 
@@ -77,12 +74,6 @@ class _PreferencesState extends State<PreferencesPage> {
   void dispose() {
     WidgetsBinding.instance.addPostFrameCallback((_) => closeSnackBar());
     super.dispose();
-  }
-
-  void postRetryError(_) {
-    if (_connectingController.retriesExceeded) {
-      showError(S.of(context).preferencesPageConnectErrorTitle, S.of(context).preferencesPageConnectErrorDetails);
-    }
   }
 
   @override
@@ -128,13 +119,14 @@ class _PreferencesState extends State<PreferencesPage> {
                     try {
                       preferences.appLocale = newLocale ?? preferences.appLocale;
                       await save();
-                      S.load(preferences.appLocale.locale);
                       // disconnect if connection changed
                       if (originalUri != preferences.url) {
                         if (mounted) {
                           mopidyService.stop();
+                          GetIt.instance<MopidyService>().connect(preferences.url);
                         }
                       }
+                      S.load(preferences.appLocale.locale);
                       Globals.applicationRoutes.gotoHome();
                     } catch (e) {
                       showError(preferencesPageSaveError, null);
@@ -177,7 +169,7 @@ class _PreferencesState extends State<PreferencesPage> {
                                   : S.of(context).preferencesPageMopidyServerInvalid;
                             },
                           ),
-                          VerticalSpacer(),
+                          const VerticalSpacer(),
                           TextFormField(
                             keyboardType: TextInputType.number,
                             initialValue: preferences.port != null ? preferences.port.toString() : '',

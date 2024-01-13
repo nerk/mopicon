@@ -29,7 +29,6 @@ import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/components/action_buttons.dart';
-import 'package:mopicon/components/busy_wrapper.dart';
 import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
@@ -54,7 +53,6 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   Ref? parent;
   List<Ref> items = [];
   var images = <String, Widget>{};
-  bool showBusy = false;
 
   // selection mode (single/multiple) of track list view
   SelectionMode selectionMode = SelectionMode.off;
@@ -69,9 +67,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
   Future updateItems() async {
     try {
-      setState(() {
-        showBusy = true;
-      });
+      mopidyService.setBusy(true);
       if (widget.parent != null) {
         parent = Ref.fromMap(Parameter.fromBase64(widget.parent!));
       }
@@ -93,11 +89,8 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
     } finally {
-      if (mounted) {
-        setState(() {
-          showBusy = false;
-        });
-      }
+      mopidyService.setBusy(false);
+      setState(() {});
     }
   }
 
@@ -158,45 +151,43 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       }
     }).build();
 
-    return BusyWrapper(
-        Scaffold(
-            appBar: AppBar(
-                title: Text(widget.title ?? S.of(context).libraryBrowserPageTitle),
-                centerTitle: true,
-                leading: widget.parent != null
-                    ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
-                        if (libraryController.isSelectionEmpty) {
-                          Navigator.of(context).pop();
-                        } else {
-                          libraryController.notifyUnselect();
-                        }
-                      })
-                    : null,
-                actions: [
-                  parent == null
-                      ? ActionButton<SelectedItemPositions>(
-                          Icons.delete, () => libraryController.deleteSelectedPlaylists(context),
-                          valueListenable: libraryController.selectionChanged)
-                      : const SizedBox(),
-                  ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
-                    var selectedItems = await libraryController.getSelectedItems(parent);
-                    if (context.mounted) {
-                      await libraryController.addItemsToTracklist<Ref>(context, selectedItems);
+    return Scaffold(
+        appBar: AppBar(
+            title: Text(widget.title ?? S.of(context).libraryBrowserPageTitle),
+            centerTitle: true,
+            leading: widget.parent != null
+                ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
+                    if (libraryController.isSelectionEmpty) {
+                      Navigator.of(context).pop();
+                    } else {
+                      libraryController.notifyUnselect();
                     }
-                    libraryController.notifyUnselect();
-                  }, valueListenable: libraryController.selectionChanged),
-                  ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-                    var selectedItems = await libraryController.getSelectedItems(parent);
-                    if (context.mounted) {
-                      await libraryController.addItemsToPlaylist<Ref>(context, selectedItems);
-                    }
-                    libraryController.notifyUnselect();
-                  }, valueListenable: libraryController.selectionChanged),
-                  VolumeControl(),
-                  LibraryBrowserAppBarMenu(items, libraryController)
-                ]),
-            body: MaterialPageFrame(child: listView)),
-        showBusy);
+                  })
+                : null,
+            actions: [
+              parent == null
+                  ? ActionButton<SelectedItemPositions>(
+                      Icons.delete, () => libraryController.deleteSelectedPlaylists(context),
+                      valueListenable: libraryController.selectionChanged)
+                  : const SizedBox(),
+              ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+                var selectedItems = await libraryController.getSelectedItems(parent);
+                if (context.mounted) {
+                  await libraryController.addItemsToTracklist<Ref>(context, selectedItems);
+                }
+                libraryController.notifyUnselect();
+              }, valueListenable: libraryController.selectionChanged),
+              ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+                var selectedItems = await libraryController.getSelectedItems(parent);
+                if (context.mounted) {
+                  await libraryController.addItemsToPlaylist<Ref>(context, selectedItems);
+                }
+                libraryController.notifyUnselect();
+              }, valueListenable: libraryController.selectionChanged),
+              VolumeControl(),
+              LibraryBrowserAppBarMenu(items, libraryController)
+            ]),
+        body: MaterialPageFrame(child: listView));
   }
 
   void translateNames(BuildContext context) {

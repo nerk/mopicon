@@ -29,11 +29,9 @@ import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/action_buttons.dart';
-import 'package:mopicon/components/busy_wrapper.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 
 import 'search_view_controller.dart';
@@ -49,12 +47,12 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final mopidyService = GetIt.instance<MopidyService>();
-  final preferences = GetIt.instance<PreferencesController>();
   final TextEditingController textEditingController = TextEditingController();
 
   List<Track> tracks = [];
   var images = <String, Widget>{};
-  bool showBusy = false;
+
+  bool searchSupported = false;
 
   // selection mode (single/multiple) of track list view
   SelectionMode selectionMode = SelectionMode.off;
@@ -86,9 +84,22 @@ class _SearchPageState extends State<SearchPage> {
     //WidgetsBinding.instance.addPostFrameCallback((_) => setState(() { }));
   }
 
+  void checkSearchSupported() async {
+    if (mounted) {
+      // Search is only supported if the Mopidy-Local extension is
+      // enabled for the server. Just set a flag we can
+      // check later.
+      var canSearch = (await mopidyService.getUriSchemes()).contains('local');
+      setState(() {
+        searchSupported = canSearch;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    checkSearchSupported();
     controller.selectionModeChanged.addListener(updateSelection);
     controller.selectionChanged.addListener(updateSelection);
     updateSelection();
@@ -132,9 +143,7 @@ class _SearchPageState extends State<SearchPage> {
         onSubmitted: (String value) async {
           List<Track> trx = [];
           try {
-            setState(() {
-              showBusy = true;
-            });
+            controller.mopidyService.setBusy(true);
 
             List<SearchResult> searchResult = await mopidyService.search(SearchCriteria().any([value]));
             trx = searchResult.first.tracks;
@@ -144,8 +153,8 @@ class _SearchPageState extends State<SearchPage> {
           } catch (e, s) {
             Globals.logger.e(e, stackTrace: s);
           } finally {
+            controller.mopidyService.setBusy(false);
             setState(() {
-              showBusy = false;
               tracks = trx;
             });
           }
@@ -156,7 +165,6 @@ class _SearchPageState extends State<SearchPage> {
             onPressed: () {
               textEditingController.clear();
               setState(() {
-                showBusy = false;
                 tracks = [];
               });
             },
@@ -167,36 +175,34 @@ class _SearchPageState extends State<SearchPage> {
       Expanded(child: Padding(padding: const EdgeInsets.only(top: 12), child: listView))
     ]);
 
-    var notSupported = Expanded(
+    var notSupported = Center(
         child: Text(S.of(context).searchPageNotSupportedMessage,
             textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)));
 
-    return BusyWrapper(
-        Scaffold(
-          appBar: AppBar(
-              title: Text(S.of(context).searchPageTitle),
-              centerTitle: true,
-              leading: controller.selectionChanged.value.isNotEmpty
-                  ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
-                      controller.notifyUnselect();
-                    })
-                  : null,
-              actions: [
-                ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
-                  var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-                  await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(S.of(context).searchPageTitle),
+          centerTitle: true,
+          leading: controller.selectionChanged.value.isNotEmpty
+              ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
                   controller.notifyUnselect();
-                }, valueListenable: controller.selectionChanged),
-                ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-                  var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-                  await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
-                  controller.notifyUnselect();
-                }, valueListenable: controller.selectionChanged),
-                VolumeControl(),
-                SearchAppBarMenu(tracks.length, controller)
-              ]),
-          body: MaterialPageFrame(child: preferences.searchSupported ? pageContent : notSupported),
-        ),
-        showBusy);
+                })
+              : null,
+          actions: [
+            ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+              var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
+              await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+              controller.notifyUnselect();
+            }, valueListenable: controller.selectionChanged),
+            ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+              var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
+              await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+              controller.notifyUnselect();
+            }, valueListenable: controller.selectionChanged),
+            VolumeControl(),
+            SearchAppBarMenu(tracks.length, controller)
+          ]),
+      body: MaterialPageFrame(child: searchSupported ? pageContent : notSupported),
+    );
   }
 }

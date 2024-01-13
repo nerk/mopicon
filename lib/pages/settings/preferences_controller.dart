@@ -71,10 +71,6 @@ abstract class PreferencesController {
   bool get showAllMediaCategories;
 
   set showAllMediaCategories(bool f);
-
-  bool get searchSupported;
-
-  set searchSupported(bool v);
 }
 
 class PreferencesControllerImpl extends PreferencesController {
@@ -106,15 +102,6 @@ class PreferencesControllerImpl extends PreferencesController {
 
   @override
   String get version => _version;
-
-  /// Flag to indicate that search is supported. This is set to true
-  /// after a connection has been established and the Mopidy server
-  /// has the Mopidy-Local extension enabled.
-  bool _searchSupported = false;
-
-  bool get searchSupported => _searchSupported;
-
-  set searchSupported(bool v) => _searchSupported = v;
 
   @override
   Future<void> load() async {

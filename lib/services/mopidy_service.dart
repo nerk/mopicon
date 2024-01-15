@@ -24,6 +24,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
+import 'package:mopicon/utils/cache.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
@@ -245,24 +246,15 @@ class MopidyServiceImpl extends MopidyService {
   int _busyLevel = 0;
 
   // cached current volume
-  int? savedVolume;
+  int? _savedVolume;
 
   // cached current mute state
-  bool? savedMuteState;
+  bool? _savedMuteState;
+
+  // cached album extra info
+  final _albumDataCache = Cache<AlbumInfoExtraData>(1000, 2000);
 
   MopidyServiceImpl() : _mopidy = Mopidy(logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 2000) {
-    /*
-    SystemChannels.lifecycle.setMessageHandler((msg) async {
-      if (msg == 'AppLifecycleState.resumed') {
-        if (_lastConnectedUri == _currentUri) {
-          print("RESUMED");
-          Globals.logger.i("Reonnecting to $_lastConnectedUri");
-          connect(_currentUri);
-        }
-      }
-      return Future.value(null);
-    });
-*/
     _mopidy.clientState$.listen((value) {
       switch (value.state) {
         case ClientState.online:
@@ -363,6 +355,7 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   Future<bool> connect(String uri, {int? maxRetries}) async {
+    _albumDataCache.clear();
     _mopidy.disconnect();
     _connected = false;
     Globals.logger.i("Connecting to $uri");
@@ -387,18 +380,16 @@ class MopidyServiceImpl extends MopidyService {
         var refs = await _mopidy.library.browse(parent?.uri);
         // lookup and add album extra info
         List<String> uris = refs.map((e) => e.type == Ref.typeAlbum ? e.uri : null).nonNulls.toList();
-
         if (uris.isNotEmpty) {
-          Map<String, List<Track>> trackMap = await _mopidy.library.lookup(uris);
-          if (trackMap.isNotEmpty) {
-            for (var ref in refs) {
-              var tracks = trackMap[ref.uri];
-              if (tracks != null && tracks.isNotEmpty) {
-                Album? album = tracks.first.album;
-                if (album != null) {
-                  ref.extraData = AlbumInfoExtraData(album);
-                }
-              }
+          // warm up cache
+          _loadAlbumExtraData(uris);
+          for (var ref in refs) {
+            var info = _albumDataCache.get(ref.uri);
+            // cache miss
+            info = info ?? (await _getAlbumExtraInfo([ref.uri]))[ref.uri];
+            if (info != null) {
+              ref.extraData = info;
+              _albumDataCache.put(ref.uri, ref.extraData);
             }
           }
         }
@@ -407,6 +398,30 @@ class MopidyServiceImpl extends MopidyService {
         setBusy(false);
       }
     });
+  }
+
+  _loadAlbumExtraData(List<String> uris) async {
+    var notCached = uris.map((uri) => !_albumDataCache.contains(uri) ? uri : null).nonNulls.toList();
+    if (notCached.isNotEmpty) {
+      _albumDataCache.putAll(await _getAlbumExtraInfo(notCached));
+    }
+  }
+
+  Future<Map<String, AlbumInfoExtraData>> _getAlbumExtraInfo(List<String> uris) async {
+    var result = <String, AlbumInfoExtraData>{};
+    Map<String, List<Track>> trackMap = await _mopidy.library.lookup(uris);
+    if (trackMap.isNotEmpty) {
+      for (var uri in uris) {
+        var tracks = trackMap[uri];
+        if (tracks != null && tracks.isNotEmpty) {
+          Album? album = tracks.first.album;
+          if (album != null) {
+            result[uri] = AlbumInfoExtraData(album);
+          }
+        }
+      }
+    }
+    return result;
   }
 
   @override
@@ -739,20 +754,20 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   Future<bool> isMuted() {
-    if (savedMuteState == null) {
+    if (_savedMuteState == null) {
       return waitConnected().then((_) async {
         try {
           setBusy(true);
-          savedMuteState = await _mopidy.mixer.getMute();
-          _muteChangedNotifier.value = savedMuteState!;
-          return Future<bool>.value(savedMuteState);
+          _savedMuteState = await _mopidy.mixer.getMute();
+          _muteChangedNotifier.value = _savedMuteState!;
+          return Future<bool>.value(_savedMuteState);
         } finally {
           setBusy(false);
         }
       });
     } else {
-      savedMuteState = _muteChangedNotifier.value;
-      return Future<bool>.value(savedMuteState);
+      _savedMuteState = _muteChangedNotifier.value;
+      return Future<bool>.value(_savedMuteState);
     }
   }
 
@@ -782,20 +797,20 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   Future<int> getVolume() {
-    if (savedVolume == null) {
+    if (_savedVolume == null) {
       return waitConnected().then((_) async {
         try {
           setBusy(true);
-          savedVolume = await _mopidy.mixer.getVolume();
-          _volumeChangedNotifier.value = savedVolume!;
-          return Future<int>.value(savedVolume);
+          _savedVolume = await _mopidy.mixer.getVolume();
+          _volumeChangedNotifier.value = _savedVolume!;
+          return Future<int>.value(_savedVolume);
         } finally {
           setBusy(false);
         }
       });
     } else {
-      savedVolume = _volumeChangedNotifier.value;
-      return Future<int>.value(savedVolume);
+      _savedVolume = _volumeChangedNotifier.value;
+      return Future<int>.value(_savedVolume);
     }
   }
 

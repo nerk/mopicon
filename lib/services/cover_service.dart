@@ -52,12 +52,12 @@ class CoverServiceImpl extends CoverService {
       return {};
     }
 
-    Image img = CoverService.defaultImage;
     var result = <String, Widget>{};
     try {
-      MImage? mImage;
       Map<String, List<MImage>> images = await _mopidyService.getImages(uris);
       for (var uri in images.keys) {
+        Image img = CoverService.defaultImage;
+        MImage? mImage;
         if (images[uri] != null && images[uri]!.isNotEmpty) {
           mImage = images[uri]!.first;
         }

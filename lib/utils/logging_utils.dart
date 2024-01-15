@@ -52,7 +52,7 @@ Logger createLogger(Level? level) {
           lineLength: 120,
           colors: false,
           printEmojis: true,
-          methodCount: 2,
+          methodCount: 4,
           errorMethodCount: 10,
           noBoxingByDefault: true,
           printTime: true));

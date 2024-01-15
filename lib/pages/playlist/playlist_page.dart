@@ -25,7 +25,6 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/action_buttons.dart';
-import 'package:mopicon/components/busy_wrapper.dart';
 import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/utils/parameters.dart';
@@ -53,7 +52,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
   late Ref playlist;
   List<Track> tracks = [];
   var images = <String, Widget>{};
-  bool showBusy = false;
 
   StreamSubscription? refreshSubscription;
 
@@ -65,9 +63,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Future loadPlaylistItems() async {
     List<Track> trx = [];
     try {
-      setState(() {
-        showBusy = true;
-      });
+      controller.mopidyService.setBusy(true);
       if (widget.parent != null) {
         playlist = Ref.fromMap(Parameter.fromBase64(widget.parent!));
         controller.currentPlaylist = playlist;
@@ -80,22 +76,17 @@ class _PlaylistPageState extends State<PlaylistPage> {
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
     } finally {
+      controller.mopidyService.setBusy(false);
       if (mounted) {
         setState(() {
           tracks = trx;
-          showBusy = false;
         });
       }
     }
   }
 
   Future<void> loadImages(List<Track> tracks) async {
-    for (Track track in tracks) {
-      if (images[track.uri] == null) {
-        var image = await track.getImage();
-        images.putIfAbsent(track.uri, () => image);
-      }
-    }
+    images = await tracks.getImages();
   }
 
   void updateSelection() {
@@ -164,43 +155,41 @@ class _PlaylistPageState extends State<PlaylistPage> {
       }
     }).buildListView();
 
-    return BusyWrapper(
-        Scaffold(
-          appBar: AppBar(
-              title: Text(widget.title ?? S.of(context).playlistPageTitle),
-              centerTitle: true,
-              //automaticallyImplyLeading: true,
-              leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
-                if (controller.isSelectionEmpty) {
-                  Navigator.of(context).pop();
-                } else {
-                  controller.notifyUnselect();
-                }
-              }),
-              actions: [
-                ActionButton<SelectedItemPositions>(
-                    Icons.delete,
-                    valueListenable: controller.selectionChanged,
-                    () => controller.deleteSelectedPlaylistItems(playlist)),
-                ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
-                  var selectedItems = await controller.getSelectedItems(playlist);
-                  if (context.mounted) {
-                    await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
-                  }
-                  controller.notifyUnselect();
-                }, valueListenable: controller.selectionChanged),
-                ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-                  var selectedItems = await controller.getSelectedItems(playlist);
-                  if (context.mounted) {
-                    await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
-                  }
-                  controller.notifyUnselect();
-                }, valueListenable: controller.selectionChanged),
-                VolumeControl(),
-                PlaylistAppBarMenu(controller, playlist)
-              ]),
-          body: MaterialPageFrame(child: listView),
-        ),
-        showBusy);
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(widget.title ?? S.of(context).playlistPageTitle),
+          centerTitle: true,
+          //automaticallyImplyLeading: true,
+          leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
+            if (controller.isSelectionEmpty) {
+              Navigator.of(context).pop();
+            } else {
+              controller.notifyUnselect();
+            }
+          }),
+          actions: [
+            ActionButton<SelectedItemPositions>(
+                Icons.delete,
+                valueListenable: controller.selectionChanged,
+                () => controller.deleteSelectedPlaylistItems(playlist)),
+            ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+              var selectedItems = await controller.getSelectedItems(playlist);
+              if (context.mounted) {
+                await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+              }
+              controller.notifyUnselect();
+            }, valueListenable: controller.selectionChanged),
+            ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+              var selectedItems = await controller.getSelectedItems(playlist);
+              if (context.mounted) {
+                await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+              }
+              controller.notifyUnselect();
+            }, valueListenable: controller.selectionChanged),
+            VolumeControl(),
+            PlaylistAppBarMenu(controller, playlist)
+          ]),
+      body: MaterialPageFrame(child: listView),
+    );
   }
 }

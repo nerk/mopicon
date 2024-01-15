@@ -100,16 +100,8 @@ class _TrackListState extends State<TrackListPage> {
     List<TlTrack> trks = [];
     try {
       controller.mopidyService.setBusy(true);
-      setState(() {});
       trks = await controller.loadTrackList();
-      // load images into local map
-
-      for (TlTrack tlt in trks) {
-        if (images[tlt.track.uri] == null) {
-          var image = await tlt.track.getImage();
-          images.putIfAbsent(tlt.track.uri, () => image);
-        }
-      }
+      images = await trks.getImages();
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
     } finally {
@@ -117,7 +109,6 @@ class _TrackListState extends State<TrackListPage> {
       if (mounted) {
         setState(() {
           tracks = trks;
-          //showBusy = false;
         });
       }
     }

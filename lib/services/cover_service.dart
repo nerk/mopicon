@@ -25,12 +25,13 @@ import 'package:mopicon/utils/logging_utils.dart';
 import 'mopidy_service.dart';
 import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
-import 'package:mopicon/extensions/mopidy_utils.dart';
 
 abstract class CoverService {
   static final defaultImage = Image.asset('assets/album_default.png');
 
   Future<Widget> getImage(String uri);
+
+  Future<Map<String, Widget>> getImages(List<String> uris);
 }
 
 class CoverServiceImpl extends CoverService {
@@ -38,36 +39,43 @@ class CoverServiceImpl extends CoverService {
   final _preferences = GetIt.instance<PreferencesController>();
 
   @override
-  Future<Widget> getImage(String uri) async {
-    Widget? image = await _getImage(uri);
-    if (image != null) {
-      return Future.value(ImageUtils.pad(image, 3));
-    } else if (uri.isStreamUri()) {
-      return Future.value(ImageUtils.pad(ImageUtils.getIconForType(uri, Ref.typeTrack), 3));
+  Future<Widget> getImage(String? uri) async {
+    if (uri == null) {
+      return ImageUtils.pad(CoverService.defaultImage, 3);
     }
-    return Future.value(ImageUtils.pad(CoverService.defaultImage, 3));
+    return Future<Widget>.value((await getImages([uri]))[uri]);
   }
 
-  Future<Widget?> _getImage(String? uri) async {
-    if (uri != null) {
-      try {
-        var mImage = ImageUtils.noIcon;
-        Map<String, List<MImage>> images = await _mopidyService.getImages([uri]);
+  @override
+  Future<Map<String, Widget>> getImages(List<String> uris) async {
+    if (uris.isEmpty) {
+      return {};
+    }
+
+    Image img = CoverService.defaultImage;
+    var result = <String, Widget>{};
+    try {
+      MImage? mImage;
+      Map<String, List<MImage>> images = await _mopidyService.getImages(uris);
+      for (var uri in images.keys) {
         if (images[uri] != null && images[uri]!.isNotEmpty) {
           mImage = images[uri]!.first;
         }
-        Image img = Image.network(
-          _preferences.computeNetworkUrl(mImage),
-          errorBuilder: (BuildContext context, Object obj, StackTrace? st) {
-            logger.e(obj.toString());
-            return ImageUtils.noIcon;
-          },
-        );
-        return Future.value(img);
-      } catch (e, s) {
-        logger.e(e, stackTrace: s);
+
+        if (mImage != null) {
+          img = Image.network(
+            _preferences.computeNetworkUrl(mImage),
+            errorBuilder: (BuildContext context, Object obj, StackTrace? st) {
+              logger.e(obj.toString());
+              return CoverService.defaultImage;
+            },
+          );
+        }
+        result[uri] = ImageUtils.pad(img, 3);
       }
+    } catch (e, s) {
+      logger.e(e, stackTrace: s);
     }
-    return Future.value(null);
+    return Future.value(result);
   }
 }

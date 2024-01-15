@@ -20,6 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/menu_builder.dart';
@@ -43,6 +45,10 @@ abstract class LibraryBrowserController extends BaseController with TracklistMet
 }
 
 class LibraryBrowserControllerImpl extends LibraryBrowserController {
+  final _preferences = GetIt.instance<PreferencesController>();
+
+  var extendedCategoriesNames = ['Performers', 'Release Years', "Last Week's Updates", "Last Month's Updates"];
+
   @override
   MenuBuilder<Ref> popupMenu(BuildContext? context, Ref? item, int? index) {
     assert(context != null);
@@ -144,23 +150,26 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
 
   @override
   Future<List<Ref>> getSelectedItems(Ref? parent) async {
-    var refs = await mopidyService.browse(parent);
-    if (parent == null) {
-      refs.addAll(await mopidyService.getPlaylists());
-    }
+    var refs = await browse(parent);
     return Future.value(selectionChanged.value.filterSelected(refs));
   }
 
   @override
   Future<List<Ref>> browse(Ref? parent) async {
     late List<Ref> items;
+    items = await mopidyService.browse(parent);
     if (parent == null) {
       // toplevel: show both, media and playlists
-      items = await mopidyService.browse(null);
       var playlists = await mopidyService.getPlaylists();
       items.addAll(playlists);
-    } else {
-      items = await mopidyService.browse(parent);
+    }
+
+    if (parent == null && _preferences.hideFileExtension) {
+      items.removeWhere((item) => item.type == Ref.typeDirectory && item.name == 'Files');
+    }
+
+    if (!_preferences.showAllMediaCategories) {
+      items.removeWhere((item) => item.type == Ref.typeDirectory && extendedCategoriesNames.contains(item.name));
     }
     return items;
   }

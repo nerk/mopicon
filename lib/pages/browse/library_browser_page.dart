@@ -59,11 +59,10 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
   final libraryController = GetIt.instance<LibraryBrowserController>();
   final mopidyService = GetIt.instance<MopidyService>();
+
   final preferences = GetIt.instance<PreferencesController>();
 
   StreamSubscription? refreshSubscription;
-
-  var extendedCategoriesNames = ['Performers', 'Release Years', "Last Week's Updates", "Last Month's Updates"];
 
   Future updateItems() async {
     try {
@@ -73,24 +72,14 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       }
 
       items = await libraryController.browse(parent);
-      if (parent == null && preferences.hideFileExtension) {
-        items.removeWhere((item) => item.type == Ref.typeDirectory && item.name == 'Files');
-      }
-
-      if (!preferences.showAllMediaCategories) {
-        items.removeWhere((item) => item.type == Ref.typeDirectory && extendedCategoriesNames.contains(item.name));
-      }
-
-      // load images into local map
-      for (Ref item in items) {
-        var image = await item.getImage();
-        images.putIfAbsent(item.uri, () => image);
-      }
+      images = await items.getImages();
     } catch (e, s) {
       Globals.logger.e(e, stackTrace: s);
     } finally {
       mopidyService.setBusy(false);
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
@@ -24,8 +26,11 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
   final preferences = GetIt.instance<PreferencesController>();
   final mopidyService = GetIt.instance<MopidyService>();
 
+  double opacity = 0;
+  Timer? timer;
+
   late final AnimationController _primaryController = AnimationController(
-    duration: const Duration(seconds: 4),
+    duration: const Duration(seconds: 5),
     vsync: this,
   );
 
@@ -45,35 +50,32 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
   );
 
   void _startAnimation() {
-    _primaryController.forward(from: 0);
-    _secondaryController.forward(from: 0);
+    _stopAnimation();
+    timer = Timer(const Duration(milliseconds: 800), () {
+      _primaryController.forward(from: 0);
+      _secondaryController.forward(from: 0);
+      setState(() {
+        opacity = 0.3;
+      });
+    });
   }
 
   void _stopAnimation() {
+    opacity = 0;
+    timer?.cancel();
     _primaryController.reset();
     _secondaryController.reset();
-  }
-
-  bool _busy = false;
-
-  bool get busy => _busy;
-
-  set busy(bool b) {
-    setState(() {
-      b ? _startAnimation() : _stopAnimation();
-      _busy = b;
-    });
   }
 
   @override
   initState() {
     super.initState();
-    _busy = widget.busy;
     _startAnimation();
   }
 
   @override
   dispose() {
+    timer?.cancel();
     _primaryController.dispose();
     _secondaryController.dispose();
     super.dispose();
@@ -102,7 +104,7 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
       children: [
         widget.child,
         Opacity(
-          opacity: 0.5,
+          opacity: opacity,
           child: ModalBarrier(dismissible: false, color: preferences.theme.data.dialogBackgroundColor),
         ),
         FadeTransition(

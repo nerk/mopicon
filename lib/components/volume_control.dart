@@ -53,8 +53,8 @@ class _VolumeControlState extends State<VolumeControl> {
 
   void updateState() async {
     try {
-      var m = await _mopidyService.isMuted() ?? false;
-      var v = await _mopidyService.getVolume() ?? 0;
+      var m = await _mopidyService.isMuted();
+      var v = await _mopidyService.getVolume();
       if (mounted) {
         setState(() {
           muted = m;

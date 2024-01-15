@@ -52,6 +52,13 @@ abstract class TracklistViewController extends BaseController {
 }
 
 class TracklistViewControllerImpl extends TracklistViewController with PlaylistMethods, TracklistMethods {
+  TracklistViewControllerImpl() {
+    mopidyService.tracklistChangedNotifier.addListener(() {
+      _tracks.clear();
+      _tracks.addAll(mopidyService.tracklistChangedNotifier.value);
+    });
+  }
+
   @override
   final splitEnabled = ValueNotifier(true);
 
@@ -105,13 +112,9 @@ class TracklistViewControllerImpl extends TracklistViewController with PlaylistM
 
   @override
   Future<List<TlTrack>> loadTrackList() async {
-    var tr = mopidyService.tracklistChangedNotifier.value;
-    if (tr.isEmpty) {
-      tr = await mopidyService.getTracklistTlTracks();
-    }
+    var tr = await mopidyService.getTracklistTlTracks();
     _tracks.clear();
     _tracks.addAll(tr);
-    //WidgetsBinding.instance.addPostFrameCallback((_) => setState(() { }));
     return Future.value(_tracks);
   }
 }

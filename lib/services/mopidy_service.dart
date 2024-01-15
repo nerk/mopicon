@@ -172,11 +172,11 @@ abstract class MopidyService {
   // Mixer
   Future<bool> setMute(bool mute);
 
-  Future<bool?> isMuted();
+  Future<bool> isMuted();
 
   Future<bool> setVolume(int volume);
 
-  Future<int?> getVolume();
+  Future<int> getVolume();
 }
 
 class MopidyServiceImpl extends MopidyService {
@@ -242,6 +242,13 @@ class MopidyServiceImpl extends MopidyService {
 
   bool _connected = false;
   bool _stopped = false;
+  int _busyLevel = 0;
+
+  // cached current volume
+  int? savedVolume;
+
+  // cached current mute state
+  bool? savedMuteState;
 
   MopidyServiceImpl() : _mopidy = Mopidy(logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 2000) {
     /*
@@ -314,7 +321,18 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   void setBusy(bool busy) {
-    _busyState$.add(busy);
+    if (busy) {
+      _busyLevel++;
+      if (_busyLevel == 1) {
+        _busyState$.add(true);
+      }
+    } else {
+      _busyLevel--;
+      if (_busyLevel <= 0) {
+        _busyLevel = 0;
+        _busyState$.add(false);
+      }
+    }
   }
 
   @override
@@ -331,7 +349,12 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<String>> getUriSchemes() {
     return waitConnected().then((_) {
-      return _mopidy.getUriSchemes();
+      try {
+        setBusy(true);
+        return _mopidy.getUriSchemes();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
@@ -359,25 +382,30 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<Ref>> browse(Ref? parent) async {
     return waitConnected().then((_) async {
-      var refs = await _mopidy.library.browse(parent?.uri);
-      // lookup and add album extra info
-      List<String> uris = refs.map((e) => e.type == Ref.typeAlbum ? e.uri : null).nonNulls.toList();
+      try {
+        setBusy(true);
+        var refs = await _mopidy.library.browse(parent?.uri);
+        // lookup and add album extra info
+        List<String> uris = refs.map((e) => e.type == Ref.typeAlbum ? e.uri : null).nonNulls.toList();
 
-      if (uris.isNotEmpty) {
-        Map<String, List<Track>> trackMap = await _mopidy.library.lookup(uris);
-        if (trackMap.isNotEmpty) {
-          for (var ref in refs) {
-            var tracks = trackMap[ref.uri];
-            if (tracks != null && tracks.isNotEmpty) {
-              Album? album = tracks.first.album;
-              if (album != null) {
-                ref.extraData = AlbumInfoExtraData(album);
+        if (uris.isNotEmpty) {
+          Map<String, List<Track>> trackMap = await _mopidy.library.lookup(uris);
+          if (trackMap.isNotEmpty) {
+            for (var ref in refs) {
+              var tracks = trackMap[ref.uri];
+              if (tracks != null && tracks.isNotEmpty) {
+                Album? album = tracks.first.album;
+                if (album != null) {
+                  ref.extraData = AlbumInfoExtraData(album);
+                }
               }
             }
           }
         }
+        return refs;
+      } finally {
+        setBusy(false);
       }
-      return refs;
     });
   }
 
@@ -387,6 +415,7 @@ class MopidyServiceImpl extends MopidyService {
       assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
 
       try {
+        setBusy(true);
         if (items is List<Ref>) {
           List<Ref> result = List<Ref>.empty(growable: true);
           for (Ref track in (items as List<Ref>)) {
@@ -414,6 +443,8 @@ class MopidyServiceImpl extends MopidyService {
         }
       } catch (e, s) {
         Globals.logger.e(e, stackTrace: s);
+      } finally {
+        setBusy(false);
       }
       return [];
     });
@@ -422,21 +453,36 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<SearchResult>> search(SearchCriteria criteria) {
     return waitConnected().then((_) {
-      return _mopidy.library.search(criteria, null, false);
+      try {
+        setBusy(true);
+        return _mopidy.library.search(criteria, null, false);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<Map<String, List<MImage>>> getImages(List<String> albumUris) {
     return waitConnected().then((_) {
-      return _mopidy.library.getImages(albumUris);
+      try {
+        setBusy(true);
+        return _mopidy.library.getImages(albumUris);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<List<TlTrack>> getTracklistTlTracks() {
     return waitConnected().then((_) {
-      return _mopidy.tracklist.getTlTracks();
+      try {
+        setBusy(true);
+        return _mopidy.tracklist.getTlTracks();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
@@ -445,33 +491,53 @@ class MopidyServiceImpl extends MopidyService {
     assert(tracks is List<Ref> || tracks is List<Track> || tracks is List<TlTrack>);
 
     return waitConnected().then((_) {
-      var uris = List<String>.empty(growable: true);
-      for (var track in tracks) {
-        String uri = getUri(track)!;
-        uris.add(uri);
+      try {
+        setBusy(true);
+        var uris = List<String>.empty(growable: true);
+        for (var track in tracks) {
+          String uri = getUri(track)!;
+          uris.add(uri);
+        }
+        return _mopidy.tracklist.add(uris, null);
+      } finally {
+        setBusy(false);
       }
-      return _mopidy.tracklist.add(uris, null);
     });
   }
 
   @override
   Future<int> getTracklistLength() {
     return waitConnected().then((_) {
-      return _mopidy.tracklist.getLength();
+      try {
+        setBusy(true);
+        return _mopidy.tracklist.getLength();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<void> move(int from, int to) {
     return waitConnected().then((_) {
-      return _mopidy.tracklist.move(from, from, to);
+      try {
+        setBusy(true);
+        return _mopidy.tracklist.move(from, from, to);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<void> clearTracklist() {
     return waitConnected().then((_) {
-      return _mopidy.tracklist.clear();
+      try {
+        setBusy(true);
+        return _mopidy.tracklist.clear();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
@@ -479,8 +545,13 @@ class MopidyServiceImpl extends MopidyService {
   Future<void> deleteFromTracklist(List<int> tlids) async {
     if (tlids.isNotEmpty) {
       return waitConnected().then((_) async {
-        await _mopidy.tracklist.remove(FilterCriteria().tlid([...tlids]).toMap());
-        return Future.value(null);
+        try {
+          setBusy(true);
+          await _mopidy.tracklist.remove(FilterCriteria().tlid([...tlids]).toMap());
+          return Future.value(null);
+        } finally {
+          setBusy(false);
+        }
       });
     }
     return Future.value(null);
@@ -489,22 +560,32 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<TlTrack>> addTrackToTracklist<T>(T track) {
     return waitConnected().then((_) {
-      return addTracksToTracklist([track]);
+      try {
+        setBusy(true);
+        return addTracksToTracklist([track]);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<void> playback(PlaybackAction action, int? tlId) {
     return waitConnected().then((_) {
-      switch (action) {
-        case PlaybackAction.stop:
-          return _mopidy.playback.stop();
-        case PlaybackAction.play:
-          return tlId != null ? _mopidy.playback.play(tlId) : Future.value(null);
-        case PlaybackAction.pause:
-          return _mopidy.playback.pause();
-        case PlaybackAction.resume:
-          return _mopidy.playback.resume();
+      try {
+        setBusy(true);
+        switch (action) {
+          case PlaybackAction.stop:
+            return _mopidy.playback.stop();
+          case PlaybackAction.play:
+            return tlId != null ? _mopidy.playback.play(tlId) : Future.value(null);
+          case PlaybackAction.pause:
+            return _mopidy.playback.pause();
+          case PlaybackAction.resume:
+            return _mopidy.playback.resume();
+        }
+      } finally {
+        setBusy(false);
       }
     });
   }
@@ -512,43 +593,73 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<void> playNext() {
     return waitConnected().then((_) {
-      return _mopidy.playback.next();
+      try {
+        setBusy(true);
+        return _mopidy.playback.next();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<void> playPrevious() {
     return waitConnected().then((_) {
-      return _mopidy.playback.previous();
+      try {
+        setBusy(true);
+        return _mopidy.playback.previous();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<TlTrack?> getCurrentTlTrack() {
     return waitConnected().then((_) {
-      return _mopidy.playback.getCurrentTlTrack();
+      try {
+        setBusy(true);
+        return _mopidy.playback.getCurrentTlTrack();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<int?> getPreviousTlid() {
     return waitConnected().then((_) {
-      return _mopidy.tracklist.getPreviousTlid();
+      try {
+        setBusy(true);
+        return _mopidy.tracklist.getPreviousTlid();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<int?> getNextTlid() {
     return waitConnected().then((_) {
-      return _mopidy.tracklist.getNextTlid();
+      try {
+        setBusy(true);
+        return _mopidy.tracklist.getNextTlid();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<int> getLastTrackId(Ref track) async {
     return waitConnected().then((_) async {
-      List<TlTrack> tracklist = await getTracklistTlTracks();
-      return findIdForTrack(tracklist, track);
+      try {
+        setBusy(true);
+        List<TlTrack> tracklist = await getTracklistTlTracks();
+        return findIdForTrack(tracklist, track);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
@@ -560,41 +671,66 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<int?> getTimePosition() {
     return waitConnected().then((_) {
-      return _mopidy.playback.getTimePosition();
+      try {
+        setBusy(true);
+        return _mopidy.playback.getTimePosition();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<String> getPlaybackState() {
     return waitConnected().then((_) {
-      return _mopidy.playback.getState();
+      try {
+        setBusy(true);
+        return _mopidy.playback.getState();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<bool> seek(int timePosition) {
     return waitConnected().then((_) {
-      return _mopidy.playback.seek(timePosition);
+      try {
+        setBusy(true);
+        return _mopidy.playback.seek(timePosition);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<String?> getStreamTitle() {
     return waitConnected().then((_) {
-      return _mopidy.playback.getStreamTitle();
+      try {
+        setBusy(true);
+        return _mopidy.playback.getStreamTitle();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<void> play(Ref track) async {
     return waitConnected().then((_) async {
-      int tlid = await getLastTrackId(track);
-      if (tlid == -1) {
-        List<TlTrack> tl = await addTrackToTracklist(track);
-        tlid = findIdForTrack(tl, track);
-      }
-      if (tlid != -1) {
-        return playback(PlaybackAction.play, tlid);
+      try {
+        setBusy(true);
+        int tlid = await getLastTrackId(track);
+        if (tlid == -1) {
+          List<TlTrack> tl = await addTrackToTracklist(track);
+          tlid = findIdForTrack(tl, track);
+        }
+        if (tlid != -1) {
+          return playback(PlaybackAction.play, tlid);
+        }
+      } finally {
+        setBusy(false);
       }
     });
   }
@@ -602,31 +738,65 @@ class MopidyServiceImpl extends MopidyService {
   // Volume control and muting.
 
   @override
-  Future<bool?> isMuted() {
-    return waitConnected().then((_) {
-      return _mopidy.mixer.getMute();
-    });
+  Future<bool> isMuted() {
+    if (savedMuteState == null) {
+      return waitConnected().then((_) async {
+        try {
+          setBusy(true);
+          savedMuteState = await _mopidy.mixer.getMute();
+          _muteChangedNotifier.value = savedMuteState!;
+          return Future<bool>.value(savedMuteState);
+        } finally {
+          setBusy(false);
+        }
+      });
+    } else {
+      savedMuteState = _muteChangedNotifier.value;
+      return Future<bool>.value(savedMuteState);
+    }
   }
 
   @override
   Future<bool> setMute(bool mute) {
     return waitConnected().then((_) {
-      return _mopidy.mixer.setMute(mute);
+      try {
+        setBusy(true);
+        return _mopidy.mixer.setMute(mute);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
   Future<bool> setVolume(int volume) {
     return waitConnected().then((_) {
-      return _mopidy.mixer.setVolume(volume);
+      try {
+        setBusy(true);
+        return _mopidy.mixer.setVolume(volume);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
   @override
-  Future<int?> getVolume() {
-    return waitConnected().then((_) {
-      return _mopidy.mixer.getVolume();
-    });
+  Future<int> getVolume() {
+    if (savedVolume == null) {
+      return waitConnected().then((_) async {
+        try {
+          setBusy(true);
+          savedVolume = await _mopidy.mixer.getVolume();
+          _volumeChangedNotifier.value = savedVolume!;
+          return Future<int>.value(savedVolume);
+        } finally {
+          setBusy(false);
+        }
+      });
+    } else {
+      savedVolume = _volumeChangedNotifier.value;
+      return Future<int>.value(savedVolume);
+    }
   }
 
   // Playlists
@@ -634,7 +804,12 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<Ref>> getPlaylists() {
     return waitConnected().then((_) {
-      return _mopidy.playlists.asList();
+      try {
+        setBusy(true);
+        return _mopidy.playlists.asList();
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
@@ -643,34 +818,44 @@ class MopidyServiceImpl extends MopidyService {
     assert(playlist.type == Ref.typePlaylist);
 
     return waitConnected().then((_) async {
-      List<Track> result = [];
-      Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
-      if (pl != null) {
-        for (var track in pl.tracks) {
-          if (!track.uri.isStreamUri()) {
-            Map<String, List<Track>> trackMap = await _mopidy.library.lookup([track.uri]);
-            trackMap[track.uri] != null ? result.add(trackMap[track.uri]!.first) : null;
-          } else {
-            result.add(track);
+      try {
+        setBusy(true);
+        List<Track> result = [];
+        Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
+        if (pl != null) {
+          for (var track in pl.tracks) {
+            if (!track.uri.isStreamUri()) {
+              Map<String, List<Track>> trackMap = await _mopidy.library.lookup([track.uri]);
+              trackMap[track.uri] != null ? result.add(trackMap[track.uri]!.first) : null;
+            } else {
+              result.add(track);
+            }
           }
         }
+        return Future.value(result);
+      } finally {
+        setBusy(false);
       }
-      return Future.value(result);
     });
   }
 
   @override
   Future<Playlist?> createPlaylist(String name) async {
     return waitConnected().then((_) async {
-      List<Ref> lists = await _mopidy.playlists.asList();
-      if (!lists.map((e) => e.name == name).contains(true)) {
-        final pl = await _mopidy.playlists.create(name, null);
-        lists.add(Ref(pl.uri, pl.name, Ref.typePlaylist));
-        await _mopidy.playlists.refresh(null);
-        playlistsChangedNotifier.value = lists;
-        return Future.value(pl);
-      } else {
-        return Future.value(null);
+      try {
+        setBusy(true);
+        List<Ref> lists = await _mopidy.playlists.asList();
+        if (!lists.map((e) => e.name == name).contains(true)) {
+          final pl = await _mopidy.playlists.create(name, null);
+          lists.add(Ref(pl.uri, pl.name, Ref.typePlaylist));
+          await _mopidy.playlists.refresh(null);
+          playlistsChangedNotifier.value = lists;
+          return Future.value(pl);
+        } else {
+          return Future.value(null);
+        }
+      } finally {
+        setBusy(false);
       }
     });
   }
@@ -678,7 +863,12 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<Playlist?> savePlaylist(Playlist playlist) {
     return waitConnected().then((_) {
-      return _mopidy.playlists.save(playlist);
+      try {
+        setBusy(true);
+        return _mopidy.playlists.save(playlist);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
@@ -686,7 +876,12 @@ class MopidyServiceImpl extends MopidyService {
   Future<bool> deletePlaylist(Ref playlist) {
     assert(playlist.type == Ref.typePlaylist);
     return waitConnected().then((_) {
-      return _mopidy.playlists.delete(playlist.uri);
+      try {
+        setBusy(true);
+        return _mopidy.playlists.delete(playlist.uri);
+      } finally {
+        setBusy(false);
+      }
     });
   }
 
@@ -694,81 +889,101 @@ class MopidyServiceImpl extends MopidyService {
   Future<Playlist?> addToPlaylist<T>(BuildContext context, Ref playlist, List<T> items) async {
     assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
     return waitConnected().then((_) async {
-      Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
-      bool trackAdded = false;
-      if (pl != null) {
-        for (var item in items) {
-          if (item is Ref) {
-            Track tr = (await _mopidy.library.lookup([item.uri])).values.first[0];
-            // Special error handling if this is a stream uri and lookup fails if the stream is invalid
-            // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
-            if (tr.name != 'INVALID_STREAM_ERROR') {
-              pl.addTrack(tr);
+      try {
+        setBusy(true);
+        Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
+        bool trackAdded = false;
+        if (pl != null) {
+          for (var item in items) {
+            if (item is Ref) {
+              Track tr = (await _mopidy.library.lookup([item.uri])).values.first[0];
+              // Special error handling if this is a stream uri and lookup fails if the stream is invalid
+              // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
+              if (tr.name != 'INVALID_STREAM_ERROR') {
+                pl.addTrack(tr);
+                trackAdded = true;
+              } else {
+                if (context.mounted) {
+                  showError(S.of(context).newStreamAccessError, tr.uri);
+                }
+              }
+            } else if (item is TlTrack) {
+              pl.addTrack(item.track);
               trackAdded = true;
             } else {
-              if (context.mounted) {
-                showError(S.of(context).newStreamAccessError, tr.uri);
-              }
+              pl.addTrack(item as Track);
+              trackAdded = true;
             }
-          } else if (item is TlTrack) {
-            pl.addTrack(item.track);
-            trackAdded = true;
-          } else {
-            pl.addTrack(item as Track);
-            trackAdded = true;
+          }
+          if (trackAdded) {
+            Playlist? result = await _mopidy.playlists.save(pl);
+            return Future.value(result);
           }
         }
-        if (trackAdded) {
-          Playlist? result = await _mopidy.playlists.save(pl);
-          return Future.value(result);
-        }
+        return Future.value(null);
+      } finally {
+        setBusy(false);
       }
-      return Future.value(null);
     });
   }
 
   @override
   Future<Playlist?> movePlaylistItem(Ref playlist, int from, int to) async {
     return waitConnected().then((_) async {
-      Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
-      if (pl != null) {
-        if (to >= 0 && to < pl.tracks.length) {
-          Track t = pl.tracks.removeAt(from);
-          pl.tracks.insert(to, t);
-          Playlist? result = await _mopidy.playlists.save(pl);
-          return Future.value(result);
+      try {
+        setBusy(true);
+        Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
+        if (pl != null) {
+          if (to >= 0 && to < pl.tracks.length) {
+            Track t = pl.tracks.removeAt(from);
+            pl.tracks.insert(to, t);
+            Playlist? result = await _mopidy.playlists.save(pl);
+            return Future.value(result);
+          }
         }
+        return Future.value(null);
+      } finally {
+        setBusy(false);
       }
-      return Future.value(null);
     });
   }
 
   @override
   Future<Playlist?> deletePlaylistItems(Ref playlist, SelectedItemPositions positions) async {
     return waitConnected().then((_) async {
-      Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
-      if (pl != null) {
-        var remaining = positions.removeSelected<Track>(pl.tracks);
-        pl.tracks.clear();
-        pl.tracks.addAll(remaining);
-        Playlist? result = await _mopidy.playlists.save(pl);
-        return Future.value(result);
+      try {
+        setBusy(true);
+        Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
+        if (pl != null) {
+          var remaining = positions.removeSelected<Track>(pl.tracks);
+          pl.tracks.clear();
+          pl.tracks.addAll(remaining);
+          Playlist? result = await _mopidy.playlists.save(pl);
+          return Future.value(result);
+        }
+        return Future.value(null);
+      } finally {
+        setBusy(false);
       }
-      return Future.value(null);
     });
   }
 
   @override
   Future<bool> renamePlaylist(Ref playlist, String name) async {
     return waitConnected().then((_) async {
-      Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
-      if (pl != null) {
-        pl.name = name;
-        await _mopidy.playlists.save(pl);
-        await _mopidy.playlists.delete(pl.uri);
-        return true;
+      try {
+        setBusy(true);
+        Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
+        if (pl != null) {
+          pl.name = name;
+          await _mopidy.playlists.save(pl);
+          await _mopidy.playlists.delete(pl.uri);
+          return true;
+        }
+        return false;
+      } finally {
+        setBusy(false);
       }
-      return false;
     });
   }
 }

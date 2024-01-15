@@ -40,16 +40,16 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final _mopidyService = GetIt.instance<MopidyService>();
+  final mopidyService = GetIt.instance<MopidyService>();
 
   int trackListCount = 0;
-  bool _showBusy = true;
+  bool showBusy = true;
 
   StreamSubscription? connectionSubscription;
   StreamSubscription? busySubscription;
 
   void initTrackListCount() async {
-    int count = await _mopidyService.getTracklistLength();
+    int count = await mopidyService.getTracklistLength();
     if (mounted) {
       setState(() {
         trackListCount = count;
@@ -60,7 +60,7 @@ class _HomeViewState extends State<HomeView> {
   void updateTrackListCount() {
     if (mounted) {
       setState(() {
-        trackListCount = _mopidyService.tracklistChangedNotifier.value.length;
+        trackListCount = mopidyService.tracklistChangedNotifier.value.length;
       });
     }
   }
@@ -69,18 +69,18 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     GetIt.instance<MopidyService>().connect(GetIt.instance<PreferencesController>().url);
-    _showBusy = true;
-    connectionSubscription = _mopidyService.connectionState$.listen((MopidyConnectionState state) {
+    showBusy = true;
+    connectionSubscription = mopidyService.connectionState$.listen((MopidyConnectionState state) {
       setState(() {
-        _showBusy = state != MopidyConnectionState.online;
+        showBusy = state != MopidyConnectionState.online;
       });
     });
-    busySubscription = _mopidyService.busyState$.listen((bool busy) {
+    busySubscription = mopidyService.busyState$.listen((bool busy) {
       setState(() {
-        _showBusy = busy ? true : !(!busy && _mopidyService.connected);
+        showBusy = busy ? true : !(!busy && mopidyService.connected);
       });
     });
-    _mopidyService.tracklistChangedNotifier.addListener(updateTrackListCount);
+    mopidyService.tracklistChangedNotifier.addListener(updateTrackListCount);
     initTrackListCount();
   }
 
@@ -88,7 +88,7 @@ class _HomeViewState extends State<HomeView> {
   void dispose() {
     connectionSubscription?.cancel();
     busySubscription?.cancel();
-    _mopidyService.tracklistChangedNotifier.removeListener(updateTrackListCount);
+    mopidyService.tracklistChangedNotifier.removeListener(updateTrackListCount);
     super.dispose();
   }
 
@@ -127,6 +127,6 @@ class _HomeViewState extends State<HomeView> {
                     initialLocation: index == widget.navigationShell.currentIndex,
                   );
                 })),
-        _showBusy);
+        showBusy);
   }
 }

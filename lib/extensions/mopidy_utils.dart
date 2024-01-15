@@ -61,6 +61,27 @@ extension MopidyRefExtensions on Ref {
   }
 }
 
+extension MopidyRefListExtensions on List<Ref> {
+  /// Returns the images for [List<Ref>]
+  Future<Map<String, Widget>> getImages() async {
+    return _coverService.getImages(map((e) => e.uri).toList());
+  }
+}
+
+extension MopidyTrackListExtensions on List<Track> {
+  /// Returns the images for [List<Track>]
+  Future<Map<String, Widget>> getImages() async {
+    return _coverService.getImages(map((e) => e.uri).toList());
+  }
+}
+
+extension MopidyTlTrackListExtensions on List<TlTrack> {
+  /// Returns the images for [List<TlTrack>]
+  Future<Map<String, Widget>> getImages() async {
+    return _coverService.getImages(map((e) => e.track.uri).toList());
+  }
+}
+
 extension MopidyTrackExtensions on Track {
   /// Returns the image for [Track]
   Future<Widget> getImage() async {

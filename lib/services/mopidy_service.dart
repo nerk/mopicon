@@ -21,10 +21,11 @@
  */
 
 import 'dart:async';
+import 'dart:io' show Platform;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
 import 'package:mopicon/utils/cache.dart';
+import 'package:flutter/services.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
@@ -80,6 +81,8 @@ abstract class MopidyService {
   Future<MopidyConnectionState> waitConnected();
 
   void stop();
+
+  Future<bool> resume();
 
   bool get connected;
 
@@ -254,7 +257,21 @@ class MopidyServiceImpl extends MopidyService {
   // cached album extra info
   final _albumDataCache = Cache<AlbumInfoExtraData>(1000, 2000);
 
-  MopidyServiceImpl() : _mopidy = Mopidy(logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 2000) {
+  MopidyServiceImpl() : _mopidy = Mopidy(logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 16000) {
+    if (Platform.isAndroid) {
+      SystemChannels.lifecycle.setMessageHandler((msg) {
+        Globals.logger.i(msg);
+        // When the app was resumed, update
+        // tracklist state.
+        if (msg == 'AppLifecycleState.resumed') {
+          resume();
+        } else if (msg == 'AppLifecycleState.paused') {
+          stop();
+        }
+        return Future.value(null);
+      });
+    }
+
     _mopidy.clientState$.listen((value) {
       switch (value.state) {
         case ClientState.online:
@@ -356,17 +373,26 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<bool> connect(String uri, {int? maxRetries}) async {
     _albumDataCache.clear();
-    _mopidy.disconnect();
     _connected = false;
+    _mopidy.disconnect();
     Globals.logger.i("Connecting to $uri");
     return await _mopidy.connect(webSocketUrl: uri, maxRetries: maxRetries);
   }
 
   @override
   void stop() {
+    Globals.logger.i("Stopping connection");
     _connected = false;
     _stopped = true;
     _mopidy.disconnect();
+  }
+
+  @override
+  Future<bool> resume() async {
+    Globals.logger.i("Resuming connection");
+    _connected = false;
+    _mopidy.disconnect();
+    return await _mopidy.connect();
   }
 
   @override

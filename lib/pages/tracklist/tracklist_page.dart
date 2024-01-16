@@ -21,10 +21,8 @@
  */
 
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/now_playing.dart';
 import 'package:mopicon/components/action_buttons.dart';
@@ -213,18 +211,6 @@ class _TrackListState extends State<TrackListPage> {
     updateSelection();
     updatePlayback();
     updateSplitMode();
-
-    if (Platform.isAndroid) {
-      SystemChannels.lifecycle.setMessageHandler((msg) {
-        // When the app was resumed, update
-        // tracklist state.
-        if (msg == 'AppLifecycleState.resumed') {
-          updateTracks();
-          updatePlayback();
-        }
-        return Future.value(null);
-      });
-    }
   }
 
   @override

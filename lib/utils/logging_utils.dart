@@ -40,7 +40,7 @@ void clearLogMessages() {
 
 // log buffer
 const _maxLen = 20000;
-const _minLen = 5000;
+const _minLen = 1000;
 StringBuffer _logBuffer = StringBuffer();
 
 Logger createLogger(Level? level) {

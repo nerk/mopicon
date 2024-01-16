@@ -51,7 +51,7 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
 
   void _startAnimation() {
     _stopAnimation();
-    timer = Timer(const Duration(milliseconds: 800), () {
+    timer = Timer(const Duration(milliseconds: 1000), () {
       _primaryController.forward(from: 0);
       _secondaryController.forward(from: 0);
       setState(() {
@@ -79,12 +79,6 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
     _primaryController.dispose();
     _secondaryController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant BusyWrapper oldWidget) {
-    _startAnimation();
-    super.didUpdateWidget(oldWidget);
   }
 
   void stop() async {

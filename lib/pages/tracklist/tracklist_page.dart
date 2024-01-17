@@ -102,6 +102,8 @@ class _TrackListState extends State<TrackListPage> {
       images = await trks.getImages();
     } catch (e, s) {
       logger.e(e, stackTrace: s);
+      trks = [];
+      images = {};
     } finally {
       controller.mopidyService.setBusy(false);
       if (mounted) {

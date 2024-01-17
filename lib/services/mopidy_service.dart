@@ -263,7 +263,9 @@ class MopidyServiceImpl extends MopidyService {
         // When the app was resumed, update
         // tracklist state.
         if (msg == 'AppLifecycleState.resumed') {
-          resume();
+          if (!connected) {
+            resume();
+          }
         } else if (msg == 'AppLifecycleState.paused') {
           stop();
         }

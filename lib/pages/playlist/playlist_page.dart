@@ -75,6 +75,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       }
     } catch (e, s) {
       logger.e(e, stackTrace: s);
+      trx = [];
     } finally {
       controller.mopidyService.setBusy(false);
       if (mounted) {

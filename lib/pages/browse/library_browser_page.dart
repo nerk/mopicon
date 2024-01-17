@@ -75,11 +75,13 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       images = await items.getImages();
     } catch (e, s) {
       logger.e(e, stackTrace: s);
+      items = [];
+      images = {};
     } finally {
-      mopidyService.setBusy(false);
       if (mounted) {
         setState(() {});
       }
+      mopidyService.setBusy(false);
     }
   }
 

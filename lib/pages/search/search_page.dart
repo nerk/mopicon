@@ -152,6 +152,7 @@ class _SearchPageState extends State<SearchPage> {
             }
           } catch (e, s) {
             logger.e(e, stackTrace: s);
+            trx = [];
           } finally {
             controller.mopidyService.setBusy(false);
             setState(() {

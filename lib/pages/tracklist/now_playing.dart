@@ -23,9 +23,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/playing_progress.dart';
-
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/generated/l10n.dart';
 
 class NowPlaying extends StatelessWidget {
@@ -158,7 +157,7 @@ class _PlayButton extends StatelessWidget {
               _mopidyService.playback(PlaybackAction.resume, null);
             }
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.play_arrow));
@@ -177,7 +176,7 @@ class _PauseButton extends StatelessWidget {
           try {
             _mopidyService.playback(PlaybackAction.pause, null);
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.pause));
@@ -196,7 +195,7 @@ class _StopButton extends StatelessWidget {
           try {
             _mopidyService.playback(PlaybackAction.stop, null);
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.stop));
@@ -215,7 +214,7 @@ class _PreviousButton extends StatelessWidget {
           try {
             _mopidyService.playPrevious();
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.skip_previous));
@@ -234,7 +233,7 @@ class _NextButton extends StatelessWidget {
           try {
             _mopidyService.playNext();
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         icon: const Icon(Icons.skip_next));

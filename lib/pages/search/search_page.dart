@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/volume_control.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
@@ -71,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
         setState(() {});
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     }
   }
 
@@ -151,7 +151,7 @@ class _SearchPageState extends State<SearchPage> {
               await loadImages(trx);
             }
           } catch (e, s) {
-            Globals.logger.e(e, stackTrace: s);
+            logger.e(e, stackTrace: s);
           } finally {
             controller.mopidyService.setBusy(false);
             setState(() {

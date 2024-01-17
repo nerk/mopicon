@@ -28,7 +28,7 @@ import 'package:mopicon/pages/browse/new_playlist_dialog.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/menu_builder.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 
 class LibraryBrowserAppBarMenu extends StatelessWidget {
   final mopidyService = GetIt.instance<MopidyService>();
@@ -70,7 +70,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
               showError(S.of(context!).playlistAlreadyExistsError, null);
             }
           }).onError((e, s) {
-            Globals.logger.e(e, stackTrace: s);
+            logger.e(e, stackTrace: s);
             showError(S.of(context!).newPlaylistCreateError, null);
           });
         }

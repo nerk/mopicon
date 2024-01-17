@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/extensions/timestring.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 
 class PlayingProgressIndicator extends StatefulWidget {
   final String playbackState;
@@ -136,7 +136,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
           try {
             previousPlaybackState = await mopidyService.getPlaybackState();
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         onChanged: (double value) {
@@ -161,7 +161,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
               }
             }
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
       )),

@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 import 'playlist_view_controller.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/components/error_snackbar.dart';
@@ -52,7 +52,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
         Ref track = Ref(uri, '', Ref.typeTrack);
         await controller.addItemsToPlaylist<Ref>(context, [track], playlist: playlist);
       } catch (e, s) {
-        Globals.logger.e(e, stackTrace: s);
+        logger.e(e, stackTrace: s);
         if (context.mounted) {
           showError(S.of(context).newStreamCreateError, null);
         }

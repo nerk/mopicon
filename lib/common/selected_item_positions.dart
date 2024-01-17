@@ -41,11 +41,7 @@ class SelectedItemPositions {
   }
 
   List<T> filterSelected<T>(List<T> items) {
-    List<T> filtered = List<T>.empty(growable: true);
-    for (int pos in positions) {
-      filtered.add(items[pos]);
-    }
-    return filtered;
+    return [for (var pos in positions) items[pos]];
   }
 
   List<T> removeSelected<T>(List<T> items) {
@@ -71,6 +67,7 @@ class SelectedItemPositions {
   }
 
   bool get isEmpty => _positions.isEmpty;
+
   bool get isNotEmpty => _positions.isNotEmpty;
 
   bool set(int index) {
@@ -130,9 +127,7 @@ class SelectedItemPositions {
 
   @override
   bool operator ==(Object other) =>
-      other is SelectedItemPositions &&
-      other.runtimeType == runtimeType &&
-      other.positions == positions;
+      other is SelectedItemPositions && other.runtimeType == runtimeType && other.positions == positions;
 
   @override
   int get hashCode => positions.hashCode;

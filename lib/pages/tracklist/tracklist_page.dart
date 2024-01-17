@@ -28,7 +28,7 @@ import 'package:mopicon/pages/tracklist/now_playing.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/components/material_page_frame.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
@@ -101,7 +101,7 @@ class _TrackListState extends State<TrackListPage> {
       trks = await controller.loadTrackList();
       images = await trks.getImages();
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     } finally {
       controller.mopidyService.setBusy(false);
       if (mounted) {
@@ -135,7 +135,7 @@ class _TrackListState extends State<TrackListPage> {
         });
       }
     } catch (e) {
-      Globals.logger.e(e);
+      logger.e(e);
     } finally {
       controller.mopidyService.setBusy(false);
     }
@@ -169,7 +169,7 @@ class _TrackListState extends State<TrackListPage> {
         });
       }
     } catch (e) {
-      Globals.logger.e(e);
+      logger.e(e);
     }
   }
 
@@ -236,7 +236,7 @@ class _TrackListState extends State<TrackListPage> {
           await controller.mopidyService.move(start, current);
         }
       } catch (e) {
-        Globals.logger.e(e);
+        logger.e(e);
       }
     }
 
@@ -273,7 +273,7 @@ class _TrackListState extends State<TrackListPage> {
             timePosition = (await controller.mopidyService.getTimePosition()) ?? timePosition;
             controller.splitEnabled.value = !splitEnabled;
           } catch (e) {
-            Globals.logger.e(e);
+            logger.e(e);
           }
         },
         child: Column(children: [
@@ -292,7 +292,7 @@ class _TrackListState extends State<TrackListPage> {
                   timePosition = (await controller.mopidyService.getTimePosition()) ?? timePosition;
                   controller.splitEnabled.value = !splitEnabled;
                 } catch (e) {
-                  Globals.logger.e(e);
+                  logger.e(e);
                 }
               },
             )),

@@ -29,14 +29,14 @@ import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_view_controller.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 
 /// Registers all services and loads preferences.
 class Initializer {
   Initializer._();
 
   static Future<void> initialize() async {
-    Globals.logger.i("initialize");
+    logger.i("initialize");
     // configure logger
     _registerServices();
     await _loadSettings();
@@ -44,7 +44,7 @@ class Initializer {
 
   static void _registerServices() {
     GetIt getIt = GetIt.instance;
-    Globals.logger.i("starting registering services");
+    logger.i("starting registering services");
     getIt.registerLazySingleton<PreferencesController>(() => PreferencesControllerImpl());
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
     getIt.registerLazySingleton<CoverService>(() => CoverServiceImpl());
@@ -52,12 +52,12 @@ class Initializer {
     getIt.registerLazySingleton<TracklistViewController>(() => TracklistViewControllerImpl());
     getIt.registerLazySingleton<PlaylistViewController>(() => PlaylistControllerImpl());
     getIt.registerLazySingleton<SearchViewController>(() => SearchViewControllerImpl());
-    Globals.logger.i("finished registering services");
+    logger.i("finished registering services");
   }
 
   static Future<void> _loadSettings() async {
-    Globals.logger.i("starting loading settings");
+    logger.i("starting loading settings");
     await GetIt.instance<PreferencesController>().load();
-    Globals.logger.i("finished loading settings");
+    logger.i("finished loading settings");
   }
 }

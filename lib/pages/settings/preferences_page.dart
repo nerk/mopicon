@@ -26,6 +26,7 @@ import 'package:mopicon/components/titled_divider.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:flutter/services.dart';
 import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart' as lg;
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/components/show_text_dialog.dart';
 import 'preferences_controller.dart';
@@ -263,7 +264,7 @@ class _PreferencesState extends State<PreferencesPage> {
                             trailing: ElevatedButton(
                                 child: Text(S.of(context).showLogButtonLbl),
                                 onPressed: () {
-                                  showTextDialog(context, S.of(context).logDialogTitle, Globals.getLogMessages());
+                                  showTextDialog(context, S.of(context).logDialogTitle, lg.getLogMessages());
                                 }),
                           ),
                           ListTile(
@@ -271,7 +272,7 @@ class _PreferencesState extends State<PreferencesPage> {
                             trailing: ElevatedButton(
                                 child: Text(S.of(context).clearLogButtonLbl),
                                 onPressed: () {
-                                  Globals.clearLogMessages();
+                                  lg.clearLogMessages();
                                 }),
                           ),
                         ])))));

@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/volume_control.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
@@ -74,7 +74,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         await loadImages(trx);
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     } finally {
       controller.mopidyService.setBusy(false);
       if (mounted) {
@@ -100,7 +100,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   void initState() {
-    Globals.logger.d("initState: playlist $hashCode");
+    logger.d("initState: playlist $hashCode");
     super.initState();
     refreshSubscription = controller.refresh$.listen((_) {
       loadPlaylistItems();
@@ -114,7 +114,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   @override
   void dispose() {
-    Globals.logger.d("dispose: playlist $hashCode");
+    logger.d("dispose: playlist $hashCode");
     refreshSubscription?.cancel();
     controller.playlistChangedNotifier.removeListener(loadPlaylistItems);
     controller.selectionModeChanged.removeListener(updateSelection);
@@ -134,7 +134,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           await controller.mopidyService.movePlaylistItem(playlist, start, current);
         }
       } catch (e) {
-        Globals.logger.e(e);
+        logger.e(e);
       }
     }, (Track track, int index) async {
       var r = await showActionDialog(

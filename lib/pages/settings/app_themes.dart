@@ -35,6 +35,7 @@ class AppTheme {
   AppTheme.light(this.name) {
     data = ThemeData.light(useMaterial3: true);
   }
+
   AppTheme.dark(this.name) {
     data = ThemeData.dark(useMaterial3: true);
   }
@@ -47,9 +48,7 @@ class AppTheme {
 
   ThemeData _createTheme(Color color, bool dark) {
     return ThemeData.from(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: color,
-            brightness: dark ? Brightness.dark : Brightness.light),
+        colorScheme: ColorScheme.fromSeed(seedColor: color, brightness: dark ? Brightness.dark : Brightness.light),
         useMaterial3: true);
   }
 }
@@ -57,31 +56,30 @@ class AppTheme {
 class AppThemes {
   static final AppThemes _instance = AppThemes._privateConstructor();
 
-  final _themes = List<AppTheme>.empty(growable: true);
+  final _themes = [
+    AppTheme.light('default_light'),
+    AppTheme.dark('default_dark'),
+    AppTheme(Colors.red, 'red_light', false),
+    AppTheme(Colors.red, 'red_dark', true),
+    AppTheme(Colors.teal, 'teal_light', false),
+    AppTheme(Colors.teal, 'teal_dark', true),
+    AppTheme(Colors.orange, 'orange_light', false),
+    AppTheme(Colors.orange, 'orange_dark', true),
+    AppTheme(Colors.purple, 'purple_light', false),
+    AppTheme(Colors.purple, 'purple_dark', true)
+  ];
 
   factory AppThemes() {
     return _instance;
   }
 
-  AppThemes._privateConstructor() {
-    _themes.add(AppTheme.light('default_light'));
-    _themes.add(AppTheme.dark('default_dark'));
-    _themes.add(AppTheme(Colors.red, 'red_light', false));
-    _themes.add(AppTheme(Colors.red, 'red_dark', true));
-    _themes.add(AppTheme(Colors.teal, 'teal_light', false));
-    _themes.add(AppTheme(Colors.teal, 'teal_dark', true));
-    _themes.add(AppTheme(Colors.orange, 'orange_light', false));
-    _themes.add(AppTheme(Colors.orange, 'orange_dark', true));
-    _themes.add(AppTheme(Colors.purple, 'purple_light', false));
-    _themes.add(AppTheme(Colors.purple, 'purple_dark', true));
-  }
+  AppThemes._privateConstructor();
 
   AppTheme getByName(String? name) {
     if (name == null) {
       return AppTheme.defaultAppTheme;
     }
-    return _themes.firstWhere((e) => e.name == name,
-        orElse: () => AppTheme.defaultAppTheme);
+    return _themes.firstWhere((e) => e.name == name, orElse: () => AppTheme.defaultAppTheme);
   }
 
   List<AppTheme> get themes => _themes;

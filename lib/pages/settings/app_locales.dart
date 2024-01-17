@@ -32,6 +32,7 @@ class AppLocale {
   static AppLocale defaultLocale = AppLocale.system();
 
   late Locale locale;
+
   String getLabel(String currentLanguageCode) {
     var label = labels.containsKey(currentLanguageCode)
         ? labels[currentLanguageCode]![locale.languageCode]
@@ -62,8 +63,7 @@ class AppLocale {
   }
 
   @override
-  bool operator ==(other) =>
-      other is AppLocale && locale.languageCode == other.locale.languageCode;
+  bool operator ==(other) => other is AppLocale && locale.languageCode == other.locale.languageCode;
 
   @override
   int get hashCode => locale.languageCode.hashCode;
@@ -72,22 +72,18 @@ class AppLocale {
 class AppLocales {
   static final AppLocales _instance = AppLocales._privateConstructor();
 
-  final _locales = List<AppLocale>.empty(growable: true);
+  final _locales = [AppLocale.german(), AppLocale.english()];
 
   factory AppLocales() {
     return _instance;
   }
 
-  AppLocales._privateConstructor() {
-    _locales.add(AppLocale.german());
-    _locales.add(AppLocale.english());
-  }
+  AppLocales._privateConstructor();
 
   AppLocale getByLanguageCode(String? languageCode) {
     languageCode = languageCode ?? Platform.localeName;
 
-    return _locales.firstWhere((e) => e.locale.languageCode == languageCode,
-        orElse: () {
+    return _locales.firstWhere((e) => e.locale.languageCode == languageCode, orElse: () {
       return _resolveFallback(languageCode!);
     });
   }
@@ -96,7 +92,6 @@ class AppLocales {
 
   AppLocale _resolveFallback(String languageCode) {
     final lang = languageCode.split('-')[0].split('_')[0];
-    return _locales.firstWhere((e) => e.locale.languageCode == lang,
-        orElse: () => AppLocale.defaultLocale);
+    return _locales.firstWhere((e) => e.locale.languageCode == lang, orElse: () => AppLocale.defaultLocale);
   }
 }

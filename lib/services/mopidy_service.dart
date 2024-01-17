@@ -31,8 +31,7 @@ import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopidy_client/mopidy_client.dart';
 import 'package:rxdart/rxdart.dart';
-
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 export 'package:mopidy_client/mopidy_client.dart' hide Image;
 import 'package:mopicon/generated/l10n.dart';
 
@@ -257,10 +256,10 @@ class MopidyServiceImpl extends MopidyService {
   // cached album extra info
   final _albumDataCache = Cache<AlbumInfoExtraData>(1000, 2000);
 
-  MopidyServiceImpl() : _mopidy = Mopidy(logger: Globals.logger, backoffDelayMin: 500, backoffDelayMax: 16000) {
+  MopidyServiceImpl() : _mopidy = Mopidy(logger: logger, backoffDelayMin: 500, backoffDelayMax: 16000) {
     if (Platform.isAndroid) {
       SystemChannels.lifecycle.setMessageHandler((msg) {
-        Globals.logger.i(msg);
+        logger.i(msg);
         // When the app was resumed, update
         // tracklist state.
         if (msg == 'AppLifecycleState.resumed') {
@@ -375,13 +374,13 @@ class MopidyServiceImpl extends MopidyService {
     _albumDataCache.clear();
     _connected = false;
     _mopidy.disconnect();
-    Globals.logger.i("Connecting to $uri");
+    logger.i("Connecting to $uri");
     return await _mopidy.connect(webSocketUrl: uri, maxRetries: maxRetries);
   }
 
   @override
   void stop() {
-    Globals.logger.i("Stopping connection");
+    logger.i("Stopping connection");
     _connected = false;
     _stopped = true;
     _mopidy.disconnect();
@@ -389,7 +388,7 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   Future<bool> resume() async {
-    Globals.logger.i("Resuming connection");
+    logger.i("Resuming connection");
     _connected = false;
     _mopidy.disconnect();
     return await _mopidy.connect();
@@ -473,17 +472,11 @@ class MopidyServiceImpl extends MopidyService {
             }
           }
           return result as List<T>;
-        } else if (items is List<Track>) {
-          List<Track> result = List<Track>.empty(growable: true);
-          result.addAll(items as List<Track>);
-          return result as List<T>;
         } else {
-          List<TlTrack> result = List<TlTrack>.empty(growable: true);
-          result.addAll(items as List<TlTrack>);
-          return result as List<T>;
+          return List<T>.from(items);
         }
       } catch (e, s) {
-        Globals.logger.e(e, stackTrace: s);
+        logger.e(e, stackTrace: s);
       } finally {
         setBusy(false);
       }

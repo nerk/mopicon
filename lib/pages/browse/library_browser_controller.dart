@@ -26,7 +26,7 @@ import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/components/question_dialog.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 import 'package:mopicon/common/base_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_mixin.dart';
@@ -102,7 +102,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
           await mopidyService.deletePlaylist(item);
         }
       } catch (e) {
-        Globals.logger.e(e);
+        logger.e(e);
         showError(deletePlaylistError, null);
       }
     }
@@ -122,7 +122,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
           await mopidyService.deletePlaylist(item);
         }
       } catch (e) {
-        Globals.logger.e(e);
+        logger.e(e);
         showError(deletePlaylistError, null);
       }
     }
@@ -143,7 +143,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
         }
       }
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
       showError(renamePlaylistCreateError, null);
     }
   }

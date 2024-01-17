@@ -29,7 +29,7 @@ import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/components/action_buttons.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 
@@ -74,7 +74,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       items = await libraryController.browse(parent);
       images = await items.getImages();
     } catch (e, s) {
-      Globals.logger.e(e, stackTrace: s);
+      logger.e(e, stackTrace: s);
     } finally {
       mopidyService.setBusy(false);
       if (mounted) {

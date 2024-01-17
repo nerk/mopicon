@@ -21,7 +21,8 @@
  */
 import 'package:flutter/material.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/common/globals.dart';
+
+import 'package:mopicon/utils/logging_utils.dart';
 import 'package:get_it/get_it.dart';
 
 /// Volume control an muting for Mopidy server.
@@ -62,7 +63,7 @@ class _VolumeControlState extends State<VolumeControl> {
         });
       }
     } catch (e) {
-      Globals.logger.e(e);
+      logger.e(e);
     }
   }
 
@@ -103,7 +104,7 @@ class _VolumeControlState extends State<VolumeControl> {
                       try {
                         await _mopidyService.setMute(m);
                       } catch (e) {
-                        Globals.logger.e(e);
+                        logger.e(e);
                       }
                     },
                   ),
@@ -120,7 +121,7 @@ class _VolumeControlState extends State<VolumeControl> {
                           volume = value.toInt();
                         });
                       } catch (e) {
-                        Globals.logger.e(e);
+                        logger.e(e);
                       }
                     },
                     onChanged: (double value) {

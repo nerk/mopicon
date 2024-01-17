@@ -24,16 +24,10 @@ library mopicon.globals;
 
 import 'package:flutter/material.dart';
 import 'package:mopicon/routes/application_routes.dart';
-import '../utils/logging_utils.dart' as lg;
 
 class Globals {
   static var rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>(debugLabel: "rootScaffoldMessengerKey");
   static var rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "rootNavigatorKey");
 
   static var applicationRoutes = ApplicationRoutes();
-  static var logger = lg.logger;
-
-  static String getLogMessages() => lg.getLogMessages();
-
-  static void clearLogMessages() => lg.clearLogMessages();
 }

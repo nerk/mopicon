@@ -87,23 +87,10 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
       timePosition = widget.timePosition;
     }
 
-    if (widget.playbackState != oldWidget.playbackState) {
-      if (widget.playbackState == PlaybackState.paused) {
-        controller.stop(canceled: false);
-      } else if (widget.playbackState == PlaybackState.stopped) {
-        controller.stop(canceled: true);
-        controller.reset();
-      } else if (widget.playbackState == PlaybackState.playing) {
-        controller.forward(from: calculateValue());
-      }
-    }
-
     if (widget.duration != oldWidget.duration) {
       duration = widget.duration;
       controller.reset();
       controller.duration = widget.duration;
-      duration = widget.duration;
-      timePosition = widget.timePosition;
     }
 
     if (widget.bitrate != oldWidget.bitrate) {
@@ -114,8 +101,15 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
       isStream = widget.isStream;
     }
 
-    if (widget.playbackState == PlaybackState.playing) {
-      controller.forward(from: calculateValue());
+    if (widget.playbackState != oldWidget.playbackState || widget.playbackState == PlaybackState.playing) {
+      if (widget.playbackState == PlaybackState.paused) {
+        controller.stop(canceled: false);
+      } else if (widget.playbackState == PlaybackState.stopped) {
+        controller.stop(canceled: true);
+        controller.reset();
+      } else if (widget.playbackState == PlaybackState.playing) {
+        controller.forward(from: calculateValue());
+      }
     }
   }
 
@@ -138,9 +132,6 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
         onChangeStart: (double value) async {
           try {
             previousPlaybackState = await mopidyService.getPlaybackState();
-            //if (previousPlaybackState == PlaybackState.playing) {
-            //await mopidyService.playback(PlaybackAction.pause, null);
-            //}
           } catch (e) {
             logger.e(e);
           }

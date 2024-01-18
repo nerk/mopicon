@@ -28,6 +28,7 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
 
   double opacity = 0;
   Timer? timer;
+  late bool busy;
 
   late final AnimationController _primaryController = AnimationController(
     duration: const Duration(seconds: 5),
@@ -51,26 +52,33 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
 
   void _startAnimation() {
     _stopAnimation();
-    timer = Timer(const Duration(milliseconds: 1000), () {
+    timer = Timer(const Duration(milliseconds: 800), () {
       _primaryController.forward(from: 0);
       _secondaryController.forward(from: 0);
       setState(() {
+        busy = true;
         opacity = 0.3;
       });
     });
   }
 
   void _stopAnimation() {
-    opacity = 0;
     timer?.cancel();
     _primaryController.reset();
     _secondaryController.reset();
+    setState(() {
+      busy = false;
+      opacity = 0;
+    });
   }
 
   @override
   initState() {
     super.initState();
-    _startAnimation();
+    busy = widget.busy;
+    if (busy) {
+      _startAnimation();
+    }
   }
 
   @override
@@ -81,6 +89,16 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant BusyWrapper oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update busy state and animations if widget was updated
+    if (widget.busy != oldWidget.busy) {
+      busy = widget.busy;
+      busy ? _startAnimation() : _stopAnimation();
+    }
+  }
+
   void stop() async {
     _stopAnimation();
     mopidyService.stop();
@@ -89,7 +107,7 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.busy && mopidyService.connected) {
+    if (!busy && mopidyService.connected) {
       return widget.child;
     }
 

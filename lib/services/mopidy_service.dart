@@ -243,9 +243,17 @@ class MopidyServiceImpl extends MopidyService {
 
   final Mopidy _mopidy;
 
+  // indicator whether application is currently connected to a Mopidy server
   bool _connected = false;
+
+  // Trying to establish a connection was explicitly stopped by user
   bool _stopped = false;
+
+  // nested busy level tracking
   int _busyLevel = 0;
+
+  // application is in paused application state
+  bool _applicationPaused = false;
 
   // cached current volume
   int? _savedVolume;
@@ -263,10 +271,12 @@ class MopidyServiceImpl extends MopidyService {
         // When the app was resumed, update
         // tracklist state.
         if (msg == 'AppLifecycleState.resumed') {
+          _applicationPaused = false;
           if (!connected) {
             resume();
           }
         } else if (msg == 'AppLifecycleState.paused') {
+          _applicationPaused = true;
           stop();
         }
         return Future.value(null);
@@ -282,11 +292,16 @@ class MopidyServiceImpl extends MopidyService {
           break;
         case ClientState.offline:
           _connected = false;
-          _connectionState$.add(MopidyConnectionState.offline);
+          // only notify subscribers if application is not paused
+          if (!_applicationPaused) {
+            _connectionState$.add(MopidyConnectionState.offline);
+          }
           break;
         case ClientState.reconnecting:
           _connected = false;
-          _connectionState$.add(MopidyConnectionState.reconnecting);
+          if (!_applicationPaused) {
+            _connectionState$.add(MopidyConnectionState.reconnecting);
+          }
           break;
         case ClientState.reconnectionPending:
           _connected = false;

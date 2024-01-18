@@ -82,6 +82,11 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
 
   @override
   void didUpdateWidget(PlayingProgressIndicator oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.timePosition != oldWidget.timePosition) {
+      timePosition = widget.timePosition;
+    }
+
     if (widget.playbackState != oldWidget.playbackState) {
       if (widget.playbackState == PlaybackState.paused) {
         controller.stop(canceled: false);
@@ -92,28 +97,26 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
         controller.forward(from: calculateValue());
       }
     }
+
     if (widget.duration != oldWidget.duration) {
+      duration = widget.duration;
       controller.reset();
       controller.duration = widget.duration;
       duration = widget.duration;
       timePosition = widget.timePosition;
-      if (widget.playbackState == PlaybackState.playing) {
-        controller.forward(from: calculateValue());
-      }
     }
 
     if (widget.bitrate != oldWidget.bitrate) {
-      setState(() {
-        bitrate = widget.bitrate;
-      });
+      bitrate = widget.bitrate;
     }
 
     if (widget.isStream != oldWidget.isStream) {
-      setState(() {
-        isStream = widget.isStream;
-      });
+      isStream = widget.isStream;
     }
-    super.didUpdateWidget(oldWidget);
+
+    if (widget.playbackState == PlaybackState.playing) {
+      controller.forward(from: calculateValue());
+    }
   }
 
   @override
@@ -135,6 +138,9 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
         onChangeStart: (double value) async {
           try {
             previousPlaybackState = await mopidyService.getPlaybackState();
+            //if (previousPlaybackState == PlaybackState.playing) {
+            //await mopidyService.playback(PlaybackAction.pause, null);
+            //}
           } catch (e) {
             logger.e(e);
           }
@@ -146,19 +152,17 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
         },
         onChangeEnd: (double value) async {
           try {
-            if (previousPlaybackState != PlaybackState.stopped) {
-              var pos = (duration.inMilliseconds * value).toInt();
-              bool success = await mopidyService.seek(pos);
-              if (success) {
-                setState(() {
-                  controller.value = value;
-                  timePosition = pos;
-                });
-              }
+            var pos = (duration.inMilliseconds * value).toInt();
+            bool success = await mopidyService.seek(pos);
+            if (success) {
+              controller.value = value;
+              timePosition = pos;
+              controller.forward(from: calculateValue());
               // needs restart because 'seek' stops player.
               if (previousPlaybackState == PlaybackState.playing) {
                 await mopidyService.playback(PlaybackAction.resume, null);
               }
+              setState(() {});
             }
           } catch (e) {
             logger.e(e);

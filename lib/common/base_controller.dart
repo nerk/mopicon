@@ -23,25 +23,24 @@
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:rxdart/rxdart.dart';
 
 abstract class BaseController {
-  /// Notification to trigger refresh.
-  Stream<bool> get refresh$ => _refresh$.stream;
-  final _refresh$ = PublishSubject<bool>();
+  final _mopidyService = GetIt.instance<MopidyService>();
+
+  Stream<bool> get refresh$ => _mopidyService.refresh$;
 
   final selectionModeChanged = SelectionModeChangedNotifier(SelectionMode.off);
   final selectionChanged = SelectionChangedNotifier(SelectedItemPositions());
 
-  final _mopidyService = GetIt.instance<MopidyService>();
-
   MopidyService get mopidyService => _mopidyService;
+
   bool get isSelectionEmpty => selectionChanged.value.isEmpty;
+
   SelectionMode get selectionMode => selectionModeChanged.value;
 
   void notifyRefresh() {
     notifyUnselect();
-    _refresh$.add(true);
+    _mopidyService.notifyRefresh();
   }
 
   void notifyUnselect() {

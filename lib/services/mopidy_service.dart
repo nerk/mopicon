@@ -50,6 +50,9 @@ abstract class MopidyService {
 
   void setBusy(bool busy);
 
+  /// Notification to trigger refresh.
+  Stream<bool> get refresh$;
+
   /// Notifier if items were added or removed from the tracklist.
   ValueNotifier<List<TlTrack>> get tracklistChangedNotifier;
 
@@ -57,6 +60,9 @@ abstract class MopidyService {
   ValueNotifier<TrackPlaybackInfo?> get trackPlaybackNotifier;
 
   ValueNotifier<PlaybackState?> get playbackStateNotifier;
+
+  /// Time position in currently playing track changed.
+  ValueNotifier<int> get seekedNotifier;
 
   /// Notifier for mute or unmute.
   ValueNotifier<bool> get muteChangedNotifier;
@@ -86,6 +92,8 @@ abstract class MopidyService {
   bool get connected;
 
   bool get stopped;
+
+  void notifyRefresh();
 
   // List of URI schemes supported by the server
   Future<List<String>> getUriSchemes();
@@ -196,6 +204,9 @@ class MopidyServiceImpl extends MopidyService {
   final _trackPlaybackNotifier = ValueNotifier<TrackPlaybackInfo?>(null);
   final _playbackStateNotifier = ValueNotifier<PlaybackState?>(null);
 
+  /// Time position in currently playing track changed
+  final _seekedNotifier = ValueNotifier<int>(0);
+
   /// Notifier for mute or unmute.
   final _muteChangedNotifier = ValueNotifier<bool>(false);
 
@@ -211,8 +222,14 @@ class MopidyServiceImpl extends MopidyService {
   /// Notification if track was added to or deleted from a playlist.
   final _playlistChangedNotifier = ValueNotifier<Playlist?>(null);
 
+  /// Notification to trigger refresh.
+  final _refresh$ = PublishSubject<bool>();
+
   @override
   Stream<bool> get busyState$ => _busyState$.stream;
+
+  @override
+  Stream<bool> get refresh$ => _refresh$.stream;
 
   @override
   Stream<MopidyConnectionState> get connectionState$ => _connectionState$.stream;
@@ -225,6 +242,9 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   ValueNotifier<PlaybackState?> get playbackStateNotifier => _playbackStateNotifier;
+
+  @override
+  ValueNotifier<int> get seekedNotifier => _seekedNotifier;
 
   @override
   ValueNotifier<bool> get muteChangedNotifier => _muteChangedNotifier;
@@ -323,6 +343,10 @@ class MopidyServiceImpl extends MopidyService {
       playbackStateNotifier.value = playbackState;
     });
 
+    _mopidy.seeked$.listen((timePosition) {
+      seekedNotifier.value = timePosition;
+    });
+
     _mopidy.playlistDeleted$.listen((Uri uri) async {
       playlistsChangedNotifier.value = await _mopidy.playlists.asList();
     });
@@ -361,6 +385,11 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
+  void notifyRefresh() {
+    _refresh$.add(true);
+  }
+
+  @override
   Future<MopidyConnectionState> waitConnected() {
     if (!_connected) {
       return connectionState$.firstWhere((MopidyConnectionState info) {
@@ -392,7 +421,11 @@ class MopidyServiceImpl extends MopidyService {
     _connected = false;
     _mopidy.disconnect();
     logger.i("Connecting to $uri");
-    return await _mopidy.connect(webSocketUrl: uri, maxRetries: maxRetries);
+    bool success = await _mopidy.connect(webSocketUrl: uri, maxRetries: maxRetries);
+    if (success) {
+      notifyRefresh();
+    }
+    return success;
   }
 
   @override
@@ -408,7 +441,11 @@ class MopidyServiceImpl extends MopidyService {
     logger.i("Resuming connection");
     _connected = false;
     _mopidy.disconnect();
-    return await _mopidy.connect();
+    bool success = await _mopidy.connect();
+    if (success) {
+      notifyRefresh();
+    }
+    return success;
   }
 
   @override

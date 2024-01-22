@@ -19,6 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/extensions/timestring.dart';
@@ -48,16 +49,32 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
   late int timePosition;
   late int bitrate;
   late Duration duration;
+  late String playbackState;
+
   late AnimationController controller;
   String? previousPlaybackState;
+
+  // Update Position on seeked event
+  void trackSeekedListener() {
+    setState(() {
+      timePosition = mopidyService.seekedNotifier.value;
+      if (playbackState == PlaybackState.playing) {
+        controller.forward(from: calculateValue());
+      } else {
+        controller.stop();
+      }
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    mopidyService.seekedNotifier.addListener(trackSeekedListener);
     isStream = widget.isStream;
     timePosition = widget.timePosition;
     bitrate = widget.bitrate;
     duration = widget.duration;
+    playbackState = widget.playbackState;
     setupAnimation();
   }
 
@@ -75,7 +92,8 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
         });
       });
 
-    if (widget.playbackState == PlaybackState.playing) {
+    // Start animation immediately if track will be playing
+    if (playbackState == PlaybackState.playing) {
       controller.forward(from: calculateValue());
     }
   }
@@ -89,8 +107,6 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
 
     if (widget.duration != oldWidget.duration) {
       duration = widget.duration;
-      controller.reset();
-      controller.duration = widget.duration;
     }
 
     if (widget.bitrate != oldWidget.bitrate) {
@@ -99,6 +115,10 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
 
     if (widget.isStream != oldWidget.isStream) {
       isStream = widget.isStream;
+    }
+
+    if (widget.playbackState != oldWidget.playbackState) {
+      playbackState = widget.playbackState;
     }
 
     if (widget.playbackState != oldWidget.playbackState || widget.playbackState == PlaybackState.playing) {
@@ -116,6 +136,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
   @override
   void dispose() {
     controller.dispose();
+    mopidyService.seekedNotifier.removeListener(trackSeekedListener);
     super.dispose();
   }
 
@@ -163,8 +184,8 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
       Text(ep),
     ]);
 
-    var buttonChilds = widget.buttons != null ? [...widget.buttons!()] : [const SizedBox()];
-    var buttonRow = Row(mainAxisAlignment: MainAxisAlignment.end, children: buttonChilds);
+    var buttons = widget.buttons != null ? [...widget.buttons!()] : [const SizedBox()];
+    var buttonRow = Row(mainAxisAlignment: MainAxisAlignment.end, children: buttons);
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,

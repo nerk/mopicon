@@ -21,6 +21,7 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/extensions/timestring.dart';
 import 'package:mopicon/services/mopidy_service.dart';
@@ -46,22 +47,22 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
   final mopidyService = GetIt.instance<MopidyService>();
 
   late bool isStream;
-  late int timePosition;
   late int bitrate;
-  late Duration duration;
+
   late String playbackState;
 
-  late AnimationController controller;
+  late ProgressController ticker;
+
   String? previousPlaybackState;
 
   // Update Position on seeked event
   void trackSeekedListener() {
     setState(() {
-      timePosition = mopidyService.seekedNotifier.value;
+      ticker.time = mopidyService.seekedNotifier.value;
       if (playbackState == PlaybackState.playing) {
-        controller.forward(from: calculateValue());
+        ticker.start();
       } else {
-        controller.stop();
+        ticker.pause();
       }
     });
   }
@@ -71,30 +72,16 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
     super.initState();
     mopidyService.seekedNotifier.addListener(trackSeekedListener);
     isStream = widget.isStream;
-    timePosition = widget.timePosition;
     bitrate = widget.bitrate;
-    duration = widget.duration;
     playbackState = widget.playbackState;
-    setupAnimation();
-  }
 
-  double calculateValue() {
-    return duration.inMilliseconds > 0 ? timePosition / duration.inMilliseconds : 0;
-  }
-
-  setupAnimation() async {
-    controller = AnimationController(
-      vsync: this,
-      duration: duration,
-    )..addListener(() {
-        setState(() {
-          timePosition = (duration.inMilliseconds * controller.value).toInt();
-        });
-      });
-
-    // Start animation immediately if track will be playing
+    ticker = ProgressController((pos) {
+      setState(() {});
+    });
+    ticker.duration = widget.duration;
+    ticker.time = widget.timePosition;
     if (playbackState == PlaybackState.playing) {
-      controller.forward(from: calculateValue());
+      ticker.start();
     }
   }
 
@@ -102,11 +89,11 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
   void didUpdateWidget(PlayingProgressIndicator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.timePosition != oldWidget.timePosition) {
-      timePosition = widget.timePosition;
+      ticker.time = widget.timePosition;
     }
 
     if (widget.duration != oldWidget.duration) {
-      duration = widget.duration;
+      ticker.duration = widget.duration;
     }
 
     if (widget.bitrate != oldWidget.bitrate) {
@@ -123,55 +110,51 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
 
     if (widget.playbackState != oldWidget.playbackState || widget.playbackState == PlaybackState.playing) {
       if (widget.playbackState == PlaybackState.paused) {
-        controller.stop(canceled: false);
+        ticker.pause();
       } else if (widget.playbackState == PlaybackState.stopped) {
-        controller.stop(canceled: true);
-        controller.reset();
+        ticker.cancel();
       } else if (widget.playbackState == PlaybackState.playing) {
-        controller.forward(from: calculateValue());
+        ticker.start();
       }
     }
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    ticker.dispose();
     mopidyService.seekedNotifier.removeListener(trackSeekedListener);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    String cp = timePosition.millisToTimeString();
-    String ep = duration.inMilliseconds.millisToTimeString();
-
     var slider = Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, mainAxisSize: MainAxisSize.max, children: [
-      Text(cp),
+      Text(ticker.timeLabel),
       Expanded(
           child: Slider(
-        value: calculateValue(),
+        value: ticker.sliderValue,
         onChangeStart: (double value) async {
           try {
             previousPlaybackState = await mopidyService.getPlaybackState();
+            ticker.pause();
           } catch (e) {
             logger.e(e);
           }
         },
         onChanged: (double value) {
-          if (previousPlaybackState != PlaybackState.stopped) {
-            controller.value = value;
-          }
+          setState(() {
+            ticker.sliderValue = value;
+          });
         },
         onChangeEnd: (double value) async {
           try {
-            var pos = (duration.inMilliseconds * value).toInt();
+            var pos = ticker.positionFromSliderValue(value);
             bool success = await mopidyService.seek(pos);
             if (success) {
-              controller.value = value;
-              timePosition = pos;
-              controller.forward(from: calculateValue());
+              ticker.sliderValue = value;
               // needs restart because 'seek' stops player.
               if (previousPlaybackState == PlaybackState.playing) {
+                ticker.start();
                 await mopidyService.playback(PlaybackAction.resume, null);
               }
               setState(() {});
@@ -181,7 +164,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
           }
         },
       )),
-      Text(ep),
+      Text(ticker.durationLabel),
     ]);
 
     var buttons = widget.buttons != null ? [...widget.buttons!()] : [const SizedBox()];
@@ -191,5 +174,59 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [!isStream ? slider : const SizedBox(), buttonRow]);
+  }
+}
+
+class ProgressController {
+  int _fromTime = 0;
+  int _time = 0;
+  Duration duration = const Duration();
+  late Ticker _ticker;
+
+  ProgressController(void Function(int position) cb) {
+    _ticker = Ticker((Duration elapsed) {
+      _time = _fromTime + elapsed.inMilliseconds;
+      cb(_time);
+    });
+  }
+
+  double get sliderValue => duration.inMilliseconds > 0 ? _time / duration.inMilliseconds : 0;
+
+  set sliderValue(double value) {
+    _fromTime = (duration.inMilliseconds * value).toInt();
+    _time = _fromTime;
+  }
+
+  int get time => _time;
+
+  set time(int value) {
+    _time = _fromTime = value;
+  }
+
+  String get timeLabel => _time.millisToTimeString();
+
+  String get durationLabel => duration.inMilliseconds.millisToTimeString();
+
+  void start() {
+    _ticker.stop();
+    _ticker.start();
+  }
+
+  void pause() {
+    _fromTime = _time;
+    _ticker.stop();
+  }
+
+  void cancel() {
+    _fromTime = _time;
+    _ticker.stop(canceled: true);
+  }
+
+  void dispose() {
+    _ticker.dispose();
+  }
+
+  int positionFromSliderValue(double value) {
+    return (duration.inMilliseconds * value).toInt();
   }
 }

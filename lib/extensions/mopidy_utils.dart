@@ -30,11 +30,15 @@ final _coverService = GetIt.instance<CoverService>();
 /// Tests if a string represents a stream URI.
 extension MopiStringExtensions on String {
   bool isStreamUri() {
-    return ['http:', 'https:', 'mms:', 'rtmp:', 'rtmps:', 'rtsp:']
+    return ['http:', 'https:', 'mms:', 'rtmp:', 'rtmps:', 'rtsp:', 'tunein', 'podcast']
         .map((e) => startsWith(e) ? true : null)
         .nonNulls
         .toList()
         .isNotEmpty;
+  }
+
+  bool isPodcastUri() {
+    return startsWith('podcast');
   }
 }
 

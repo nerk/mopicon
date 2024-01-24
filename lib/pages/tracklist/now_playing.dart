@@ -53,23 +53,23 @@ class NowPlaying extends StatelessWidget {
     int bitrate = 0;
 
     if (currentTlTrack != null) {
-      if (isStream) {
+      length = currentTlTrack!.track.length ?? 0;
+      date = currentTlTrack!.track.date ?? '';
+      trackNo = currentTlTrack!.track.trackNo ?? 0;
+      bitrate = currentTlTrack!.track.bitrate ?? 0;
+      // If this is an infinite stream, i.p. length is 0
+      if (isStream && length == 0) {
         artistName = currentTlTrack!.track.name; // Station name
         title = streamTitle != null ? streamTitle! : artistName;
         if (title == artistName) {
           artistName = '';
         }
         albumName = currentTlTrack!.track.uri;
-        bitrate = currentTlTrack!.track.bitrate ?? 0;
       } else {
         title = currentTlTrack!.track.name;
         artistName = currentTlTrack!.track.artists.map((e) => e.name).nonNulls.join(', ');
         albumName = currentTlTrack!.track.album?.name ?? '';
-        length = currentTlTrack!.track.length ?? 0;
-        date = currentTlTrack!.track.date ?? '';
         discNo = currentTlTrack!.track.discNo ?? 0;
-        trackNo = currentTlTrack!.track.trackNo ?? 0;
-        bitrate = currentTlTrack!.track.bitrate ?? 0;
       }
     }
 
@@ -80,8 +80,8 @@ class NowPlaying extends StatelessWidget {
     }
   }
 
-  Widget _big(BuildContext context, String title, String artistName, String albumName, length, date, discNo, trackNo,
-      int bitrate) {
+  Widget _big(BuildContext context, String title, String artistName, String albumName, int length, String date,
+      int discNo, int trackNo, int bitrate) {
     return Expanded(
         flex: 1,
         child: Column(
@@ -94,13 +94,11 @@ class NowPlaying extends StatelessWidget {
               Center(child: Text(albumName, style: const TextStyle(fontSize: 14.0, fontStyle: FontStyle.italic)))
             ]),
             Column(children: [
-              !isStream
-                  ? Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-                      Text(S.of(context).nowPlayingDiscLbl(discNo)),
-                      Text(S.of(context).nowPlayingTrackNoLbl(trackNo)),
-                      Text(S.of(context).nowPlayingDateLbl(date)),
-                    ])
-                  : const SizedBox(),
+              Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+                if (!isStream) Text(S.of(context).nowPlayingDiscLbl(discNo)),
+                if (trackNo != 0) Text(S.of(context).nowPlayingTrackNoLbl(trackNo)),
+                if (date.isNotEmpty) Text(S.of(context).nowPlayingDateLbl(date)),
+              ]),
               PlayingProgressIndicator(
                   Duration(milliseconds: length), playbackState, timePosition, bitrate, _getButtons, isStream)
             ]),

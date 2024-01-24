@@ -173,7 +173,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [!isStream ? slider : const SizedBox(), buttonRow]);
+        children: [!isStream || widget.duration.inMilliseconds > 0 ? slider : const SizedBox(), buttonRow]);
   }
 }
 

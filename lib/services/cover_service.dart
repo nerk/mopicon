@@ -23,7 +23,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 import 'mopidy_service.dart';
-import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 abstract class CoverService {
@@ -41,7 +40,7 @@ class CoverServiceImpl extends CoverService {
   @override
   Future<Widget> getImage(String? uri) async {
     if (uri == null) {
-      return ImageUtils.pad(CoverService.defaultImage, 3);
+      return CoverService.defaultImage;
     }
     return Future<Widget>.value((await getImages([uri]))[uri]);
   }
@@ -67,11 +66,11 @@ class CoverServiceImpl extends CoverService {
             _preferences.computeNetworkUrl(mImage),
             errorBuilder: (BuildContext context, Object obj, StackTrace? st) {
               logger.e(obj.toString());
-              return CoverService.defaultImage;
+              return img;
             },
           );
         }
-        result[uri] = ImageUtils.pad(img, 3);
+        result[uri] = img;
       }
     } catch (e, s) {
       logger.e(e, stackTrace: s);

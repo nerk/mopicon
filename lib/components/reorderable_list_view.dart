@@ -71,7 +71,7 @@ class ReorderableTrackListView<T extends Object> {
   Widget buildListView() {
     var listView = ReorderableListView.builder(
         buildDefaultDragHandles: false,
-        shrinkWrap: items.length > 500,
+        shrinkWrap: true,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) => _listItem(items[index], index),
         onReorder: (int start, int current) {
@@ -88,7 +88,7 @@ class ReorderableTrackListView<T extends Object> {
     var track = item is Track ? item : (item as TlTrack).track;
 
     var listTile = ListTile(
-        contentPadding: const EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.only(left: 3, right: 3, top: 0, bottom: 0),
         tileColor: index == markedItemIndex ? _preferences.theme.data.colorScheme.inversePrimary : null,
         onTap: () async {
           if (selectionModeChangedNotifier.value == SelectionMode.on) {

@@ -69,9 +69,9 @@ class LibraryListView {
     }
   }
 
-  ListView build() {
+  Widget build() {
     var listView = ListView.separated(
-      shrinkWrap: items.length > 500,
+      shrinkWrap: true,
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) => _buildItem(context, index),
       separatorBuilder: (BuildContext context, int index) => parent == null &&
@@ -79,11 +79,11 @@ class LibraryListView {
               index < items.length - 1 &&
               items[index + 1].type == Ref.typePlaylist
           ? TitledDivider(S.of(context).libraryPlaylistSeparator)
-          : const SizedBox(),
+          : const SizedBox.shrink(),
       //leading: null,
     );
 
-    return listView;
+    return Material(child: listView);
   }
 
   Widget _buildItem(BuildContext context, int index) {
@@ -125,7 +125,7 @@ class LibraryListView {
     Ref item = items[index];
     var listTile = ListTile(
         key: Key("$index$item.uri"),
-        contentPadding: const EdgeInsets.all(0),
+        contentPadding: const EdgeInsets.only(left: 3, right: 3, top: 5, bottom: 5),
         onLongPress: item.type == Ref.typeTrack || item.type == Ref.typePlaylist
             ? () {
                 selectionModeChangedNotifier.value = SelectionMode.on;

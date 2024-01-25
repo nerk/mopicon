@@ -25,11 +25,13 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/playing_progress.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
+import 'package:mopicon/utils/image_utils.dart';
+import 'package:mopicon/components/rd_list_tile.dart';
 import 'package:mopicon/generated/l10n.dart';
 
 class NowPlaying extends StatelessWidget {
   final bool splitPage;
-  final Widget? cover;
+  final Widget cover;
   final TlTrack? currentTlTrack;
   final String playbackState;
   final int timePosition;
@@ -88,7 +90,7 @@ class NowPlaying extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(children: [
-              Container(padding: const EdgeInsets.all(8), child: Center(child: cover ?? const Icon(null))),
+              Container(padding: const EdgeInsets.all(8), child: Center(child: cover)),
               Center(child: Text(title, style: const TextStyle(fontSize: 20.0))),
               Center(child: Text(artistName, style: const TextStyle(fontSize: 18.0))),
               Center(child: Text(albumName, style: const TextStyle(fontSize: 14.0, fontStyle: FontStyle.italic)))
@@ -111,11 +113,15 @@ class NowPlaying extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        ListTile(
-          isThreeLine: true,
-          leading: cover ?? const Icon(null),
-          title: Text(title),
-          subtitle: Text(artistName),
+        RdListTile(
+          0,
+          //isThreeLine: true,
+          leading: ImageUtils.resize(cover, 40, 40),
+          title: Text(
+            title,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+          ),
+          subtitle: Text(artistName, style: const TextStyle(fontSize: 12)),
           //trailing: Row(mainAxisSize: MainAxisSize.min, children: _getButtons()),
         ),
         PlayingProgressIndicator(

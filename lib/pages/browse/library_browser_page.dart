@@ -52,7 +52,7 @@ class LibraryBrowserPage extends StatefulWidget {
 class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   Ref? parent;
   List<Ref> items = [];
-  var images = <String, Widget>{};
+  var images = <String, Widget?>{};
 
   // selection mode (single/multiple) of track list view
   SelectionMode selectionMode = SelectionMode.off;

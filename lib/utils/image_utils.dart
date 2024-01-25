@@ -33,7 +33,7 @@ var _iconMap = <String, IconData>{
 };
 
 class ImageUtils {
-  static const double defaultThumbnailSize = 40.0;
+  static const double defaultThumbnailSize = 100.0;
   static const double defaultCoverSize = 100.0;
 
   static get noIcon => const Icon(null, size: defaultThumbnailSize);

@@ -22,7 +22,6 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/tracklist/now_playing.dart';
 import 'package:mopicon/components/action_buttons.dart';
@@ -52,7 +51,7 @@ class _TrackListState extends State<TrackListPage> {
 
   // all tracks on the tracklist
   List<TlTrack> tracks = [];
-  var images = <String, Widget>{};
+  var images = <String, Widget?>{};
 
   // currently active track
   int? playingTlId;
@@ -79,17 +78,21 @@ class _TrackListState extends State<TrackListPage> {
   StreamSubscription? refreshSubscription;
 
   TlTrack? getTrackByTlid(int? tlid) {
-    return tracks.firstWhereOrNull((element) => tlid == element.tlid);
+    return tlid != null ? tracks.firstWhere((element) => tlid == element.tlid) : null;
   }
 
   int? getPositionByTlid(int? tlid) {
-    return tracks.indexWhere((element) => tlid == element.tlid);
+    return tlid != null ? tracks.indexWhere((element) => tlid == element.tlid) : null;
   }
 
   Widget getImage(TlTrack? track) {
-    return splitEnabled
-        ? (images[track?.track.uri] ?? CoverService.defaultImage)
-        : ImageUtils.roundedCornersWithPadding(images[track?.track.uri] ?? CoverService.defaultImage, 200, 200);
+    Widget w = CoverService.defaultTrack;
+    if (track != null) {
+      String uri = track.track.uri;
+      w = images[uri] ??
+          (uri.isStreamUri() ? ImageUtils.getIconForType(uri, Ref.typeTrack) : CoverService.defaultTrack);
+    }
+    return splitEnabled ? FittedBox(fit: BoxFit.cover, child: w) : ImageUtils.roundedCornersWithPadding(w, 200, 200);
   }
 
   // updates track list view from current track list and

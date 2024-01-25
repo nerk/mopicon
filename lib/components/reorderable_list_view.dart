@@ -25,7 +25,9 @@ import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/utils/image_utils.dart';
 import '../common/selected_item_positions.dart';
+import 'rd_list_tile.dart';
 
 typedef OnReorderCallback = void Function(int start, int current);
 typedef OnTapCallback<T> = void Function(T item, int index);
@@ -36,7 +38,7 @@ class ReorderableTrackListView<T extends Object> {
   // uri/image map
   final BuildContext context;
   final List<T> items;
-  final Map<String, Widget> images;
+  final Map<String, Widget?> images;
   final SelectionChangedNotifier selectionChangedNotifier;
   final SelectionModeChangedNotifier selectionModeChangedNotifier;
   final OnReorderCallback? onReorder;
@@ -57,21 +59,27 @@ class ReorderableTrackListView<T extends Object> {
     checked = toggle ? !checked : checked;
     if (checked) {
       return Padding(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(0),
         child: CircleAvatar(
           backgroundColor: _preferences.theme.data.colorScheme.inversePrimary,
           child: const Icon(Icons.check),
         ),
       );
     } else {
-      return images[getUri(item)] ?? CoverService.defaultImage;
+      String? uri = getUri(item);
+      Widget? w = images[uri];
+      w = w ??
+          (uri != null && uri.isStreamUri()
+              ? ImageUtils.getIconForType(uri, Ref.typeTrack)
+              : CoverService.defaultTrack);
+      return FittedBox(fit: BoxFit.cover, child: w);
     }
   }
 
   Widget buildListView() {
     var listView = ReorderableListView.builder(
         buildDefaultDragHandles: false,
-        shrinkWrap: true,
+        shrinkWrap: items.length > 200,
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) => _listItem(items[index], index),
         onReorder: (int start, int current) {
@@ -87,51 +95,40 @@ class ReorderableTrackListView<T extends Object> {
   Widget _listItem(T item, int index) {
     var track = item is Track ? item : (item as TlTrack).track;
 
-    var listTile = ListTile(
-        contentPadding: const EdgeInsets.only(left: 3, right: 3, top: 0, bottom: 0),
-        tileColor: index == markedItemIndex ? _preferences.theme.data.colorScheme.inversePrimary : null,
-        onTap: () async {
-          if (selectionModeChangedNotifier.value == SelectionMode.on) {
-            selectedPositions.toggle(index);
-            selectionChangedNotifier.value = selectedPositions;
-            selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
-          } else if (onTap != null) {
-            onTap!(item, index);
-          }
-        },
-        leading: GestureDetector(
-            onLongPress: () {
-              selectionModeChangedNotifier.value = SelectionMode.on;
-              selectedPositions.set(index);
-              selectionChangedNotifier.value = selectedPositions;
-            },
-            child: _getImage(item, index, false)),
-        title: Text(track.name),
-        subtitle: track.artistNames != null ? Text(track.artistNames!) : null);
-
-    return Dismissible(
-        key: Key("$index$item"),
-        background: Container(
-          color: _preferences.theme.data.colorScheme.onBackground,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(padding: const EdgeInsets.only(left: 4), child: _getImage(item, index, true)),
-          ),
-        ),
-        confirmDismiss: (direction) async {
-          if (direction == DismissDirection.startToEnd) {
-            selectedPositions.toggle(index);
-            selectionChangedNotifier.value = selectedPositions;
-            selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
-          }
-          return false;
-        },
-        child: onReorder != null
-            ? ReorderableDelayedDragStartListener(
-                key: Key("$index$item.uri"),
-                index: index,
-                child: listTile,
-              )
-            : listTile);
+    return RdListTile(
+      index,
+      key: Key("$index tile"),
+      canReorder: onReorder != null,
+      leading: ImageUtils.resize(_getImage(item, index, false), 40, 40),
+      title: Text(
+        track.name,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+      ),
+      subtitle: track.artistNames != null ? Text(track.artistNames!, style: const TextStyle(fontSize: 12)) : null,
+      tileColor: index == markedItemIndex ? _preferences.theme.data.colorScheme.inversePrimary : null,
+      dismissibleBackgroundColor: _preferences.theme.data.colorScheme.inversePrimary,
+      onTap: () async {
+        if (selectionModeChangedNotifier.value == SelectionMode.on) {
+          selectedPositions.toggle(index);
+          selectionChangedNotifier.value = selectedPositions;
+          selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
+        } else if (onTap != null) {
+          onTap!(item, index);
+        }
+      },
+      onLongPress: () {
+        selectionModeChangedNotifier.value = SelectionMode.on;
+        selectedPositions.set(index);
+        selectionChangedNotifier.value = selectedPositions;
+      },
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          selectedPositions.toggle(index);
+          selectionChangedNotifier.value = selectedPositions;
+          selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
+        }
+        return false;
+      },
+    );
   }
 }

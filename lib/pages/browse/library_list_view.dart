@@ -22,7 +22,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/components/titled_divider.dart';
+import 'package:mopicon/components/rd_list_tile.dart';
 import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
@@ -37,7 +39,7 @@ class LibraryListView {
   // uri/image map
   final Ref? parent;
   final List<Ref> items;
-  final Map<String, Widget> images;
+  final Map<String, Widget?> images;
   final SelectionChangedNotifier selectionChangedNotifier;
   final SelectionModeChangedNotifier selectionModeChangedNotifier;
   final void Function(Ref item, int index)? onTap;
@@ -55,23 +57,26 @@ class LibraryListView {
     checked = toggle ? !checked : checked;
     if (checked) {
       return Padding(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(0),
         child: CircleAvatar(
           backgroundColor: preferences.theme.data.colorScheme.inversePrimary,
           child: const Icon(Icons.check),
         ),
       );
     } else if (item.type == Ref.typeTrack) {
-      Widget? w = images[getUri(item)];
-      return w ?? ImageUtils.getIconForType(item.uri, item.type);
+      String? uri = getUri(item);
+      Widget? w = images[uri];
+      w = w ??
+          (uri != null && uri.isStreamUri() ? ImageUtils.getIconForType(uri, item.type) : CoverService.defaultTrack);
+      return FittedBox(fit: BoxFit.cover, child: w);
     } else {
-      return ImageUtils.getIconForType(item.uri, item.type);
+      return FittedBox(fit: BoxFit.cover, child: ImageUtils.getIconForType(item.uri, item.type));
     }
   }
 
   Widget build() {
     var listView = ListView.separated(
-      shrinkWrap: true,
+      shrinkWrap: items.length > 200,
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) => _buildItem(context, index),
       separatorBuilder: (BuildContext context, int index) => parent == null &&
@@ -123,43 +128,37 @@ class LibraryListView {
 
   Widget _listItem(BuildContext context, int index, void Function() onTapped) {
     Ref item = items[index];
-    var listTile = ListTile(
-        key: Key("$index$item.uri"),
-        contentPadding: const EdgeInsets.only(left: 3, right: 3, top: 5, bottom: 5),
-        onLongPress: item.type == Ref.typeTrack || item.type == Ref.typePlaylist
-            ? () {
-                selectionModeChangedNotifier.value = SelectionMode.on;
-                selectedPositions.set(index);
-                selectionChangedNotifier.value = selectedPositions;
-              }
-            : null,
-        onTap: onTapped,
-        leading: _getImage(item, index, false),
-        title: Text(item.name),
-        subtitle: item.artistNames != null ? Text(item.artistNames!) : null);
 
-    if (item.type == Ref.typeTrack || item.type == Ref.typePlaylist) {
-      return Dismissible(
-          key: Key("$index$item"),
-          background: Container(
-            color: preferences.theme.data.colorScheme.onBackground,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(padding: const EdgeInsets.only(left: 4), child: _getImage(item, index, true)),
-            ),
-          ),
-          confirmDismiss: (direction) async {
-            if (direction == DismissDirection.startToEnd) {
-              selectedPositions.toggle(index);
+    return RdListTile(
+      index,
+      key: Key("$index$item.uri"),
+      onLongPress: item.type == Ref.typeTrack || item.type == Ref.typePlaylist
+          ? () {
+              selectionModeChangedNotifier.value = SelectionMode.on;
+              selectedPositions.set(index);
               selectionChangedNotifier.value = selectedPositions;
-              selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
             }
-            return false;
-          },
-          child: listTile);
-    } else {
-      return listTile;
-    }
+          : null,
+      onTap: onTapped,
+      leading: ImageUtils.resize(_getImage(item, index, false), 40, 40),
+      title: Text(
+        item.name,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+      ),
+      subtitle: item.artistNames != null ? Text(item.artistNames!, style: const TextStyle(fontSize: 12)) : null,
+      dismissibleBackgroundColor: preferences.theme.data.colorScheme.inversePrimary,
+      canReorder: false,
+      confirmDismiss: (item.type == Ref.typeTrack || item.type == Ref.typePlaylist)
+          ? (direction) async {
+              if (direction == DismissDirection.startToEnd) {
+                selectedPositions.toggle(index);
+                selectionChangedNotifier.value = selectedPositions;
+                selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
+              }
+              return false;
+            }
+          : null,
+    );
   }
 
   Widget _albumItem(BuildContext context, int index, Ref? parent, Function() onTapped) {
@@ -175,8 +174,8 @@ class LibraryListView {
     return Card(
         child: AlbumListItem(
             item,
-            ImageUtils.roundedCornersWithPadding(
-                images[item.uri], ImageUtils.defaultCoverSize, ImageUtils.defaultCoverSize),
+            ImageUtils.roundedCornersWithPadding(images[item.uri] ?? CoverService.defaultAlbum,
+                ImageUtils.defaultCoverSize, ImageUtils.defaultCoverSize),
             item.name,
             artistName,
             numTracks,

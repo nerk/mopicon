@@ -26,11 +26,12 @@ import 'mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 abstract class CoverService {
-  static final defaultImage = Image.asset('assets/album_default.png');
+  static final defaultAlbum = Image.asset('assets/jewel_case.png', fit: BoxFit.cover);
+  static final defaultTrack = Image.asset('assets/note.png', fit: BoxFit.cover);
 
-  Future<Widget> getImage(String uri);
+  Future<Widget?> getImage(String uri);
 
-  Future<Map<String, Widget>> getImages(List<String> uris);
+  Future<Map<String, Widget?>> getImages(List<String> uris);
 }
 
 class CoverServiceImpl extends CoverService {
@@ -38,24 +39,24 @@ class CoverServiceImpl extends CoverService {
   final _preferences = GetIt.instance<PreferencesController>();
 
   @override
-  Future<Widget> getImage(String? uri) async {
+  Future<Widget?> getImage(String? uri) async {
     if (uri == null) {
-      return CoverService.defaultImage;
+      return CoverService.defaultAlbum;
     }
     return Future<Widget>.value((await getImages([uri]))[uri]);
   }
 
   @override
-  Future<Map<String, Widget>> getImages(List<String> uris) async {
+  Future<Map<String, Widget?>> getImages(List<String> uris) async {
     if (uris.isEmpty) {
       return {};
     }
 
-    var result = <String, Widget>{};
+    var result = <String, Widget?>{};
     try {
       Map<String, List<MImage>> images = await _mopidyService.getImages(uris);
       for (var uri in images.keys) {
-        Image img = CoverService.defaultImage;
+        Image? img;
         MImage? mImage;
         if (images[uri] != null && images[uri]!.isNotEmpty) {
           mImage = images[uri]!.first;
@@ -66,9 +67,10 @@ class CoverServiceImpl extends CoverService {
             _preferences.computeNetworkUrl(mImage),
             errorBuilder: (BuildContext context, Object obj, StackTrace? st) {
               logger.e(obj.toString());
-              return img;
+              return CoverService.defaultAlbum;
             },
           );
+          img = img == CoverService.defaultAlbum ? null : img;
         }
         result[uri] = img;
       }

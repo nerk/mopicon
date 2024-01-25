@@ -50,7 +50,7 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController textEditingController = TextEditingController();
 
   List<Track> tracks = [];
-  var images = <String, Widget>{};
+  var images = <String, Widget?>{};
 
   bool searchSupported = false;
 

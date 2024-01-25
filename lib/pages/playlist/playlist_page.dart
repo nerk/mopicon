@@ -51,7 +51,7 @@ class PlaylistPage extends StatefulWidget {
 class _PlaylistPageState extends State<PlaylistPage> {
   late Ref playlist;
   List<Track> tracks = [];
-  var images = <String, Widget>{};
+  var images = <String, Widget?>{};
 
   StreamSubscription? refreshSubscription;
 

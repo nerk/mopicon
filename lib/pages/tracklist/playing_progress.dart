@@ -211,6 +211,7 @@ class ProgressController {
   String get durationLabel => duration.inMilliseconds.millisToTimeString();
 
   void start() {
+    _fromTime = _time;
     _ticker.stop();
     _ticker.start();
   }

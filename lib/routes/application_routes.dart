@@ -150,6 +150,12 @@ class ApplicationRoutes {
                 ]),
                 StatefulShellBranch(routes: <RouteBase>[
                   GoRoute(
+                    redirect: (BuildContext context, GoRouterState state) {
+                      // Use redirect to update TrackListPage's state
+                      final controller = GetIt.instance<TracklistViewController>();
+                      controller.notifyRefresh();
+                      return null;
+                    },
                     // unselect all potentially selected items
                     // and reset selection mode on exit
                     onExit: (BuildContext c) {

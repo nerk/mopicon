@@ -182,8 +182,10 @@ class ProgressController {
   int _time = 0;
   Duration duration = const Duration();
   late Ticker _ticker;
+  late void Function(int position) callback;
 
   ProgressController(void Function(int position) cb) {
+    callback = cb;
     _ticker = Ticker((Duration elapsed) {
       _time = _fromTime + elapsed.inMilliseconds;
       cb(_time);
@@ -201,6 +203,7 @@ class ProgressController {
 
   set time(int value) {
     _time = _fromTime = value;
+    callback(_time);
   }
 
   String get timeLabel => _time.millisToTimeString();

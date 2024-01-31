@@ -50,7 +50,7 @@ jobs:
           echo version: ${{ steps.read_action_js.outputs['version'] }}
 
       - name: create tag
-        uses: rymndhng/release-on-push-action@main
+        uses: rymndhng/release-on-push-action@v0.28.0
         with:
           tag_prefix: "v"
           release_name: ${{ steps.read_action_js.outputs['version'] }}

@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   version:
@@ -28,6 +29,31 @@ jobs:
         with:
           name: gitversion
           path: version.txt
+
+  read-yaml:
+    name: Tag a release
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: read-yaml-file
+        uses: pietrobolcato/action-read-yaml@1.0.0
+        id: read_action_js
+        with:
+          config: ${{ github.workspace }}/pubspec.yaml
+
+      - name: use-yaml-file
+        run: |
+          echo version: ${{ steps.read_action_js.outputs['version'] }}
+
+      - name: create tag
+      - uses: rymndhng/release-on-push-action@main
+        with:
+          tag_prefix: "v"
+          release_name: ${{ steps.read_action_js.outputs['version'] }}
 
   build-and-release-android:
     runs-on: ubuntu-latest

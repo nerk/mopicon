@@ -1,4 +1,4 @@
-name: Build and release development version
+name: Create a release
 
 on:
   #push:

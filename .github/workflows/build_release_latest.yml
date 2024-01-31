@@ -1,10 +1,10 @@
 name: Build and release development version
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  #push:
+  #branches: [ "main" ]
+  #pull_request:
+  #branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -82,7 +82,7 @@ jobs:
         with:
           name: Release ${{steps.read_action_js.outputs['version']}}
           tag_name: ${{steps.read_action_js.outputs['version']}}
-          prerelease: true
+          prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/app/outputs/flutter-apk/mopicon-${{steps.read_action_js.outputs['version']}}-apk.zip
       - name: Android App Bundle Release
         uses: softprops/action-gh-release@v1
@@ -92,7 +92,7 @@ jobs:
         with:
           name: Release ${{steps.read_action_js.outputs['version']}}
           tag_name: ${{steps.read_action_js.outputs['version']}}
-          prerelease: true
+          prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/app/outputs/bundle/release/mopicon-${{steps.read_action_js.outputs['version']}}-appbundle.zip
 
   build-and-release-windows:
@@ -131,7 +131,7 @@ jobs:
         with:
           name: Release ${{steps.read_action_js.outputs['version']}}
           tag_name: ${{steps.read_action_js.outputs['version']}}
-          prerelease: true
+          prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/windows/x64/runner/Release/mopicon-${{steps.read_action_js.outputs['version']}}-windows-x64.zip
 
   build-and-release-ubuntu-20-04:
@@ -178,7 +178,7 @@ jobs:
         with:
           name: Release ${{steps.read_action_js.outputs['version']}}
           tag_name: ${{steps.read_action_js.outputs['version']}}
-          prerelease: true
+          prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/linux/x64/release/bundle/mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-20_04-x64.zip
 
   build-and-release-ubuntu-22-04:
@@ -225,5 +225,5 @@ jobs:
         with:
           name: Release ${{steps.read_action_js.outputs['version']}}
           tag_name: ${{steps.read_action_js.outputs['version']}}
-          prerelease: true
+          prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/linux/x64/release/bundle/mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-22_04-x64.zip

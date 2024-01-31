@@ -22,6 +22,7 @@
 import 'dart:async';
 import 'package:mopidy_client/mopidy_client.dart' hide Image;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'app_themes.dart';
 export 'app_themes.dart';
@@ -33,6 +34,10 @@ abstract class PreferencesController {
   Stream<void> get preferencesChanged$;
 
   String get version;
+
+  String get buildNumber;
+
+  String get appName;
 
   Future<void> load();
 
@@ -74,7 +79,9 @@ abstract class PreferencesController {
 }
 
 class PreferencesControllerImpl extends PreferencesController {
-  static const _version = '1.0.0';
+  String _appName = '';
+  String _version = '';
+  String _buildNumber = '';
 
   final _preferencesChanged$ = PublishSubject<void>();
 
@@ -83,6 +90,11 @@ class PreferencesControllerImpl extends PreferencesController {
 
   PreferencesControllerImpl() {
     SharedPreferences.setPrefix('$_version-');
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      _appName = packageInfo.appName;
+      _version = packageInfo.version;
+      _buildNumber = packageInfo.buildNumber;
+    });
   }
 
   bool valid = true;
@@ -101,6 +113,12 @@ class PreferencesControllerImpl extends PreferencesController {
 
   @override
   String get version => _version;
+
+  @override
+  String get buildNumber => _buildNumber;
+
+  @override
+  String get appName => _appName;
 
   @override
   Future<void> load() async {

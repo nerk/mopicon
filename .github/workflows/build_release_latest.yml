@@ -7,6 +7,26 @@ on:
     branches: [ "main" ]
 
 jobs:
+  version:
+    name: Create version number
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: "5.x"
+      - name: Use GitVersion
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.7
+      - name: Create version.txt with nuGetVersion
+        run: echo ${{ steps.gitversion.outputs.nuGetVersion  }} > version.txt
+      - name: Upload version.txt
+        uses: actions/upload-artifact@v2
+        with:
+          name: gitversion
+          path: version.txt
+
   build-and-release-android:
     runs-on: ubuntu-latest
 
@@ -20,10 +40,12 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+          cache: 'gradle'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.3'
           channel: 'stable'
+          cache: true
       - name: Generate intermediates
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Enable Android build
@@ -112,10 +134,12 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+          cache: 'gradle'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.3'
           channel: 'stable'
+          cache: true
       - name: Generate intermediates
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Enable linux build
@@ -152,10 +176,12 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+          cache: 'gradle'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.16.3'
           channel: 'stable'
+          cache: true
       - name: Generate intermediates
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Enable linux build

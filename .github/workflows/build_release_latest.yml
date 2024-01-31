@@ -30,31 +30,6 @@ jobs:
           name: gitversion
           path: version.txt
 
-  read-yaml:
-    name: Tag a release
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-
-      - name: read-yaml-file
-        uses: pietrobolcato/action-read-yaml@1.1.0
-        id: read_action_js
-        with:
-          config: ${{ github.workspace }}/pubspec.yaml
-
-      - name: use-yaml-file
-        run: |
-          echo version: ${{ steps.read_action_js.outputs['version'] }}
-
-      - name: create tag
-        uses: rymndhng/release-on-push-action@v0.28.0
-        with:
-          tag_prefix: "v"
-          release_name: ${{ steps.read_action_js.outputs['version'] }}
-
   build-and-release-android:
     runs-on: ubuntu-latest
 
@@ -74,6 +49,11 @@ jobs:
           flutter-version: '3.16.3'
           channel: 'stable'
           cache: true
+      - name: read-yaml-file
+        uses: pietrobolcato/action-read-yaml@1.1.0
+        id: read_action_js
+        with:
+          config: ${{ github.workspace }}/pubspec.yaml
       - name: Generate intermediates
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Enable Android build
@@ -86,13 +66,13 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-apk.zip
+          filename: mopicon-${{steps.read_action_js.outputs['version']}}-apk.zip
           directory: build/app/outputs/flutter-apk
       - name: Archive App Bundle Release
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-appbundle.zip
+          filename: mopicon-${{steps.read_action_js.outputs['version']}}-appbundle.zip
           directory: build/app/outputs/bundle/release
       - name: Android APK Release
         uses: softprops/action-gh-release@v1
@@ -100,20 +80,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Development Release
-          tag_name: latest
+          name: Release ${{steps.read_action_js.outputs['version']}}
+          tag_name: ${{steps.read_action_js.outputs['version']}}
           prerelease: true
-          files: build/app/outputs/flutter-apk/mopicon-${{github.ref_name}}-apk.zip
+          files: build/app/outputs/flutter-apk/mopicon-${{steps.read_action_js.outputs['version']}}-apk.zip
       - name: Android App Bundle Release
         uses: softprops/action-gh-release@v1
         #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Development Release
-          tag_name: latest
+          name: Release ${{steps.read_action_js.outputs['version']}}
+          tag_name: ${{steps.read_action_js.outputs['version']}}
           prerelease: true
-          files: build/app/outputs/bundle/release/mopicon-${{github.ref_name}}-appbundle.zip
+          files: build/app/outputs/bundle/release/mopicon-${{steps.read_action_js.outputs['version']}}-appbundle.zip
 
   build-and-release-windows:
     runs-on: windows-latest
@@ -124,6 +104,11 @@ jobs:
         with:
           flutter-version: '3.16.3'
           channel: 'stable'
+      - name: read-yaml-file
+        uses: pietrobolcato/action-read-yaml@1.1.0
+        id: read_action_js
+        with:
+          config: ${{ github.workspace }}/pubspec.yaml
       - name: Install project dependencies
         run: flutter pub get
       - name: Generate intermediates
@@ -136,7 +121,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-windows-x64.zip
+          filename: mopicon-${{steps.read_action_js.outputs['version']}}-windows-x64.zip
           directory: build/windows/x64/runner/Release
       - name: Windows Release
         uses: softprops/action-gh-release@v1
@@ -144,10 +129,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Development Release
-          tag_name: latest
+          name: Release ${{steps.read_action_js.outputs['version']}}
+          tag_name: ${{steps.read_action_js.outputs['version']}}
           prerelease: true
-          files: build/windows/x64/runner/Release/mopicon-${{github.ref_name}}-windows-x64.zip
+          files: build/windows/x64/runner/Release/mopicon-${{steps.read_action_js.outputs['version']}}-windows-x64.zip
 
   build-and-release-ubuntu-20-04:
     runs-on: ubuntu-20.04
@@ -168,6 +153,11 @@ jobs:
           flutter-version: '3.16.3'
           channel: 'stable'
           cache: true
+      - name: read-yaml-file
+        uses: pietrobolcato/action-read-yaml@1.1.0
+        id: read_action_js
+        with:
+          config: ${{ github.workspace }}/pubspec.yaml
       - name: Generate intermediates
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Enable linux build
@@ -178,7 +168,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-ubuntu-20_04-x64.zip
+          filename: mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-20_04-x64.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
         uses: softprops/action-gh-release@v1
@@ -186,10 +176,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Development Release
-          tag_name: latest
+          name: Release ${{steps.read_action_js.outputs['version']}}
+          tag_name: ${{steps.read_action_js.outputs['version']}}
           prerelease: true
-          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-ubuntu-20_04-x64.zip
+          files: build/linux/x64/release/bundle/mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-20_04-x64.zip
 
   build-and-release-ubuntu-22-04:
     runs-on: ubuntu-22.04
@@ -210,6 +200,11 @@ jobs:
           flutter-version: '3.16.3'
           channel: 'stable'
           cache: true
+      - name: read-yaml-file
+        uses: pietrobolcato/action-read-yaml@1.1.0
+        id: read_action_js
+        with:
+          config: ${{ github.workspace }}/pubspec.yaml
       - name: Generate intermediates
         run: dart run build_runner build --delete-conflicting-outputs
       - name: Enable linux build
@@ -220,7 +215,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           type: 'zip'
-          filename: mopicon-${{github.ref_name}}-ubuntu-22_04-x64.zip
+          filename: mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-22_04-x64.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
         uses: softprops/action-gh-release@v1
@@ -228,7 +223,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: Development Release
-          tag_name: latest
+          name: Release ${{steps.read_action_js.outputs['version']}}
+          tag_name: ${{steps.read_action_js.outputs['version']}}
           prerelease: true
-          files: build/linux/x64/release/bundle/mopicon-${{github.ref_name}}-ubuntu-22_04-x64.zip
+          files: build/linux/x64/release/bundle/mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-22_04-x64.zip

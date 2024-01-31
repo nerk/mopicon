@@ -29,6 +29,7 @@ import 'package:mopicon/pages/browse/library_browser_page.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_page.dart';
 import 'package:mopicon/pages/settings/preferences_page.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/pages/about/about_page.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_page.dart';
@@ -37,8 +38,6 @@ import 'package:mopicon/utils/parameters.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 
 class ApplicationRoutes {
-  static const String connecting = 'connecting';
-  static const String connectingPath = '/connecting';
   static const String settingsPath = '/settings';
   static const String aboutPath = '/about';
   static const String browse = 'browse';
@@ -55,6 +54,8 @@ class ApplicationRoutes {
   final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
   late final GoRouter _router;
 
+  final preferences = GetIt.instance<PreferencesController>();
+
   static final ApplicationRoutes _instance = ApplicationRoutes._privateConstructor();
 
   factory ApplicationRoutes() {
@@ -64,18 +65,9 @@ class ApplicationRoutes {
   ApplicationRoutes._privateConstructor() {
     _router = GoRouter(
         navigatorKey: rootNavigatorKey,
-        initialLocation: tracksPath,
+        initialLocation: preferences.host != null ? tracksPath : settingsPath,
         debugLogDiagnostics: true,
         routes: <RouteBase>[
-          /**
-              GoRoute(
-              name: connecting,
-              path: connectingPath,
-              builder: (BuildContext context, GoRouterState state) {
-              return const ConnectingScreen();
-              },
-              ),
-           */
           GoRoute(
             path: settingsPath,
             builder: (BuildContext context, GoRouterState state) {

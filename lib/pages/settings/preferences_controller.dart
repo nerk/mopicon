@@ -89,14 +89,13 @@ class PreferencesControllerImpl extends PreferencesController {
   bool _dirty = false;
 
   final _defaultPort = 6680;
-  final _defaultHost = 'localhost';
 
   late String? _host;
   late int? _port;
   AppTheme _theme = AppTheme.defaultAppTheme;
   AppLocale _appLocale = AppLocale.defaultLocale;
 
-  bool _translateServerNames = false;
+  bool _translateServerNames = true;
   bool _hideFileExtension = false;
   bool _showAllMediaCategories = false;
 
@@ -106,7 +105,7 @@ class PreferencesControllerImpl extends PreferencesController {
   @override
   Future<void> load() async {
     var prefs = await SharedPreferences.getInstance();
-    _host = prefs.getString('mopidy_host') ?? _defaultHost;
+    _host = prefs.getString('mopidy_host');
     _port = prefs.getInt('mopidy_port') ?? _defaultPort;
     _theme = AppThemes().getByName(prefs.getString('theme'));
     _appLocale = AppLocales().getByLanguageCode(prefs.getString('locale'));

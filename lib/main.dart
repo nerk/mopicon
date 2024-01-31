@@ -39,7 +39,6 @@ class AppWidget extends StatelessWidget {
   AppWidget({super.key});
 
   final preferences = GetIt.instance<PreferencesController>();
-  final applicationRoutes = Globals.applicationRoutes;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +51,7 @@ class AppWidget extends StatelessWidget {
             scaffoldMessengerKey: Globals.rootScaffoldMessengerKey,
             title: 'Mopicon',
             theme: preferences.theme.data,
-            routerConfig: applicationRoutes.router,
+            routerConfig: Globals.applicationRoutes.router,
             localizationsDelegates: const [
               S.delegate,
               GlobalMaterialLocalizations.delegate,

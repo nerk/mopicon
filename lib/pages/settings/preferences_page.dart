@@ -120,12 +120,10 @@ class _PreferencesState extends State<PreferencesPage> {
                     try {
                       preferences.appLocale = newLocale ?? preferences.appLocale;
                       await save();
-                      // disconnect if connection changed
-                      if (originalUri != preferences.url) {
-                        if (mounted) {
-                          mopidyService.stop();
-                          GetIt.instance<MopidyService>().connect(preferences.url);
-                        }
+                      // reconnect if connection changed or not connected at all
+                      if (originalUri != preferences.url || !mopidyService.connected) {
+                        mopidyService.stop();
+                        GetIt.instance<MopidyService>().connect(preferences.url);
                       }
                       S.load(preferences.appLocale.locale);
                       Globals.applicationRoutes.gotoHome();

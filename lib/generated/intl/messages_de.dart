@@ -40,7 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m9(n, p) => "${n} Titel zu Playlist \'${p}\' hinzugefügt.";
 
-  static String m10(n) => "${n} Titel zu Titelliste hinzugefügt.";
+  static String m10(n) => "${n} Titel zu Wiedergabeliste hinzugefügt.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -72,7 +72,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Playlist konnte nicht gelöscht werden."),
         "homePageBrowseLbl": MessageLookupByLibrary.simpleMessage("Bibliothek"),
         "homePageSearchLbl": MessageLookupByLibrary.simpleMessage("Suche"),
-        "homePageTracksLbl": MessageLookupByLibrary.simpleMessage("Titelliste"),
+        "homePageTracksLbl": MessageLookupByLibrary.simpleMessage("Wiedergabe"),
         "libraryBrowserPageTitle":
             MessageLookupByLibrary.simpleMessage("Bibliothek"),
         "libraryPlaylistSeparator":
@@ -82,8 +82,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "menuAbout": MessageLookupByLibrary.simpleMessage("Über"),
         "menuAddToPlaylist":
             MessageLookupByLibrary.simpleMessage("Zu Playlist hinzufügen"),
-        "menuAddToTracklist":
-            MessageLookupByLibrary.simpleMessage("Zu Titelliste hinzufügen"),
+        "menuAddToTracklist": MessageLookupByLibrary.simpleMessage(
+            "Zu Wiedergabeliste hinzufügen"),
         "menuClearList": MessageLookupByLibrary.simpleMessage("Liste leeren"),
         "menuDelete": MessageLookupByLibrary.simpleMessage("Löschen"),
         "menuNewPlaylist":
@@ -145,7 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "newStreamUriInvalid": MessageLookupByLibrary.simpleMessage(
             "Bitte gültigen URI des Streams eingeben."),
         "newTracklistStreamDialogTitle": MessageLookupByLibrary.simpleMessage(
-            "Neuen Stream zur Titelliste hinzufügen"),
+            "Neuen Stream zur Wiedergabeliste hinzufügen"),
         "noBtn": MessageLookupByLibrary.simpleMessage("Nein"),
         "nowPlayingBitrateLbl": m4,
         "nowPlayingDateLbl": m5,
@@ -230,9 +230,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "submitBtn": MessageLookupByLibrary.simpleMessage("Bestätigen"),
         "trackAddedToPlaylistMessage": m8,
         "trackAddedToTracklistMessage": MessageLookupByLibrary.simpleMessage(
-            "Titel zu Titelliste hinzugefügt."),
+            "Titel zu Wiedergabeliste hinzugefügt."),
         "trackListPageTitle":
-            MessageLookupByLibrary.simpleMessage("Titelliste"),
+            MessageLookupByLibrary.simpleMessage("Wiedergabeliste"),
         "tracksAddedToPlaylistMessage": m9,
         "tracksAddedToTracklistMessage": m10,
         "yesBtn": MessageLookupByLibrary.simpleMessage("Ja")

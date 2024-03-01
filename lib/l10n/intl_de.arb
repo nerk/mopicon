@@ -13,7 +13,7 @@
   "connectingPageStopBtn": "Stopp",
   "homePageSearchLbl": "Suche",
   "homePageBrowseLbl": "Bibliothek",
-  "homePageTracksLbl": "Titelliste",
+  "homePageTracksLbl": "Wiedergabe",
   "pageNotFoundMsg": "Seite nicht gefunden!",
   "preferencesPageTitle": "Einstellungen",
   "preferencesPageMopidyServerHintText": "IP-Adresse oder Name des Mopidy-Servers.",
@@ -37,7 +37,7 @@
   "preferencesPageConnectErrorDetails": "Maximale Versuche überschritten.",
   "libraryBrowserPageTitle": "Bibliothek",
   "libraryPlaylistSeparator": "Playlists",
-  "trackListPageTitle": "Titelliste",
+  "trackListPageTitle": "Wiedergabeliste",
   "playlistPageTitle": "Playlist",
   "searchPageTitle": "Suche",
   "searchPageNotSupportedMessage": "Suche wird nicht unterstützt, weil die Mopidy-Local Erweiterung des Servers nicht aktiviert ist.",
@@ -81,7 +81,7 @@
   },
   "deletePlaylistError": "Playlist konnte nicht gelöscht werden.",
   "newPlaylistStreamDialogTitle": "Neuen Stream zur Playlist hinzufügen",
-  "newTracklistStreamDialogTitle": "Neuen Stream zur Titelliste hinzufügen",
+  "newTracklistStreamDialogTitle": "Neuen Stream zur Wiedergabeliste hinzufügen",
   "newStreamDialogUriLabel": "URI",
   "newStreamDialogUriHint": "URI des Streams.",
   "newStreamDialogSubmitBtn": "OK",
@@ -89,7 +89,7 @@
   "newStreamUriInvalid": "Bitte gültigen URI des Streams eingeben.",
   "newStreamCreateError": "Stream konnte nicht angelegt werden.",
   "newStreamAccessError": "Zugriff auf den Stream gescheitert. Ungültiger URI?",
-  "menuAddToTracklist": "Zu Titelliste hinzufügen",
+  "menuAddToTracklist": "Zu Wiedergabeliste hinzufügen",
   "menuAddToPlaylist": "Zu Playlist hinzufügen",
   "menuSettings": "Einstellungen",
   "menuAbout": "Über",
@@ -115,7 +115,7 @@
   "nameTranslateReleaseYears": "Erscheinungsjahre",
   "nameTranslateLastWeeksUpdates": "Letzte Woche aktualisiert",
   "nameTranslateLastMonthsUpdates": "Letzten Monat aktualisiert",
-  "tracksAddedToTracklistMessage": "{n} Titel zu Titelliste hinzugefügt.",
+  "tracksAddedToTracklistMessage": "{n} Titel zu Wiedergabeliste hinzugefügt.",
   "@tracksAddedToTracklistMessage": {
     "placeholders": {
       "n": {
@@ -123,7 +123,7 @@
       }
     }
   },
-  "trackAddedToTracklistMessage": "Titel zu Titelliste hinzugefügt.",
+  "trackAddedToTracklistMessage": "Titel zu Wiedergabeliste hinzugefügt.",
   "tracksAddedToPlaylistMessage": "{n} Titel zu Playlist '{p}' hinzugefügt.",
   "@tracksAddedToPlaylistMessage": {
     "placeholders": {

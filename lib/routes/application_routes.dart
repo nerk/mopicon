@@ -87,7 +87,7 @@ class ApplicationRoutes {
               branches: <StatefulShellBranch>[
                 StatefulShellBranch(routes: <RouteBase>[
                   GoRoute(
-                    onExit: (BuildContext c) {
+                    onExit: (BuildContext c, _) {
                       GetIt.instance<SearchViewController>().notifyUnselect();
                       return true;
                     },
@@ -109,7 +109,7 @@ class ApplicationRoutes {
                         GoRoute(
                             // unselect all potentially selected items
                             // and reset selection mode on exit
-                            onExit: (BuildContext c) {
+                            onExit: (BuildContext c, _) {
                               final controller = GetIt.instance<LibraryBrowserController>();
                               controller.notifyUnselect();
                               return true;
@@ -125,7 +125,7 @@ class ApplicationRoutes {
                         GoRoute(
                             // unselect all potentially selected items
                             // and reset selection mode on exit
-                            onExit: (BuildContext c) {
+                            onExit: (BuildContext c, _) {
                               final controller = GetIt.instance<PlaylistViewController>();
                               controller.notifyUnselect();
                               return true;
@@ -150,7 +150,7 @@ class ApplicationRoutes {
                     },
                     // unselect all potentially selected items
                     // and reset selection mode on exit
-                    onExit: (BuildContext c) {
+                    onExit: (BuildContext c, _) {
                       final controller = GetIt.instance<TracklistViewController>();
                       controller.notifyUnselect();
                       controller.splitEnabled.value = true;

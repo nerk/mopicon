@@ -22,10 +22,10 @@
 
 library mopicon.logging;
 
-import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 export 'package:logger/logger.dart';
+import 'package:universal_io/io.dart' as io;
 
 /// Global logger.
 Logger logger = createLogger(kDebugMode ? Level.debug : Level.info);
@@ -55,17 +55,21 @@ Logger createLogger(Level? level) {
           methodCount: 4,
           errorMethodCount: 10,
           noBoxingByDefault: true,
-          printTime: true));
+          dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart));
 }
 
 class _LoggerOutput extends LogOutput {
   @override
   void output(OutputEvent event) {
-    if (kDebugMode && io.stdout.hasTerminal) {
-      for (var line in event.lines) {
-        // Send to console
-        debugPrint(line);
+    try {
+      if (kDebugMode && io.stdout.hasTerminal) {
+        for (var line in event.lines) {
+          // Send to console
+          debugPrint(line);
+        }
       }
+    } catch (e) {
+      // Ignore errors if stdout can not be obtained
     }
     // write to buffer
     _logBuffer.write('\n\n');

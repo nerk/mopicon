@@ -21,7 +21,7 @@
  */
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 class AppLocale {
   static final labels = <String, Map<String, String>>{
@@ -63,7 +63,8 @@ class AppLocale {
   }
 
   @override
-  bool operator ==(other) => other is AppLocale && locale.languageCode == other.locale.languageCode;
+  bool operator ==(other) =>
+      other is AppLocale && locale.languageCode == other.locale.languageCode;
 
   @override
   int get hashCode => locale.languageCode.hashCode;
@@ -83,7 +84,8 @@ class AppLocales {
   AppLocale getByLanguageCode(String? languageCode) {
     languageCode = languageCode ?? Platform.localeName;
 
-    return _locales.firstWhere((e) => e.locale.languageCode == languageCode, orElse: () {
+    return _locales.firstWhere((e) => e.locale.languageCode == languageCode,
+        orElse: () {
       return _resolveFallback(languageCode!);
     });
   }
@@ -92,6 +94,7 @@ class AppLocales {
 
   AppLocale _resolveFallback(String languageCode) {
     final lang = languageCode.split('-')[0].split('_')[0];
-    return _locales.firstWhere((e) => e.locale.languageCode == lang, orElse: () => AppLocale.defaultLocale);
+    return _locales.firstWhere((e) => e.locale.languageCode == lang,
+        orElse: () => AppLocale.defaultLocale);
   }
 }

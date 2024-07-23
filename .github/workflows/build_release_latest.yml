@@ -46,7 +46,7 @@ jobs:
           cache: 'gradle'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.3'
+          flutter-version: '3.22.3'
           channel: 'stable'
           cache: true
       - name: read-yaml-file
@@ -102,7 +102,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.3'
+          flutter-version: '3.22.3'
           channel: 'stable'
       - name: read-yaml-file
         uses: pietrobolcato/action-read-yaml@1.1.0
@@ -150,7 +150,7 @@ jobs:
           cache: 'gradle'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.3'
+          flutter-version: '3.22.3'
           channel: 'stable'
           cache: true
       - name: read-yaml-file
@@ -197,7 +197,7 @@ jobs:
           cache: 'gradle'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.3'
+          flutter-version: '3.22.3'
           channel: 'stable'
           cache: true
       - name: read-yaml-file

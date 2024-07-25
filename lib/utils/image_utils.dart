@@ -38,8 +38,10 @@ class ImageUtils {
 
   static get noIcon => const Icon(null, size: defaultThumbnailSize);
 
-  static Icon getIconForType(String? uri, String type, [double? size]) {
-    return Icon(_iconMap[_computeType(uri, type)], size: size ?? defaultThumbnailSize);
+  static Widget getIconForType(String? uri, String type, [double? size]) {
+    return FittedBox(
+        child: Icon(_iconMap[_computeType(uri, type)],
+            size: size ?? defaultThumbnailSize));
   }
 
   static String _computeType(String? uri, String type) {
@@ -47,7 +49,8 @@ class ImageUtils {
       if (type == Ref.typeDirectory) {
         if (uri.contains('?type=album') || uri.contains('&album=local:album')) {
           type = Ref.typeAlbum;
-        } else if (uri.contains('?type=artist') || uri.contains('?composer=local:artist')) {
+        } else if (uri.contains('?type=artist') ||
+            uri.contains('?composer=local:artist')) {
           type = Ref.typeArtist;
         }
       } else if (type == Ref.typeTrack && uri.isStreamUri()) {

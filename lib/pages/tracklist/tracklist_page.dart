@@ -75,14 +75,20 @@ class _TrackListState extends State<TrackListPage> {
   // If false, NowPlaying covers whole window and is showing more details.
   bool splitEnabled = true;
 
+  bool smallHeight = false;
+
   StreamSubscription? refreshSubscription;
 
   TlTrack? getTrackByTlid(int? tlid) {
-    return tlid != null ? tracks.firstWhere((element) => tlid == element.tlid) : null;
+    return tlid != null
+        ? tracks.firstWhere((element) => tlid == element.tlid)
+        : null;
   }
 
   int? getPositionByTlid(int? tlid) {
-    return tlid != null ? tracks.indexWhere((element) => tlid == element.tlid) : null;
+    return tlid != null
+        ? tracks.indexWhere((element) => tlid == element.tlid)
+        : null;
   }
 
   Widget getImage(TlTrack? track) {
@@ -90,9 +96,11 @@ class _TrackListState extends State<TrackListPage> {
     if (track != null) {
       String uri = track.track.uri;
       w = images[uri] ??
-          (uri.isStreamUri() ? ImageUtils.getIconForType(uri, Ref.typeTrack) : CoverService.defaultTrack);
+          (uri.isStreamUri()
+              ? ImageUtils.getIconForType(uri, Ref.typeTrack)
+              : CoverService.defaultTrack);
     }
-    return splitEnabled ? FittedBox(fit: BoxFit.cover, child: w) : ImageUtils.roundedCornersWithPadding(w, 200, 200);
+    return w;
   }
 
   // updates track list view from current track list and
@@ -131,8 +139,11 @@ class _TrackListState extends State<TrackListPage> {
       final position = await controller.mopidyService.getTimePosition();
       if (mounted) {
         setState(() {
-          playingTlId =
-              state != null && (state == PlaybackState.playing || state == PlaybackState.paused) ? tlTrack?.tlid : null;
+          playingTlId = state != null &&
+                  (state == PlaybackState.playing ||
+                      state == PlaybackState.paused)
+              ? tlTrack?.tlid
+              : null;
           playbackState = state ?? playbackState;
           timePosition = position ?? 0;
           streamTitle = strTitle;
@@ -149,7 +160,8 @@ class _TrackListState extends State<TrackListPage> {
   // updates current track view, playback state und position within track.
   void updateTrackPlayback() async {
     try {
-      TrackPlaybackInfo? info = controller.mopidyService.trackPlaybackNotifier.value;
+      TrackPlaybackInfo? info =
+          controller.mopidyService.trackPlaybackNotifier.value;
       if (info != null) {
         var state = PlaybackState.stopped;
         switch (info.state) {
@@ -167,7 +179,10 @@ class _TrackListState extends State<TrackListPage> {
 
         setState(() {
           playbackState = state;
-          playingTlId = (state == PlaybackState.playing || state == PlaybackState.paused) ? info.tlTrack.tlid : null;
+          playingTlId =
+              (state == PlaybackState.playing || state == PlaybackState.paused)
+                  ? info.tlTrack.tlid
+                  : null;
           timePosition = info.timePosition;
           streamTitle = info.tlTrack.track.name;
           isStream = info.tlTrack.track.uri.isStreamUri();
@@ -205,9 +220,11 @@ class _TrackListState extends State<TrackListPage> {
     });
 
     controller.mopidyService.tracklistChangedNotifier.addListener(updateTracks);
-    controller.mopidyService.trackPlaybackNotifier.addListener(updateTrackPlayback);
+    controller.mopidyService.trackPlaybackNotifier
+        .addListener(updateTrackPlayback);
     controller.mopidyService.playbackStateNotifier.addListener(updatePlayback);
-    controller.mopidyService.streamTitleChangedNotifier.addListener(updateStreamTitle);
+    controller.mopidyService.streamTitleChangedNotifier
+        .addListener(updateStreamTitle);
     controller.selectionModeChanged.addListener(updateSelection);
     controller.selectionChanged.addListener(updateSelection);
     controller.splitEnabled.addListener(updateSplitMode);
@@ -219,11 +236,23 @@ class _TrackListState extends State<TrackListPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final double height = MediaQuery.of(context).size.height;
+    smallHeight = height < 600;
+  }
+
+  @override
   void dispose() {
-    controller.mopidyService.tracklistChangedNotifier.removeListener(updateTracks);
-    controller.mopidyService.trackPlaybackNotifier.removeListener(updateTrackPlayback);
-    controller.mopidyService.playbackStateNotifier.removeListener(updatePlayback);
-    controller.mopidyService.streamTitleChangedNotifier.removeListener(updateStreamTitle);
+    controller.mopidyService.tracklistChangedNotifier
+        .removeListener(updateTracks);
+    controller.mopidyService.trackPlaybackNotifier
+        .removeListener(updateTrackPlayback);
+    controller.mopidyService.playbackStateNotifier
+        .removeListener(updatePlayback);
+    controller.mopidyService.streamTitleChangedNotifier
+        .removeListener(updateStreamTitle);
     controller.selectionModeChanged.removeListener(updateSelection);
     controller.selectionChanged.removeListener(updateSelection);
     controller.splitEnabled.removeListener(updateSplitMode);
@@ -246,7 +275,8 @@ class _TrackListState extends State<TrackListPage> {
     }
 
     void onTappedCb(TlTrack track, int index) async {
-      var r = await showActionDialog([ItemActionOption.play, ItemActionOption.addToPlaylist]);
+      var r = await showActionDialog(
+          [ItemActionOption.play, ItemActionOption.addToPlaylist]);
       switch (r) {
         case ItemActionOption.play:
           controller.mopidyService.play(track.asRef);
@@ -260,8 +290,14 @@ class _TrackListState extends State<TrackListPage> {
       }
     }
 
-    var listView = ReorderableTrackListView<TlTrack>(context, tracks, images, controller.selectionChanged,
-            controller.selectionModeChanged, itemMovedCb, onTappedCb,
+    var listView = ReorderableTrackListView<TlTrack>(
+            context,
+            tracks,
+            images,
+            controller.selectionChanged,
+            controller.selectionModeChanged,
+            itemMovedCb,
+            onTappedCb,
             markedItemIndex: getPositionByTlid(playingTlId))
         .buildListView();
 
@@ -275,26 +311,31 @@ class _TrackListState extends State<TrackListPage> {
               return;
             }
             // store the position in current track
-            timePosition = (await controller.mopidyService.getTimePosition()) ?? timePosition;
+            timePosition = (await controller.mopidyService.getTimePosition()) ??
+                timePosition;
             controller.splitEnabled.value = !splitEnabled;
           } catch (e) {
             logger.e(e);
           }
         },
-        child: Column(children: [
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
           // top divider with handle button
           Stack(alignment: Alignment.center, children: [
-            const Center(child: Divider(height: 34, thickness: 3.0)),
+            const Center(child: Divider(height: 20, thickness: 2.0)),
             Center(
                 child: IconButton.filled(
-              constraints: BoxConstraints.tight(const Size(34, 34)),
+              constraints: BoxConstraints.tight(const Size(20, 20)),
               padding: const EdgeInsets.all(0),
-              iconSize: 32,
-              icon: splitEnabled ? const Icon(Icons.arrow_circle_up) : const Icon(Icons.arrow_circle_down),
+              iconSize: 20,
+              icon: splitEnabled
+                  ? const Icon(Icons.arrow_circle_up)
+                  : const Icon(Icons.arrow_circle_down),
               onPressed: () async {
                 try {
                   // store the position in current track
-                  timePosition = (await controller.mopidyService.getTimePosition()) ?? timePosition;
+                  timePosition =
+                      (await controller.mopidyService.getTimePosition()) ??
+                          timePosition;
                   controller.splitEnabled.value = !splitEnabled;
                 } catch (e) {
                   logger.e(e);
@@ -303,10 +344,15 @@ class _TrackListState extends State<TrackListPage> {
             )),
           ]),
           // the actual contents
-          NowPlaying(splitEnabled, getTrackByTlid(playingTlId), getImage(getTrackByTlid(playingTlId)), playbackState,
-              timePosition, streamTitle, isStream),
-          // bottom divider
-          const Center(child: Divider(thickness: 1.0)),
+          NowPlaying(
+              splitEnabled,
+              smallHeight,
+              getTrackByTlid(playingTlId),
+              getImage(getTrackByTlid(playingTlId)),
+              playbackState,
+              timePosition,
+              streamTitle,
+              isStream),
         ]));
 
     // full size mode
@@ -331,30 +377,36 @@ class _TrackListState extends State<TrackListPage> {
       controller.splitEnabled.value = true;
     }
 
-    var children = splitEnabled ? [Expanded(child: listView), currentlyPlayingPanel] : [currentlyPlayingPanel];
+    var children = splitEnabled
+        ? [Expanded(child: listView), currentlyPlayingPanel]
+        : [currentlyPlayingPanel];
 
     return Scaffold(
       appBar: AppBar(
           title: Text(S.of(context).trackListPageTitle),
           centerTitle: true,
-          leading:
-              ActionButton<SelectedItemPositions>(Icons.arrow_back, valueListenable: controller.selectionChanged, () {
+          leading: ActionButton<SelectedItemPositions>(Icons.arrow_back,
+              valueListenable: controller.selectionChanged, () {
             controller.notifyUnselect();
           }),
           actions: [
             ActionButton<SelectedItemPositions>(
-                Icons.delete, valueListenable: controller.selectionChanged, controller.deleteSelectedTracks),
+                Icons.delete,
+                valueListenable: controller.selectionChanged,
+                controller.deleteSelectedTracks),
             ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
               var selectedItems = await controller.getSelectedItems();
               if (context.mounted) {
-                await controller.addItemsToPlaylist<Ref>(context, selectedItems);
+                await controller.addItemsToPlaylist<Ref>(
+                    context, selectedItems);
               }
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
             VolumeControl(),
             TracklistAppBarMenu(controller)
           ]),
-      body: MaterialPageFrame(child: Column(mainAxisSize: MainAxisSize.max, children: children)),
+      body: MaterialPageFrame(
+          child: Column(mainAxisSize: MainAxisSize.max, children: children)),
     );
   }
 }

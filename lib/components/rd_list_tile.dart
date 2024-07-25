@@ -63,10 +63,13 @@ class RdListTile extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-            if (title != null) title!,
-            if (subtitle != null) subtitle!,
-          ]))
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                if (title != null) title!,
+                if (subtitle != null) subtitle!,
+              ])),
         ]));
 
     Widget tile = canReorder != null && canReorder == true
@@ -84,7 +87,9 @@ class RdListTile extends StatelessWidget {
               color: dismissibleBackgroundColor,
               child: const Align(
                 alignment: Alignment.centerLeft,
-                child: Padding(padding: EdgeInsets.only(left: 6), child: Icon(Icons.check)),
+                child: Padding(
+                    padding: EdgeInsets.only(left: 6),
+                    child: Icon(Icons.check)),
               ),
             ),
             confirmDismiss: confirmDismiss,

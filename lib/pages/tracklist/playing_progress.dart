@@ -35,15 +35,17 @@ class PlayingProgressIndicator extends StatefulWidget {
   final List<Widget> Function()? buttons;
   final bool isStream;
 
-  const PlayingProgressIndicator(
-      this.duration, this.playbackState, this.timePosition, this.bitrate, this.buttons, this.isStream,
+  const PlayingProgressIndicator(this.duration, this.playbackState,
+      this.timePosition, this.bitrate, this.buttons, this.isStream,
       {super.key});
 
   @override
-  State<PlayingProgressIndicator> createState() => _PlayingProgressIndicatorState();
+  State<PlayingProgressIndicator> createState() =>
+      _PlayingProgressIndicatorState();
 }
 
-class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> with SingleTickerProviderStateMixin {
+class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
+    with SingleTickerProviderStateMixin {
   final mopidyService = GetIt.instance<MopidyService>();
 
   late bool isStream;
@@ -108,7 +110,8 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
       playbackState = widget.playbackState;
     }
 
-    if (widget.playbackState != oldWidget.playbackState || widget.playbackState == PlaybackState.playing) {
+    if (widget.playbackState != oldWidget.playbackState ||
+        widget.playbackState == PlaybackState.playing) {
       if (widget.playbackState == PlaybackState.paused) {
         ticker.pause();
       } else if (widget.playbackState == PlaybackState.stopped) {
@@ -128,52 +131,71 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator> wit
 
   @override
   Widget build(BuildContext context) {
-    var slider = Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, mainAxisSize: MainAxisSize.max, children: [
-      Text(ticker.timeLabel),
-      Expanded(
-          child: Slider(
-        value: ticker.sliderValue,
-        onChangeStart: (double value) async {
-          try {
-            previousPlaybackState = await mopidyService.getPlaybackState();
-            ticker.pause();
-          } catch (e) {
-            logger.e(e);
-          }
-        },
-        onChanged: (double value) {
-          setState(() {
-            ticker.sliderValue = value;
-          });
-        },
-        onChangeEnd: (double value) async {
-          try {
-            var pos = ticker.positionFromSliderValue(value);
-            bool success = await mopidyService.seek(pos);
-            if (success) {
-              ticker.sliderValue = value;
-              // needs restart because 'seek' stops player.
-              if (previousPlaybackState == PlaybackState.playing) {
-                ticker.start();
-                await mopidyService.playback(PlaybackAction.resume, null);
-              }
-              setState(() {});
-            }
-          } catch (e) {
-            logger.e(e);
-          }
-        },
-      )),
-      Text(ticker.durationLabel),
-    ]);
+    var slider = Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Text(ticker.timeLabel),
+          Expanded(
+              child: SliderTheme(
+                  data: const SliderThemeData(
+                      overlayShape: RoundSliderOverlayShape(overlayRadius: 8.0),
+                      thumbShape: RoundSliderThumbShape(
+                          enabledThumbRadius: 6.0,
+                          disabledThumbRadius: 6.0,
+                          pressedElevation: 6.0)),
+                  child: Slider(
+                    value: ticker.sliderValue,
+                    onChangeStart: (double value) async {
+                      try {
+                        previousPlaybackState =
+                            await mopidyService.getPlaybackState();
+                        ticker.pause();
+                      } catch (e) {
+                        logger.e(e);
+                      }
+                    },
+                    onChanged: (double value) {
+                      setState(() {
+                        ticker.sliderValue = value;
+                      });
+                    },
+                    onChangeEnd: (double value) async {
+                      try {
+                        var pos = ticker.positionFromSliderValue(value);
+                        bool success = await mopidyService.seek(pos);
+                        if (success) {
+                          ticker.sliderValue = value;
+                          // needs restart because 'seek' stops player.
+                          if (previousPlaybackState == PlaybackState.playing) {
+                            ticker.start();
+                            await mopidyService.playback(
+                                PlaybackAction.resume, null);
+                          }
+                          setState(() {});
+                        }
+                      } catch (e) {
+                        logger.e(e);
+                      }
+                    },
+                  ))),
+          Text(ticker.durationLabel),
+        ]);
 
-    var buttons = widget.buttons != null ? [...widget.buttons!()] : [const SizedBox()];
-    var buttonRow = Row(mainAxisAlignment: MainAxisAlignment.end, children: buttons);
+    var buttons =
+        widget.buttons != null ? [...widget.buttons!()] : [const SizedBox()];
+    var buttonRow =
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: buttons);
     return Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [!isStream || widget.duration.inMilliseconds > 0 ? slider : const SizedBox(), buttonRow]);
+        children: [
+          !isStream || widget.duration.inMilliseconds > 0
+              ? slider
+              : const SizedBox(),
+          buttonRow
+        ]);
   }
 }
 
@@ -192,7 +214,8 @@ class ProgressController {
     });
   }
 
-  double get sliderValue => duration.inMilliseconds > 0 ? _time / duration.inMilliseconds : 0;
+  double get sliderValue =>
+      duration.inMilliseconds > 0 ? _time / duration.inMilliseconds : 0;
 
   set sliderValue(double value) {
     _fromTime = (duration.inMilliseconds * value).toInt();

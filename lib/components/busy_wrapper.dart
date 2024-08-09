@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2024 Thomas Kern
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -22,7 +43,8 @@ class BusyWrapper extends StatefulWidget {
   State<BusyWrapper> createState() => _BusyWrapperState();
 }
 
-class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin {
+class _BusyWrapperState extends State<BusyWrapper>
+    with TickerProviderStateMixin {
   final preferences = GetIt.instance<PreferencesController>();
   final mopidyService = GetIt.instance<MopidyService>();
 
@@ -117,11 +139,16 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
         widget.child,
         Opacity(
           opacity: opacity,
-          child: ModalBarrier(dismissible: false, color: preferences.theme.data.dialogBackgroundColor),
+          child: ModalBarrier(
+              dismissible: false,
+              color: preferences.theme.data.dialogBackgroundColor),
         ),
         FadeTransition(
           opacity: _busyAnimation,
-          child: Center(child: Container(padding: const EdgeInsets.all(40), child: const CircularProgressIndicator())),
+          child: Center(
+              child: Container(
+                  padding: const EdgeInsets.all(40),
+                  child: const CircularProgressIndicator())),
         ),
         mopidyService.connected == false
             ? Center(
@@ -142,7 +169,8 @@ class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin
                       ElevatedButton(
                           onPressed: stop,
                           child: Text(S.of(context).connectingPageStopBtn,
-                              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)))
+                              style: const TextStyle(
+                                  fontSize: 32, fontWeight: FontWeight.bold)))
                     ],
                   ),
                 ),

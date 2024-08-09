@@ -116,10 +116,17 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     var listView = ReorderableTrackListView<Track>(
-        context, tracks, images, controller.selectionChanged, controller.selectionModeChanged, null,
-        (Track track, int index) async {
-      var r = await showActionDialog(
-          [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
+        context,
+        tracks,
+        images,
+        controller.selectionChanged,
+        controller.selectionModeChanged,
+        null, (Track track, int index) async {
+      var r = await showActionDialog([
+        ItemActionOption.play,
+        ItemActionOption.addToTracklist,
+        ItemActionOption.addToPlaylist
+      ]);
       if (!context.mounted) return;
       switch (r) {
         case ItemActionOption.play:
@@ -139,13 +146,15 @@ class _SearchPageState extends State<SearchPage> {
     var pageContent = Column(mainAxisSize: MainAxisSize.max, children: [
       SearchBar(
         controller: textEditingController,
-        padding: const MaterialStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 16.0)),
+        padding: const WidgetStatePropertyAll<EdgeInsets>(
+            EdgeInsets.symmetric(horizontal: 16.0)),
         onSubmitted: (String value) async {
           List<Track> trx = [];
           try {
             controller.mopidyService.setBusy(true);
 
-            List<SearchResult> searchResult = await mopidyService.search(SearchCriteria().any([value]));
+            List<SearchResult> searchResult =
+                await mopidyService.search(SearchCriteria().any([value]));
             trx = searchResult.first.tracks;
             if (trx.isNotEmpty) {
               await loadImages(trx);
@@ -173,7 +182,9 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ],
       ),
-      Expanded(child: Padding(padding: const EdgeInsets.only(top: 12), child: listView))
+      Expanded(
+          child:
+              Padding(padding: const EdgeInsets.only(top: 12), child: listView))
     ]);
 
     var notSupported = Center(
@@ -191,19 +202,24 @@ class _SearchPageState extends State<SearchPage> {
               : null,
           actions: [
             ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
-              var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-              await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+              var selectedItems =
+                  controller.selectionChanged.value.filterSelected(tracks);
+              await controller.addItemsToTracklist<Ref>(
+                  context, selectedItems.asRef);
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
             ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-              var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-              await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+              var selectedItems =
+                  controller.selectionChanged.value.filterSelected(tracks);
+              await controller.addItemsToPlaylist<Ref>(
+                  context, selectedItems.asRef);
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
             VolumeControl(),
             SearchAppBarMenu(tracks.length, controller)
           ]),
-      body: MaterialPageFrame(child: searchSupported ? pageContent : notSupported),
+      body: MaterialPageFrame(
+          child: searchSupported ? pageContent : notSupported),
     );
   }
 }

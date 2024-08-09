@@ -32,6 +32,7 @@ class ModalDialog extends StatefulWidget {
 
   const ModalDialog(this.title, this.content, this.actions,
       {this.defaultActionIndex, this.constrainSize, super.key});
+
   @override
   State<ModalDialog> createState() => _ModalDialogState();
 }
@@ -51,10 +52,10 @@ class _ModalDialogState extends State<ModalDialog> {
         : null;
 
     if (widget.defaultActionIndex != null) {
-      return RawKeyboardListener(
+      return KeyboardListener(
           focusNode: FocusNode(),
           autofocus: true,
-          onKey: (v) {
+          onKeyEvent: (v) {
             if (v.logicalKey == LogicalKeyboardKey.enter ||
                 v.logicalKey == LogicalKeyboardKey.numpadEnter) {
               if (widget.defaultActionIndex != null) {

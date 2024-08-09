@@ -42,12 +42,15 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     late var menuBuilder = MenuBuilder();
     if (items.indexWhere((e) => e.type != Ref.typeTrack) == -1) {
-      menuBuilder.addMenuItem(S.of(context).menuSelectAll, Icons.select_all, _selectAll);
+      menuBuilder.addMenuItem(
+          S.of(context).menuSelectAll, Icons.select_all, _selectAll);
     }
 
     controller.selectionChanged.value.positions.length != 1
-        ? menuBuilder.addMenuItem(S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
-        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist, Icons.drive_file_rename_outline, _renamePlayList);
+        ? menuBuilder.addMenuItem(
+            S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
+        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist,
+            Icons.drive_file_rename_outline, _renamePlayList);
 
     return menuBuilder
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
@@ -61,17 +64,19 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
     controller.notifySelectAll(items.length);
   }
 
-  void _newPlayList(BuildContext? context, _, __) {
+  void _newPlayList(BuildContext context, _, __) {
+    String alreadyExistsError = S.of(context).playlistAlreadyExistsError;
+    String createError = S.of(context).newPlaylistCreateError;
     mopidyService.getPlaylists().then((List<Ref> playlists) {
       newPlaylistDialog().then((name) {
         if (name != null && name.isNotEmpty) {
           mopidyService.createPlaylist(name).then((playlist) {
             if (playlist == null) {
-              showError(S.of(context!).playlistAlreadyExistsError, null);
+              showError(alreadyExistsError, null);
             }
           }).onError((e, s) {
             logger.e(e, stackTrace: s);
-            showError(S.of(context!).newPlaylistCreateError, null);
+            showError(createError, null);
           });
         }
       });

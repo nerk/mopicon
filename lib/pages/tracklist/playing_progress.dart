@@ -69,10 +69,35 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
     });
   }
 
+  void trackPlaybackListener() {
+    setState(() {
+      TrackPlaybackInfo? info = mopidyService.trackPlaybackNotifier.value;
+      if (info != null) {
+        switch (info.state) {
+          case TrackState.started:
+            ticker.time = 0;
+            ticker.start();
+            break;
+          case TrackState.ended:
+            ticker.time = 0;
+            ticker.cancel();
+            break;
+          case TrackState.paused:
+            ticker.pause();
+            break;
+          case TrackState.resumed:
+            ticker.start();
+            break;
+        }
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     mopidyService.seekedNotifier.addListener(trackSeekedListener);
+    mopidyService.trackPlaybackNotifier.addListener(trackPlaybackListener);
     isStream = widget.isStream;
     bitrate = widget.bitrate;
     playbackState = widget.playbackState;
@@ -126,6 +151,7 @@ class _PlayingProgressIndicatorState extends State<PlayingProgressIndicator>
   void dispose() {
     ticker.dispose();
     mopidyService.seekedNotifier.removeListener(trackSeekedListener);
+    mopidyService.trackPlaybackNotifier.removeListener(trackPlaybackListener);
     super.dispose();
   }
 
@@ -214,8 +240,14 @@ class ProgressController {
     });
   }
 
-  double get sliderValue =>
-      duration.inMilliseconds > 0 ? _time / duration.inMilliseconds : 0;
+  double get sliderValue {
+    if (duration.inMilliseconds <= 0) {
+      return 0;
+    }
+
+    double value = _time / duration.inMilliseconds;
+    return value <= 1.0 ? value : 1.0;
+  }
 
   set sliderValue(double value) {
     _fromTime = (duration.inMilliseconds * value).toInt();

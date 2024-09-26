@@ -195,6 +195,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
           title: Text(S.of(context).searchPageTitle),
           centerTitle: true,
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           leading: controller.selectionChanged.value.isNotEmpty
               ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
                   controller.notifyUnselect();

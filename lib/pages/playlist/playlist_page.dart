@@ -126,20 +126,28 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     var listView = ReorderableTrackListView<Track>(
-        context, tracks, images, controller.selectionChanged, controller.selectionModeChanged,
-        (int start, int current) async {
+        context,
+        tracks,
+        images,
+        controller.selectionChanged,
+        controller.selectionModeChanged, (int start, int current) async {
       try {
         if (start < current) {
-          await controller.mopidyService.movePlaylistItem(playlist, start, current - 1);
+          await controller.mopidyService
+              .movePlaylistItem(playlist, start, current - 1);
         } else {
-          await controller.mopidyService.movePlaylistItem(playlist, start, current);
+          await controller.mopidyService
+              .movePlaylistItem(playlist, start, current);
         }
       } catch (e) {
         logger.e(e);
       }
     }, (Track track, int index) async {
-      var r = await showActionDialog(
-          [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
+      var r = await showActionDialog([
+        ItemActionOption.play,
+        ItemActionOption.addToTracklist,
+        ItemActionOption.addToPlaylist
+      ]);
       if (!context.mounted) return;
       switch (r) {
         case ItemActionOption.play:
@@ -160,6 +168,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       appBar: AppBar(
           title: Text(widget.title ?? S.of(context).playlistPageTitle),
           centerTitle: true,
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           //automaticallyImplyLeading: true,
           leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
             if (controller.isSelectionEmpty) {
@@ -176,14 +185,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
             ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
               var selectedItems = await controller.getSelectedItems(playlist);
               if (context.mounted) {
-                await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+                await controller.addItemsToTracklist<Ref>(
+                    context, selectedItems.asRef);
               }
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
             ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
               var selectedItems = await controller.getSelectedItems(playlist);
               if (context.mounted) {
-                await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+                await controller.addItemsToPlaylist<Ref>(
+                    context, selectedItems.asRef);
               }
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),

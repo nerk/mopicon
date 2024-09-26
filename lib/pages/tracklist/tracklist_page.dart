@@ -385,6 +385,7 @@ class _TrackListState extends State<TrackListPage> {
       appBar: AppBar(
           title: Text(S.of(context).trackListPageTitle),
           centerTitle: true,
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           leading: ActionButton<SelectedItemPositions>(Icons.arrow_back,
               valueListenable: controller.selectionChanged, () {
             controller.notifyUnselect();

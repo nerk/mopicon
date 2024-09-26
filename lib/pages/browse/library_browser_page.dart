@@ -122,10 +122,16 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
     }
 
     var listView = LibraryListView(
-        parent, items, images, libraryController.selectionChanged, libraryController.selectionModeChanged,
-        (Ref item, int index) async {
-      var r = await showActionDialog(
-          [ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
+        parent,
+        items,
+        images,
+        libraryController.selectionChanged,
+        libraryController.selectionModeChanged, (Ref item, int index) async {
+      var r = await showActionDialog([
+        ItemActionOption.play,
+        ItemActionOption.addToTracklist,
+        ItemActionOption.addToPlaylist
+      ]);
       if (!context.mounted) return;
       switch (r) {
         case ItemActionOption.play:
@@ -146,6 +152,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
         appBar: AppBar(
             title: Text(widget.title ?? S.of(context).libraryBrowserPageTitle),
             centerTitle: true,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             leading: widget.parent != null
                 ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
                     if (libraryController.isSelectionEmpty) {
@@ -157,21 +164,25 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                 : null,
             actions: [
               parent == null
-                  ? ActionButton<SelectedItemPositions>(
-                      Icons.delete, () => libraryController.deleteSelectedPlaylists(context),
+                  ? ActionButton<SelectedItemPositions>(Icons.delete,
+                      () => libraryController.deleteSelectedPlaylists(context),
                       valueListenable: libraryController.selectionChanged)
                   : const SizedBox(),
               ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
-                var selectedItems = await libraryController.getSelectedItems(parent);
+                var selectedItems =
+                    await libraryController.getSelectedItems(parent);
                 if (context.mounted) {
-                  await libraryController.addItemsToTracklist<Ref>(context, selectedItems);
+                  await libraryController.addItemsToTracklist<Ref>(
+                      context, selectedItems);
                 }
                 libraryController.notifyUnselect();
               }, valueListenable: libraryController.selectionChanged),
               ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-                var selectedItems = await libraryController.getSelectedItems(parent);
+                var selectedItems =
+                    await libraryController.getSelectedItems(parent);
                 if (context.mounted) {
-                  await libraryController.addItemsToPlaylist<Ref>(context, selectedItems);
+                  await libraryController.addItemsToPlaylist<Ref>(
+                      context, selectedItems);
                 }
                 libraryController.notifyUnselect();
               }, valueListenable: libraryController.selectionChanged),

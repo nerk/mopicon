@@ -66,6 +66,7 @@ class AboutPage extends StatelessWidget {
           automaticallyImplyLeading: true,
           centerTitle: true,
           title: Text(S.of(context).aboutPageTitle),
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         ),
         body: MaterialPageFrame(
             child: SingleChildScrollView(
@@ -75,28 +76,37 @@ class AboutPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               title(_preferences.appName.toUpperCase()),
-              paragraph(context, 'Copyright \u00a9 2023 Thomas Kern', fontSize: 14, textAlign: TextAlign.center),
-              paragraph(context, S.of(context).aboutPageDescription, fontSize: 14, textAlign: TextAlign.center),
+              paragraph(context, 'Copyright \u00a9 2023 Thomas Kern',
+                  fontSize: 14, textAlign: TextAlign.center),
+              paragraph(context, S.of(context).aboutPageDescription,
+                  fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageVersionSection),
-              paragraph(context, '${_preferences.version} Build: ${_preferences.buildNumber}',
+              paragraph(context,
+                  '${_preferences.version} Build: ${_preferences.buildNumber}',
                   fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageHelpSection),
-              paragraph(context, S.of(context).aboutPageHelpDescription, fontSize: 14, textAlign: TextAlign.center),
+              paragraph(context, S.of(context).aboutPageHelpDescription,
+                  fontSize: 14, textAlign: TextAlign.center),
               TitledDivider(S.of(context).aboutPageLicenseSection),
-              SingleChildScrollView(scrollDirection: Axis.horizontal, child: paragraph(context, license, fontSize: 11))
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: paragraph(context, license, fontSize: 11))
             ],
           ),
         )));
   }
 
-  Widget paragraph(BuildContext context, String text, {TextAlign? textAlign, double? fontSize}) {
+  Widget paragraph(BuildContext context, String text,
+      {TextAlign? textAlign, double? fontSize}) {
     return Padding(
-        padding: const EdgeInsets.only(top: 10), //apply padding to all four sides
+        padding: const EdgeInsets.only(top: 10),
+        //apply padding to all four sides
         child: Text.rich(
             softWrap: true,
             TextSpan(
               children: textSpans(context, text),
-              style: TextStyle(fontSize: fontSize ?? 14, fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: fontSize ?? 14, fontWeight: FontWeight.normal),
             ),
             textAlign: textAlign ?? TextAlign.start));
   }
@@ -104,7 +114,9 @@ class AboutPage extends StatelessWidget {
   Widget title(String text) {
     return Text.rich(
       softWrap: true,
-      TextSpan(text: text, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+      TextSpan(
+          text: text,
+          style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
       textAlign: TextAlign.center,
     );
   }
@@ -133,7 +145,9 @@ class AboutPage extends StatelessWidget {
               Uri url = Uri.parse('${match[1]}${match[2]}');
               if (!await launchUrl(url)) {
                 if (context.mounted) {
-                  showError(S.of(context).aboutPageLinkLaunchError(url.toString()), null);
+                  showError(
+                      S.of(context).aboutPageLinkLaunchError(url.toString()),
+                      null);
                 }
               }
             },

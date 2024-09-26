@@ -198,6 +198,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "preferencesPageShowAllMediaCategoriesLbl":
             MessageLookupByLibrary.simpleMessage(
                 "Alle Medienkategorien anzeigen"),
+        "preferencesPageThemeDark":
+            MessageLookupByLibrary.simpleMessage("Dark"),
         "preferencesPageThemeLbl":
             MessageLookupByLibrary.simpleMessage("Theme"),
         "preferencesPageTitle":

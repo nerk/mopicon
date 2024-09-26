@@ -61,6 +61,10 @@ abstract class PreferencesController {
 
   set theme(AppTheme t);
 
+  bool get dark;
+
+  set dark(bool t);
+
   AppLocale get appLocale;
 
   set appLocale(AppLocale l);
@@ -104,7 +108,8 @@ class PreferencesControllerImpl extends PreferencesController {
 
   late String? _host;
   late int? _port;
-  AppTheme _theme = AppTheme.defaultAppTheme;
+  AppTheme _theme = AppThemes.defaultTheme;
+  bool _dark = true;
   AppLocale _appLocale = AppLocale.defaultLocale;
 
   bool _translateServerNames = true;
@@ -125,7 +130,8 @@ class PreferencesControllerImpl extends PreferencesController {
     var prefs = await SharedPreferences.getInstance();
     _host = prefs.getString('mopidy_host');
     _port = prefs.getInt('mopidy_port') ?? _defaultPort;
-    _theme = AppThemes().getByName(prefs.getString('theme'));
+    _dark = prefs.getBool('dark') != null ? prefs.getBool('dark')! : true;
+    _theme = AppThemes.get(prefs.getString('theme'), _dark);
     _appLocale = AppLocales().getByLanguageCode(prefs.getString('locale'));
     _translateServerNames = prefs.getBool('translateServerNames') ?? false;
     _hideFileExtension = prefs.getBool('hideFileExtension') ?? false;
@@ -137,10 +143,15 @@ class PreferencesControllerImpl extends PreferencesController {
   Future<void> save() async {
     if (_dirty) {
       var prefs = await SharedPreferences.getInstance();
-      _host != null ? prefs.setString('mopidy_host', _host!) : prefs.remove('mopidy_host');
-      _port != null ? prefs.setInt('mopidy_port', _port!) : prefs.remove('mopidy_port');
+      _host != null
+          ? prefs.setString('mopidy_host', _host!)
+          : prefs.remove('mopidy_host');
+      _port != null
+          ? prefs.setInt('mopidy_port', _port!)
+          : prefs.remove('mopidy_port');
 
       prefs.setString('theme', _theme.name);
+      prefs.setBool('dark', _dark);
       prefs.setString('locale', _appLocale.locale.languageCode);
 
       prefs.setBool('translateServerNames', _translateServerNames);
@@ -192,6 +203,17 @@ class PreferencesControllerImpl extends PreferencesController {
   set theme(AppTheme t) {
     _dirty = _dirty || t != _theme;
     _theme = t;
+  }
+
+  @override
+  bool get dark {
+    return _dark;
+  }
+
+  @override
+  set dark(bool t) {
+    _dirty = _dirty || t != _dark;
+    _dark = t;
   }
 
   @override

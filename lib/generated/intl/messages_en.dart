@@ -192,6 +192,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Saving preferences failed."),
         "preferencesPageShowAllMediaCategoriesLbl":
             MessageLookupByLibrary.simpleMessage("Show all media categories"),
+        "preferencesPageThemeDark":
+            MessageLookupByLibrary.simpleMessage("Dark"),
         "preferencesPageThemeLbl":
             MessageLookupByLibrary.simpleMessage("Theme"),
         "preferencesPageTitle":

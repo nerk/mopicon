@@ -26,6 +26,7 @@
   "preferencesPageAppearanceLbl": "Appearance",
   "preferencesPageUiLbl": "User Interface",
   "preferencesPageThemeLbl": "Theme",
+  "preferencesPageThemeDark": "Dark",
   "preferencesPageLanguageLbl": "Language",
   "preferencesPageTranslateServerNamesLbl": "Translate server names",
   "preferencesPageHideFileExtensionLbl": "Hide file extension",

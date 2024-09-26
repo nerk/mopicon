@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Thomas Kern
+ * Copyright (c) 2024 Thomas Kern
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -23,32 +23,35 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static AppTheme defaultAppTheme = AppTheme.light('default_light');
-
-  late ThemeData data;
   String name;
+  late ThemeData data;
+  late bool dark;
 
-  AppTheme(Color color, this.name, bool dark) {
+  AppTheme(Color color, this.name, this.dark) {
     data = _createTheme(color, dark);
   }
 
   AppTheme.light(this.name) {
+    dark = false;
     data = ThemeData.light(useMaterial3: true);
   }
 
   AppTheme.dark(this.name) {
+    dark = true;
     data = ThemeData.dark(useMaterial3: true);
   }
 
   @override
-  bool operator ==(other) => other is AppTheme && name == other.name;
+  bool operator ==(other) => other is AppTheme && name == other.name && dark == other.dark;
 
   @override
-  int get hashCode => name.hashCode;
+  int get hashCode => Object.hash(name, dark);
 
   ThemeData _createTheme(Color color, bool dark) {
     return ThemeData.from(
-        colorScheme: ColorScheme.fromSeed(seedColor: color, brightness: dark ? Brightness.dark : Brightness.light),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: color,
+            brightness: dark ? Brightness.dark : Brightness.light),
         useMaterial3: true);
   }
 }
@@ -56,17 +59,26 @@ class AppTheme {
 class AppThemes {
   static final AppThemes _instance = AppThemes._privateConstructor();
 
-  final _themes = [
-    AppTheme.light('default_light'),
-    AppTheme.dark('default_dark'),
-    AppTheme(Colors.red, 'red_light', false),
-    AppTheme(Colors.red, 'red_dark', true),
-    AppTheme(Colors.teal, 'teal_light', false),
-    AppTheme(Colors.teal, 'teal_dark', true),
-    AppTheme(Colors.orange, 'orange_light', false),
-    AppTheme(Colors.orange, 'orange_dark', true),
-    AppTheme(Colors.purple, 'purple_light', false),
-    AppTheme(Colors.purple, 'purple_dark', true)
+  static final _lightThemes = [
+    AppTheme.light('default'),
+    AppTheme(Colors.orange, 'orange', false),
+    AppTheme(Colors.red, 'red', false),
+    AppTheme(Colors.purple, 'purple', false),
+    AppTheme(Colors.teal, 'teal', false),
+    AppTheme(Colors.blue, 'blue', false),
+    AppTheme(Colors.cyan, 'cyan', false),
+    AppTheme(Colors.amber, 'amber', false),
+  ];
+
+  static final _darkThemes = [
+    AppTheme.dark('default'),
+    AppTheme(Colors.orange, 'orange', true),
+    AppTheme(Colors.red, 'red', true),
+    AppTheme(Colors.purple, 'purple', true),
+    AppTheme(Colors.teal, 'teal', true),
+    AppTheme(Colors.blue, 'blue', true),
+    AppTheme(Colors.cyan, 'cyan', true),
+    AppTheme(Colors.amber, 'amber', true),
   ];
 
   factory AppThemes() {
@@ -75,12 +87,23 @@ class AppThemes {
 
   AppThemes._privateConstructor();
 
-  AppTheme getByName(String? name) {
+ static AppTheme get(String? name, bool? dark) {
     if (name == null) {
-      return AppTheme.defaultAppTheme;
+      return _darkThemes[0];
     }
-    return _themes.firstWhere((e) => e.name == name, orElse: () => AppTheme.defaultAppTheme);
+
+    if (dark == null || dark) {
+      return _darkThemes.firstWhere((e) => e.name == name,
+          orElse: () => _darkThemes[0]);
+
+    } else {
+      return _lightThemes.firstWhere((e) => e.name == name,
+          orElse: () => _lightThemes[0]);
+    }
   }
 
-  List<AppTheme> get themes => _themes;
+  static AppTheme get defaultTheme => _darkThemes[0];
+
+  static List<AppTheme> get lightThemes => _lightThemes;
+  static List<AppTheme> get darkThemes => _darkThemes;
 }

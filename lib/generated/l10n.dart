@@ -310,6 +310,16 @@ class S {
     );
   }
 
+  /// `Dark`
+  String get preferencesPageThemeDark {
+    return Intl.message(
+      'Dark',
+      name: 'preferencesPageThemeDark',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Language`
   String get preferencesPageLanguageLbl {
     return Intl.message(

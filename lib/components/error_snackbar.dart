@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Thomas Kern
+ * Copyright (c) 2024 Thomas Kern
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -21,18 +21,20 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/common/globals.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:muelli/common/globals.dart';
+import 'package:muelli/pages/preferences/preferences_controller.dart';
 
 /// Displays a [SnackBar] with error icon, [title] and [detail].
 void showError(String title, String? detail) {
-  Globals.rootScaffoldMessengerKey.currentState!.showSnackBar(_ErrorSnackBar(title: title, detail: detail));
+  Globals.rootScaffoldMessengerKey.currentState!
+      .showSnackBar(_ErrorSnackBar(title: title, detail: detail));
 }
 
 /// Displays a [SnackBar] with info icon, [title] and [detail].
 void showInfo(String title, String? detail) {
-  Globals.rootScaffoldMessengerKey.currentState!.showSnackBar(_InfoSnackBar(title: title, detail: detail));
+  Globals.rootScaffoldMessengerKey.currentState!
+      .showSnackBar(_InfoSnackBar(title: title, detail: detail));
 }
 
 /// Closes the current [SnackBar].
@@ -43,14 +45,24 @@ void closeSnackBar() {
 class _ErrorSnackBar extends SnackBar {
   _ErrorSnackBar({required String title, String? detail})
       : super(
-            content: ListTile(
-              leading: const Icon(Icons.error),
-              title: Text(title),
-              subtitle: detail != null ? Text(detail) : null,
-            ),
-            duration: const Duration(seconds: 30),
-            backgroundColor: Colors.deepOrange,
-            showCloseIcon: true);
+          content: ListTile(
+            leading: const Icon(Icons.error),
+            title: Text(title),
+            subtitle: detail != null ? Text(detail) : null,
+          ),
+          duration: const Duration(seconds: 30),
+          backgroundColor: GetIt.instance<PreferencesController>()
+              .theme
+              .data
+              .colorScheme
+              .errorContainer,
+          showCloseIcon: true,
+          closeIconColor: GetIt.instance<PreferencesController>()
+              .theme
+              .data
+              .colorScheme
+              .onErrorContainer,
+        );
 }
 
 class _InfoSnackBar extends SnackBar {
@@ -61,7 +73,11 @@ class _InfoSnackBar extends SnackBar {
               title: Text(title),
               subtitle: detail != null ? Text(detail) : null,
             ),
-            duration: const Duration(seconds: 4),
-            backgroundColor: GetIt.instance<PreferencesController>().theme.data.colorScheme.onInverseSurface,
+            duration: const Duration(seconds: 10),
+            backgroundColor: GetIt.instance<PreferencesController>()
+                .theme
+                .data
+                .colorScheme
+                .surfaceContainerHigh,
             showCloseIcon: false);
 }

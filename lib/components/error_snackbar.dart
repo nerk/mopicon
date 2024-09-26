@@ -22,8 +22,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:muelli/common/globals.dart';
-import 'package:muelli/pages/preferences/preferences_controller.dart';
+import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 /// Displays a [SnackBar] with error icon, [title] and [detail].
 void showError(String title, String? detail) {

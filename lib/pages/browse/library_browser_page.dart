@@ -152,7 +152,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
         appBar: AppBar(
             title: Text(widget.title ?? S.of(context).libraryBrowserPageTitle),
             centerTitle: true,
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
             leading: widget.parent != null
                 ? ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
                     if (libraryController.isSelectionEmpty) {

@@ -141,7 +141,7 @@ class _PreferencesState extends State<PreferencesPage> {
             ),
             title: Text(S.of(context).preferencesPageTitle),
             centerTitle: true,
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
             actions: [
               TextButton(
                 onPressed: () async {

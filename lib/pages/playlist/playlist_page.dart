@@ -168,7 +168,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       appBar: AppBar(
           title: Text(widget.title ?? S.of(context).playlistPageTitle),
           centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
           //automaticallyImplyLeading: true,
           leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
             if (controller.isSelectionEmpty) {

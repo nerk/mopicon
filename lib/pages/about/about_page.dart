@@ -66,7 +66,7 @@ class AboutPage extends StatelessWidget {
           automaticallyImplyLeading: true,
           centerTitle: true,
           title: Text(S.of(context).aboutPageTitle),
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         ),
         body: MaterialPageFrame(
             child: SingleChildScrollView(

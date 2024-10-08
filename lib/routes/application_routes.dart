@@ -51,12 +51,14 @@ class ApplicationRoutes {
   static const String search = 'search';
   static const String searchPath = '/search';
 
-  final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+  final GlobalKey<NavigatorState> rootNavigatorKey =
+      GlobalKey<NavigatorState>(debugLabel: 'root');
   late final GoRouter _router;
 
   final preferences = GetIt.instance<PreferencesController>();
 
-  static final ApplicationRoutes _instance = ApplicationRoutes._privateConstructor();
+  static final ApplicationRoutes _instance =
+      ApplicationRoutes._privateConstructor();
 
   factory ApplicationRoutes() {
     return _instance;
@@ -81,7 +83,8 @@ class ApplicationRoutes {
             },
           ),
           StatefulShellRoute.indexedStack(
-              builder: (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
+              builder: (BuildContext context, GoRouterState state,
+                  StatefulNavigationShell navigationShell) {
                 return HomeView(navigationShell);
               },
               branches: <StatefulShellBranch>[
@@ -110,13 +113,15 @@ class ApplicationRoutes {
                             // unselect all potentially selected items
                             // and reset selection mode on exit
                             onExit: (BuildContext c, _) {
-                              final controller = GetIt.instance<LibraryBrowserController>();
+                              final controller =
+                                  GetIt.instance<LibraryBrowserController>();
                               controller.notifyUnselect();
                               return true;
                             },
                             name: down,
                             path: downPath,
-                            builder: (BuildContext context, GoRouterState state) {
+                            builder:
+                                (BuildContext context, GoRouterState state) {
                               return LibraryBrowserPage(
                                 title: state.uri.queryParameters['title'],
                                 parent: state.pathParameters['parent'],
@@ -126,13 +131,15 @@ class ApplicationRoutes {
                             // unselect all potentially selected items
                             // and reset selection mode on exit
                             onExit: (BuildContext c, _) {
-                              final controller = GetIt.instance<PlaylistViewController>();
+                              final controller =
+                                  GetIt.instance<PlaylistViewController>();
                               controller.notifyUnselect();
                               return true;
                             },
                             name: playlist,
                             path: playlistPath,
-                            builder: (BuildContext context, GoRouterState state) {
+                            builder:
+                                (BuildContext context, GoRouterState state) {
                               return PlaylistPage(
                                 title: state.uri.queryParameters['title'],
                                 parent: state.pathParameters['parent'],
@@ -144,14 +151,16 @@ class ApplicationRoutes {
                   GoRoute(
                     redirect: (BuildContext context, GoRouterState state) {
                       // Use redirect to update TrackListPage's state
-                      final controller = GetIt.instance<TracklistViewController>();
+                      final controller =
+                          GetIt.instance<TracklistViewController>();
                       controller.notifyRefresh();
                       return null;
                     },
                     // unselect all potentially selected items
                     // and reset selection mode on exit
                     onExit: (BuildContext c, _) {
-                      final controller = GetIt.instance<TracklistViewController>();
+                      final controller =
+                          GetIt.instance<TracklistViewController>();
                       controller.notifyUnselect();
                       controller.splitEnabled.value = true;
                       return true;
@@ -168,7 +177,8 @@ class ApplicationRoutes {
   }
 
   void gotoHome() {
-    GoRouter.of(rootNavigatorKey.currentContext!).goNamed(tracks, queryParameters: <String, String>{'title': 'Tracks'});
+    GoRouter.of(rootNavigatorKey.currentContext!)
+        .goNamed(tracks, queryParameters: <String, String>{'title': 'Tracks'});
   }
 
   void gotoSettings() {
@@ -183,14 +193,26 @@ class ApplicationRoutes {
     GoRouter.of(rootNavigatorKey.currentContext!).push(searchPath);
   }
 
+  void gotoAlbum(Album album) {
+    Ref item = Ref(album.uri!, album.name, Ref.typeAlbum);
+    GoRouter.of(rootNavigatorKey.currentContext!).pushNamed(down,
+        queryParameters: <String, String>{
+          'title': item.name
+        },
+        pathParameters: <String, String>{
+          'parent': Parameter.toBase64(item.toMap())
+        });
+  }
+
   GoRouter get router => _router;
 }
 
 extension GoRouterExtension on GoRouter {
   Map<String, String> currentPathParameters() {
     final RouteMatch lastMatch = routerDelegate.currentConfiguration.last;
-    final RouteMatchList matchList =
-        lastMatch is ImperativeRouteMatch ? lastMatch.matches : routerDelegate.currentConfiguration;
+    final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+        ? lastMatch.matches
+        : routerDelegate.currentConfiguration;
     return matchList.pathParameters;
   }
 

@@ -35,6 +35,7 @@ import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 import 'tracklist_view_controller.dart';
 import 'tracklist_appbar_menu.dart';
@@ -403,6 +404,18 @@ class _TrackListState extends State<TrackListPage> {
               }
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
+            ActionButton<SelectedItemPositions>(Icons.album, () async {
+              var selectedItems = controller.getSelectedTracks();
+              if (context.mounted &&
+                  selectedItems.length == 1 &&
+                  selectedItems[0].track.album != null) {
+                Globals.applicationRoutes
+                    .gotoAlbum(selectedItems[0].track.album!);
+              }
+              controller.notifyUnselect();
+            },
+                valueListenable: controller.selectionChanged,
+                onlySingleValue: true),
             VolumeControl(),
             TracklistAppBarMenu(controller)
           ]),

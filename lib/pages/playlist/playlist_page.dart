@@ -33,6 +33,7 @@ import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 
 import 'playlist_view_controller.dart';
@@ -198,6 +199,17 @@ class _PlaylistPageState extends State<PlaylistPage> {
               }
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
+            ActionButton<SelectedItemPositions>(Icons.album, () async {
+              var selectedItems = await controller.getSelectedItems(playlist);
+              if (context.mounted &&
+                  selectedItems.length == 1 &&
+                  selectedItems[0].album != null) {
+                Globals.applicationRoutes.gotoAlbum(selectedItems[0].album!);
+              }
+              controller.notifyUnselect();
+            },
+                valueListenable: controller.selectionChanged,
+                onlySingleValue: true),
             VolumeControl(),
             PlaylistAppBarMenu(controller, playlist)
           ]),

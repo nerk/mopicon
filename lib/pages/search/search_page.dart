@@ -31,6 +31,7 @@ import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 
@@ -216,6 +217,18 @@ class _SearchPageState extends State<SearchPage> {
                   context, selectedItems.asRef);
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
+            ActionButton<SelectedItemPositions>(Icons.album, () async {
+              var selectedItems =
+                  controller.selectionChanged.value.filterSelected(tracks);
+              if (context.mounted &&
+                  selectedItems.length == 1 &&
+                  selectedItems[0].album != null) {
+                Globals.applicationRoutes.gotoAlbum(selectedItems[0].album!);
+              }
+              controller.notifyUnselect();
+            },
+                valueListenable: controller.selectionChanged,
+                onlySingleValue: true),
             VolumeControl(),
             SearchAppBarMenu(tracks.length, controller)
           ]),

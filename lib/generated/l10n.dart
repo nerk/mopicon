@@ -150,10 +150,10 @@ class S {
     );
   }
 
-  /// `Stop`
+  /// `Abort`
   String get connectingPageStopBtn {
     return Intl.message(
-      'Stop',
+      'Abort',
       name: 'connectingPageStopBtn',
       desc: '',
       args: [],

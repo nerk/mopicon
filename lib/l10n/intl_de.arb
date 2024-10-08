@@ -10,7 +10,7 @@
   "retryBtn": "Wiederholen",
   "saveBtn": "Speichern",
   "connectingPageConnecting": "Verbinden...",
-  "connectingPageStopBtn": "Stopp",
+  "connectingPageStopBtn": "Abbrechen",
   "homePageSearchLbl": "Suche",
   "homePageBrowseLbl": "Bibliothek",
   "homePageTracksLbl": "Wiedergabe",

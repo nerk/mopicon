@@ -64,7 +64,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "clearLogButtonLbl": MessageLookupByLibrary.simpleMessage("Clear Log"),
         "connectingPageConnecting":
             MessageLookupByLibrary.simpleMessage("Connecting..."),
-        "connectingPageStopBtn": MessageLookupByLibrary.simpleMessage("Stop"),
+        "connectingPageStopBtn": MessageLookupByLibrary.simpleMessage("Abort"),
         "deletePlaylistDialogMessage": m3,
         "deletePlaylistDialogTitle":
             MessageLookupByLibrary.simpleMessage("Delete Playlist"),

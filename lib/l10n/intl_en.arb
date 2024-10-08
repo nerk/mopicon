@@ -10,7 +10,7 @@
   "submitBtn": "Submit",
   "saveBtn": "Save",
   "connectingPageConnecting": "Connecting...",
-  "connectingPageStopBtn": "Stop",
+  "connectingPageStopBtn": "Abort",
   "homePageSearchLbl": "Search",
   "homePageBrowseLbl": "Browse",
   "homePageTracksLbl": "Tracks",

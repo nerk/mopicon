@@ -116,6 +116,7 @@
   "nameTranslateReleaseYears": "Release Years",
   "nameTranslateLastWeeksUpdates": "Last Week's Updates",
   "nameTranslateLastMonthsUpdates": "Last Month's Updates",
+  "noAlbumInformationError": "No album found for this title.",
   "tracksAddedToTracklistMessage": "{n} tracks added to tracklist.",
   "@tracksAddedToTracklistMessage": {
     "placeholders": {

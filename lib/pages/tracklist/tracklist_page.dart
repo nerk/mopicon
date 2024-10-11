@@ -23,6 +23,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/pages/tracklist/now_playing.dart';
 import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/volume_control.dart';
@@ -406,11 +407,14 @@ class _TrackListState extends State<TrackListPage> {
             }, valueListenable: controller.selectionChanged),
             ActionButton<SelectedItemPositions>(Icons.album, () async {
               var selectedItems = controller.getSelectedTracks();
-              if (context.mounted &&
-                  selectedItems.length == 1 &&
-                  selectedItems[0].track.album != null) {
-                Globals.applicationRoutes
-                    .gotoAlbum(selectedItems[0].track.album!);
+              if (context.mounted) {
+                if (selectedItems.length == 1 &&
+                    selectedItems[0].track.album != null) {
+                  Globals.applicationRoutes
+                      .gotoAlbum(selectedItems[0].track.album!);
+                } else {
+                  showError(S.of(context).noAlbumInformationError, null);
+                }
               }
               controller.notifyUnselect();
             },

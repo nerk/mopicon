@@ -20,9 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'dart:async';
-import 'package:get_it/get_it.dart';
-
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/components/volume_control.dart';
@@ -220,10 +220,13 @@ class _SearchPageState extends State<SearchPage> {
             ActionButton<SelectedItemPositions>(Icons.album, () async {
               var selectedItems =
                   controller.selectionChanged.value.filterSelected(tracks);
-              if (context.mounted &&
-                  selectedItems.length == 1 &&
-                  selectedItems[0].album != null) {
-                Globals.applicationRoutes.gotoAlbum(selectedItems[0].album!);
+              if (context.mounted) {
+                if (selectedItems.length == 1 &&
+                    selectedItems[0].album != null) {
+                  Globals.applicationRoutes.gotoAlbum(selectedItems[0].album!);
+                } else {
+                  showError(S.of(context).noAlbumInformationError, null);
+                }
               }
               controller.notifyUnselect();
             },

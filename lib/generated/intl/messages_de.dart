@@ -147,6 +147,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Bitte gültigen URI des Streams eingeben."),
         "newTracklistStreamDialogTitle": MessageLookupByLibrary.simpleMessage(
             "Neuen Stream zur Wiedergabeliste hinzufügen"),
+        "noAlbumInformationError": MessageLookupByLibrary.simpleMessage(
+            "Kein Album zu diesem Titel gefunden."),
         "noBtn": MessageLookupByLibrary.simpleMessage("Nein"),
         "nowPlayingBitrateLbl": m4,
         "nowPlayingDateLbl": m5,

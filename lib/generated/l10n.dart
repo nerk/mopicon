@@ -1070,6 +1070,16 @@ class S {
     );
   }
 
+  /// `No album found for this title.`
+  String get noAlbumInformationError {
+    return Intl.message(
+      'No album found for this title.',
+      name: 'noAlbumInformationError',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `{n} tracks added to tracklist.`
   String tracksAddedToTracklistMessage(int n) {
     return Intl.message(

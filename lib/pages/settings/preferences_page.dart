@@ -309,7 +309,6 @@ class _PreferencesState extends State<PreferencesPage> {
                               }
                             },
                           ),
-                          TitledDivider(S.of(context).preferencesPageUiLbl),
                           SwitchListTile(
                             contentPadding: EdgeInsets.zero,
                             title: Text(S

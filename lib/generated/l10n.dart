@@ -290,16 +290,6 @@ class S {
     );
   }
 
-  /// `User Interface`
-  String get preferencesPageUiLbl {
-    return Intl.message(
-      'User Interface',
-      name: 'preferencesPageUiLbl',
-      desc: '',
-      args: [],
-    );
-  }
-
   /// `Theme`
   String get preferencesPageThemeLbl {
     return Intl.message(

@@ -202,8 +202,6 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Settings"),
         "preferencesPageTranslateServerNamesLbl":
             MessageLookupByLibrary.simpleMessage("Translate server names"),
-        "preferencesPageUiLbl":
-            MessageLookupByLibrary.simpleMessage("User Interface"),
         "renamePlaylistCreateError":
             MessageLookupByLibrary.simpleMessage("Could not rename playlist."),
         "renamePlaylistDialogCancelBtn":

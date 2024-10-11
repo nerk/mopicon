@@ -24,7 +24,6 @@
   "preferencesPageMopidyPortInvalid": "Please enter a valid port number.",
   "preferencesPageConnectionLbl": "Connection",
   "preferencesPageAppearanceLbl": "Appearance",
-  "preferencesPageUiLbl": "User Interface",
   "preferencesPageThemeLbl": "Theme",
   "preferencesPageThemeDark": "Dark",
   "preferencesPageLanguageLbl": "Language",

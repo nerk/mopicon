@@ -52,25 +52,11 @@ class _BusyWrapperState extends State<BusyWrapper>
   Timer? timer;
   late bool busy;
 
-  late final AnimationController _primaryController = AnimationController(
-    duration: const Duration(seconds: 5),
-    vsync: this,
-  );
+  late AnimationController _primaryController;
+  late AnimationController _secondaryController;
+  late Animation<double> _connectionAnimation;
+  late Animation<double> _busyAnimation;
 
-  late final AnimationController _secondaryController = AnimationController(
-    duration: const Duration(seconds: 10),
-    vsync: this,
-  );
-
-  late final Animation<double> _connectionAnimation = CurvedAnimation(
-    parent: _secondaryController,
-    curve: Curves.easeIn,
-  );
-
-  late final Animation<double> _busyAnimation = CurvedAnimation(
-    parent: _primaryController,
-    curve: Curves.easeIn,
-  );
 
   void _startAnimation() {
     _stopAnimation();
@@ -97,6 +83,27 @@ class _BusyWrapperState extends State<BusyWrapper>
   @override
   initState() {
     super.initState();
+
+     _primaryController = AnimationController(
+      duration: const Duration(seconds: 5),
+      vsync: this,
+    );
+
+    _secondaryController = AnimationController(
+      duration: const Duration(seconds: 10),
+      vsync: this,
+    );
+
+    _connectionAnimation = CurvedAnimation(
+      parent: _secondaryController,
+      curve: Curves.easeIn,
+    );
+
+    _busyAnimation = CurvedAnimation(
+      parent: _primaryController,
+      curve: Curves.easeIn,
+    );
+
     busy = widget.busy;
     if (busy) {
       _startAnimation();

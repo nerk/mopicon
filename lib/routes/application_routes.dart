@@ -204,6 +204,10 @@ class ApplicationRoutes {
         });
   }
 
+  void goBack() {
+    GoRouter.of(rootNavigatorKey.currentContext!).pop();
+  }
+
   GoRouter get router => _router;
 }
 

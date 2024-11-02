@@ -124,51 +124,34 @@ class _PreferencesState extends State<PreferencesPage> {
 
     return Scaffold(
         appBar: AppBar(
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () async {
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () async {
+              if (preferencesFormKey.currentState?.validate() ?? false) {
+                var preferencesPageSaveError =
+                    S.of(context).preferencesPageSaveError;
                 try {
-                  await load();
+                  preferences.appLocale = newLocale ?? preferences.appLocale;
+                  await save();
+                  // reconnect if connection changed or not connected at all
+                  if (originalUri != preferences.url ||
+                      !mopidyService.connected) {
+                    mopidyService.stop();
+                    GetIt.instance<MopidyService>().connect(preferences.url);
+                  }
                   S.load(preferences.appLocale.locale);
                   Globals.applicationRoutes.gotoHome();
                 } catch (e) {
-                  if (context.mounted) {
-                    showError(S.of(context).preferencesPageLoadError, null);
-                  }
+                  showError(preferencesPageSaveError, null);
                 }
-              },
-            ),
-            title: Text(S.of(context).preferencesPageTitle),
-            centerTitle: true,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  if (preferencesFormKey.currentState?.validate() ?? false) {
-                    var preferencesPageSaveError =
-                        S.of(context).preferencesPageSaveError;
-                    try {
-                      preferences.appLocale =
-                          newLocale ?? preferences.appLocale;
-                      await save();
-                      // reconnect if connection changed or not connected at all
-                      if (originalUri != preferences.url ||
-                          !mopidyService.connected) {
-                        mopidyService.stop();
-                        GetIt.instance<MopidyService>()
-                            .connect(preferences.url);
-                      }
-                      S.load(preferences.appLocale.locale);
-                      Globals.applicationRoutes.gotoHome();
-                    } catch (e) {
-                      showError(preferencesPageSaveError, null);
-                    }
-                  }
-                },
-                child: Text(S.of(context).preferencesPageSaveBtn),
-              )
-            ]),
+              }
+            },
+          ),
+          title: Text(S.of(context).preferencesPageTitle),
+          centerTitle: true,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+        ),
         body: MaterialPageFrame(
             child: SingleChildScrollView(
                 child: Form(

@@ -30,12 +30,11 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "de.kernwelt.mopicon"
-    compileSdkVersion flutter.compileSdkVersion
-    ndkVersion = "26.1.10909125"
+    //ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     defaultConfig {
@@ -43,7 +42,9 @@ android {
         applicationId "de.kernwelt.mopicon"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        //minSdkVersion flutter.minSdkVersion
+        minSdkVersion 28
+        compileSdkVersion flutter.compileSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

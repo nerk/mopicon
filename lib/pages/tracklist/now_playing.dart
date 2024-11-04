@@ -264,12 +264,21 @@ class NowPlaying extends StatelessWidget {
 
   List<Widget> _getButtons() {
     if (playbackState == PlaybackState.playing) {
-      return [_PreviousButton(), _PauseButton(), _StopButton(), _NextButton()];
+      return [
+        _PreviousButton(),
+        !isStream ? _Back10Button() : const SizedBox(),
+        _PauseButton(),
+        _StopButton(),
+        !isStream ? _Forward10Button(currentTlTrack?.track) : const SizedBox(),
+        _NextButton()
+      ];
     } else if (playbackState == PlaybackState.paused) {
       return [
         _PreviousButton(),
+        !isStream ? _Back10Button() : const SizedBox(),
         _PlayButton(null),
         _StopButton(),
+        !isStream ? _Forward10Button(currentTlTrack?.track) : const SizedBox(),
         _NextButton()
       ];
     } else if (playbackState == PlaybackState.stopped) {
@@ -378,5 +387,59 @@ class _NextButton extends StatelessWidget {
           }
         },
         icon: const Icon(Icons.skip_next));
+  }
+}
+
+class _Back10Button extends StatelessWidget {
+  final _mopidyService = GetIt.instance<MopidyService>();
+
+  _Back10Button();
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () async {
+          try {
+            int? pos = await _mopidyService.getTimePosition();
+            if (pos != null && pos - 10000 >= 0) {
+              _mopidyService.seek(pos - 10000);
+            } else {
+              _mopidyService.seek(0);
+            }
+          } catch (e) {
+            logger.e(e);
+          }
+        },
+        icon: const Icon(Icons.replay_10));
+  }
+}
+
+class _Forward10Button extends StatelessWidget {
+  final _mopidyService = GetIt.instance<MopidyService>();
+
+  final Track? track;
+
+  _Forward10Button(this.track);
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        onPressed: () async {
+          try {
+            int length = track?.length != null ? track!.length! : 0;
+            int? pos = await _mopidyService.getTimePosition();
+            if (pos != null) {
+              if (length == 0) {
+                _mopidyService.seek(pos + 10000);
+              } else {
+                _mopidyService
+                    .seek(length - pos > 10000 ? pos + 10000 : length);
+              }
+            }
+          } catch (e) {
+            logger.e(e);
+          }
+        },
+        icon: const Icon(Icons.forward_10));
   }
 }

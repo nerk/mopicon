@@ -116,7 +116,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: Release ${{steps.read_action_js.outputs['version']}}
-          body_path: ${{ github.workspace }}-history.txt
+          body_path: history.txt
           tag_name: ${{steps.read_action_js.outputs['version']}}
           prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/app/outputs/bundle/release/mopicon-${{steps.read_action_js.outputs['version']}}-appbundle.zip

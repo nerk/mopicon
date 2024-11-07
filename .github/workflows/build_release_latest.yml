@@ -30,10 +30,34 @@ jobs:
           name: gitversion
           path: version.txt
 
+  last-commits:
+    name: Get last commits
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: messages
+        run: |
+          git log $(git describe --tags --abbrev=0)..HEAD --oneline --pretty=format:%h\ %s%n%b%- > history.txt
+      - name: Upload history.txt
+        uses: actions/upload-artifact@v4
+        with:
+          name: history
+          path: history.txt
+
   build-and-release-android:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download history.txt
+        uses: actions/download-artifact@v4
+        with:
+          name: history
       - name: Install ninja build tools etc.
         run: |
           sudo apt-get update -y
@@ -75,7 +99,7 @@ jobs:
           filename: mopicon-${{steps.read_action_js.outputs['version']}}-appbundle.zip
           directory: build/app/outputs/bundle/release
       - name: Android APK Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,12 +109,13 @@ jobs:
           prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/app/outputs/flutter-apk/mopicon-${{steps.read_action_js.outputs['version']}}-apk.zip
       - name: Android App Bundle Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: Release ${{steps.read_action_js.outputs['version']}}
+          body_path: ${{ github.workspace }}-history.txt
           tag_name: ${{steps.read_action_js.outputs['version']}}
           prerelease: ${{steps.read_action_js.outputs['mopicon_prerelease']}}
           files: build/app/outputs/bundle/release/mopicon-${{steps.read_action_js.outputs['version']}}-appbundle.zip
@@ -124,7 +149,7 @@ jobs:
           filename: mopicon-${{steps.read_action_js.outputs['version']}}-windows-x64.zip
           directory: build/windows/x64/runner/Release
       - name: Windows Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -171,7 +196,7 @@ jobs:
           filename: mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-20_04-x64.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -218,7 +243,7 @@ jobs:
           filename: mopicon-${{steps.read_action_js.outputs['version']}}-ubuntu-22_04-x64.zip
           directory: build/linux/x64/release/bundle
       - name: Linux Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         #if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

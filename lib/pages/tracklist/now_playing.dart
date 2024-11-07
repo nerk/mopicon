@@ -263,28 +263,19 @@ class NowPlaying extends StatelessWidget {
   }
 
   List<Widget> _getButtons() {
-    if (playbackState == PlaybackState.playing) {
+    if (playbackState != PlaybackState.stopped) {
       return [
         _PreviousButton(),
         !isStream ? _Back10Button() : const SizedBox(),
-        _PauseButton(),
+        playbackState == PlaybackState.playing
+            ? _PauseButton()
+            : _PlayButton(null),
         !isStream ? _Forward10Button(currentTlTrack?.track) : const SizedBox(),
         _NextButton(),
         _StopButton(),
       ];
-    } else if (playbackState == PlaybackState.paused) {
-      return [
-        _PreviousButton(),
-        !isStream ? _Back10Button() : const SizedBox(),
-        _PlayButton(null),
-        !isStream ? _Forward10Button(currentTlTrack?.track) : const SizedBox(),
-        _NextButton(),
-        _StopButton(),
-      ];
-    } else if (playbackState == PlaybackState.stopped) {
-      return [_PlayButton(currentTlTrack?.tlid)];
     } else {
-      return [];
+      return [_PlayButton(currentTlTrack?.tlid)];
     }
   }
 }

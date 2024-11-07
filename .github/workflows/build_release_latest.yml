@@ -51,6 +51,7 @@ jobs:
           path: history.txt
 
   build-and-release-android:
+    needs: last-commits
     runs-on: ubuntu-latest
 
     steps:

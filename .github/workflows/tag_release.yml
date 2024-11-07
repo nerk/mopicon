@@ -51,9 +51,11 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
-      - with: 
-        ref: ${{ github.event.pull_request.head.sha }}
-        fetch-depth: 0
-      - run: |
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: messages
+        run: |
           git log $(git describe --tags --abbrev=0)..HEAD --oneline --pretty=format:%h\ %s%n%b%-

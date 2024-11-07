@@ -44,3 +44,16 @@ jobs:
       - name: use-yaml-file
         run: |
           echo version: ${{ steps.read_action_js.outputs['version'] }}
+
+  last-commits:
+    name: Tag a release
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Get commit messages
+        run: |
+          git log $(git describe --tags --abbrev=0)..HEAD --oneline --pretty=format:%h\ %s%n%b%-

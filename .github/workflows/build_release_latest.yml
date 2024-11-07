@@ -55,10 +55,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download history.txt
-        uses: actions/download-artifact@v4
-        with:
-          name: history
       - name: Install ninja build tools etc.
         run: |
           sudo apt-get update -y
@@ -99,6 +95,10 @@ jobs:
           type: 'zip'
           filename: mopicon-${{steps.read_action_js.outputs['version']}}-appbundle.zip
           directory: build/app/outputs/bundle/release
+      - name: Download history.txt
+        uses: actions/download-artifact@v4
+        with:
+          name: history
       - name: Android APK Release
         uses: softprops/action-gh-release@v2
         #if: startsWith(github.ref, 'refs/tags/')

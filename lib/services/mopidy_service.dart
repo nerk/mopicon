@@ -32,6 +32,7 @@ import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopidy_client/mopidy_client.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:mopicon/utils/logging_utils.dart';
+import 'package:mopicon/utils/open_value_notifier.dart';
 export 'package:mopidy_client/mopidy_client.dart' hide Image;
 import 'package:mopicon/generated/l10n.dart';
 
@@ -62,7 +63,7 @@ abstract class MopidyService {
   ValueNotifier<PlaybackState?> get playbackStateNotifier;
 
   /// Time position in currently playing track changed.
-  ValueNotifier<int> get seekedNotifier;
+  OpenValueNotifier<int> get seekedNotifier;
 
   /// Notifier for mute or unmute.
   ValueNotifier<bool> get muteChangedNotifier;
@@ -207,7 +208,7 @@ class MopidyServiceImpl extends MopidyService {
   final _playbackStateNotifier = ValueNotifier<PlaybackState?>(null);
 
   /// Time position in currently playing track changed
-  final _seekedNotifier = ValueNotifier<int>(0);
+  final _seekedNotifier = OpenValueNotifier<int>(0);
 
   /// Notifier for mute or unmute.
   final _muteChangedNotifier = ValueNotifier<bool>(false);
@@ -250,7 +251,7 @@ class MopidyServiceImpl extends MopidyService {
       _playbackStateNotifier;
 
   @override
-  ValueNotifier<int> get seekedNotifier => _seekedNotifier;
+  OpenValueNotifier<int> get seekedNotifier => _seekedNotifier;
 
   @override
   ValueNotifier<bool> get muteChangedNotifier => _muteChangedNotifier;
@@ -355,7 +356,10 @@ class MopidyServiceImpl extends MopidyService {
     });
 
     _mopidy.seeked$.listen((timePosition) {
+      bool explicitNotify = timePosition == seekedNotifier.value;
       seekedNotifier.value = timePosition;
+      // explicitly trigger listeners if old and value are the same
+      explicitNotify ? seekedNotifier.notify() : null;
     });
 
     _mopidy.playlistDeleted$.listen((Uri uri) async {

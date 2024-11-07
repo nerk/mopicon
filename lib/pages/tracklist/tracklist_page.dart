@@ -405,21 +405,25 @@ class _TrackListState extends State<TrackListPage> {
               }
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
-            ActionButton<SelectedItemPositions>(Icons.album, () async {
-              var selectedItems = controller.getSelectedTracks();
-              if (context.mounted) {
-                if (selectedItems.length == 1 &&
-                    selectedItems[0].track.album != null) {
-                  Globals.applicationRoutes
-                      .gotoAlbum(selectedItems[0].track.album!);
-                } else {
-                  showError(S.of(context).noAlbumInformationError, null);
-                }
-              }
-              controller.notifyUnselect();
-            },
+            ActionButton<SelectedItemPositions>(
+                Icons.album,
+                () async {
+                  var selectedItems = controller.getSelectedTracks();
+                  if (context.mounted) {
+                    if (selectedItems.length == 1 &&
+                        selectedItems[0].track.album != null) {
+                      Globals.applicationRoutes
+                          .gotoAlbum(selectedItems[0].track.album!);
+                    } else {
+                      showError(S.of(context).noAlbumInformationError, null);
+                    }
+                  }
+                  controller.notifyUnselect();
+                },
                 valueListenable: controller.selectionChanged,
-                onlySingleValue: true),
+                checkEnable: (value, result) {
+                  return value.positions.length == 1;
+                }),
             VolumeControl(),
             TracklistAppBarMenu(controller)
           ]),

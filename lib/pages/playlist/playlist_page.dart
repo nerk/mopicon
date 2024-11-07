@@ -200,20 +200,26 @@ class _PlaylistPageState extends State<PlaylistPage> {
               }
               controller.notifyUnselect();
             }, valueListenable: controller.selectionChanged),
-            ActionButton<SelectedItemPositions>(Icons.album, () async {
-              var selectedItems = await controller.getSelectedItems(playlist);
-              if (context.mounted) {
-                if (selectedItems.length == 1 &&
-                    selectedItems[0].album != null) {
-                  Globals.applicationRoutes.gotoAlbum(selectedItems[0].album!);
-                } else {
-                  showError(S.of(context).noAlbumInformationError, null);
-                }
-              }
-              controller.notifyUnselect();
-            },
+            ActionButton<SelectedItemPositions>(
+                Icons.album,
+                () async {
+                  var selectedItems =
+                      await controller.getSelectedItems(playlist);
+                  if (context.mounted) {
+                    if (selectedItems.length == 1 &&
+                        selectedItems[0].album != null) {
+                      Globals.applicationRoutes
+                          .gotoAlbum(selectedItems[0].album!);
+                    } else {
+                      showError(S.of(context).noAlbumInformationError, null);
+                    }
+                  }
+                  controller.notifyUnselect();
+                },
                 valueListenable: controller.selectionChanged,
-                onlySingleValue: true),
+                checkEnable: (value, result) {
+                  return value.positions.length == 1;
+                }),
             VolumeControl(),
             PlaylistAppBarMenu(controller, playlist)
           ]),

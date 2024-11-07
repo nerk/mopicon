@@ -43,45 +43,31 @@ class ActionButton<T> extends StatelessWidget {
   /// The [ValueListenable] to control whether the button is displayed.
   final ValueListenable<T>? valueListenable;
 
-  final bool onlySingleValue;
+  final bool Function(T value, bool result)? checkEnable;
 
   const ActionButton(this.iconData, this.onPressed,
-      {this.valueListenable, this.onlySingleValue = false, super.key});
+      {this.valueListenable, this.checkEnable, super.key});
 
   bool _shouldEnable(T value) {
+    bool result = false;
     if (value == null) {
-      return false;
+      result = false;
+    } else if (value is SelectedItemPositions) {
+      result = value.positions.isNotEmpty;
+    } else if (value is List) {
+      result = value.isNotEmpty;
+    } else if (value is Set && value.isNotEmpty) {
+      result = true;
+    } else if (value is bool && value) {
+      result = true;
+    } else if (value is int || value is double && value != 0) {
+      result = true;
     }
 
-    if (value is SelectedItemPositions) {
-      if (onlySingleValue) {
-        return value.positions.length == 1;
-      } else {
-        return value.positions.isNotEmpty;
-      }
+    if (checkEnable != null) {
+      return checkEnable!(value, result);
     }
-
-    if (value is List) {
-      if (onlySingleValue) {
-        return value.length == 1;
-      } else {
-        return value.isNotEmpty;
-      }
-    }
-
-    if (value is Set && value.isNotEmpty) {
-      return true;
-    }
-
-    if (value is bool && value) {
-      return true;
-    }
-
-    if (value is int || value is double && value != 0) {
-      return true;
-    }
-
-    return false;
+    return result;
   }
 
   @override

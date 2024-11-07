@@ -27,7 +27,7 @@ jobs:
           path: version.txt
 
   read-yaml:
-    name: Tag a release
+    name: Read YAML
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
           echo version: ${{ steps.read_action_js.outputs['version'] }}
 
   last-commits:
-    name: Tag a release
+    name: Get last commits
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

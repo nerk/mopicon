@@ -264,13 +264,18 @@ class NowPlaying extends StatelessWidget {
 
   List<Widget> _getButtons() {
     if (playbackState != PlaybackState.stopped) {
+      int length = currentTlTrack?.track.length != null
+          ? currentTlTrack!.track.length!
+          : 0;
       return [
         _PreviousButton(),
-        !isStream ? _Back10Button() : const SizedBox(),
+        !(isStream && length == 0) ? _Back10Button() : const SizedBox(),
         playbackState == PlaybackState.playing
             ? _PauseButton()
             : _PlayButton(null),
-        !isStream ? _Forward10Button(currentTlTrack?.track) : const SizedBox(),
+        !(isStream && length == 0)
+            ? _Forward10Button(length)
+            : const SizedBox(),
         _NextButton(),
         _StopButton(),
       ];
@@ -408,16 +413,15 @@ class _Back10Button extends StatelessWidget {
 class _Forward10Button extends StatelessWidget {
   final _mopidyService = GetIt.instance<MopidyService>();
 
-  final Track? track;
+  final int length;
 
-  _Forward10Button(this.track);
+  _Forward10Button(this.length);
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
         onPressed: () async {
           try {
-            int length = track?.length != null ? track!.length! : 0;
             int? pos = await _mopidyService.getTimePosition();
             if (pos != null) {
               if (length == 0) {

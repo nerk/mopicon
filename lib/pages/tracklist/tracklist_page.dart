@@ -159,6 +159,23 @@ class _TrackListState extends State<TrackListPage> {
     }
   }
 
+  // updates the time position of the current track view
+  void updateTimePosition() async {
+    try {
+      controller.mopidyService.setBusy(true);
+      final position = await controller.mopidyService.getTimePosition();
+      if (mounted) {
+        setState(() {
+          timePosition = position ?? 0;
+        });
+      }
+    } catch (e) {
+      logger.e(e);
+    } finally {
+      controller.mopidyService.setBusy(false);
+    }
+  }
+
   // updates current track view, playback state und position within track.
   void updateTrackPlayback() async {
     try {
@@ -242,7 +259,11 @@ class _TrackListState extends State<TrackListPage> {
     super.didChangeDependencies();
 
     final double height = MediaQuery.of(context).size.height;
+    bool wasSmallHeight = smallHeight;
     smallHeight = height < 600;
+    if (wasSmallHeight != smallHeight) {
+      updateTimePosition();
+    }
   }
 
   @override

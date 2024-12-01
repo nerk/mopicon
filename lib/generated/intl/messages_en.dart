@@ -20,52 +20,40 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(url) => "Could not launch \'${url}\'.";
+  static String m0(date) => "Year: ${date}";
 
-  static String m1(date) => "Year: ${date}";
+  static String m1(numTracks) => "Tracks: ${numTracks}";
 
-  static String m2(numTracks) => "Tracks: ${numTracks}";
-
-  static String m3(name) =>
+  static String m2(name) =>
       "Do you really want to delete playlist \'${name}\'?";
 
-  static String m4(bitrate) => "Bitrate: ${bitrate} kbit/s";
+  static String m3(bitrate) => "Bitrate: ${bitrate} kbit/s";
 
-  static String m5(date) => "Year: ${date}";
+  static String m4(date) => "Year: ${date}";
 
-  static String m6(discNo) => "Disc: ${discNo}";
+  static String m5(discNo) => "Disc: ${discNo}";
 
-  static String m7(trackNo) => "Track: ${trackNo}";
+  static String m6(trackNo) => "Track: ${trackNo}";
 
-  static String m8(p) => "Track added to playlist ${p}.";
+  static String m7(p) => "Track added to playlist ${p}.";
 
-  static String m9(n, p) => "${n} tracks added to playlist ${p}.";
+  static String m8(n, p) => "${n} tracks added to playlist ${p}.";
 
-  static String m10(n) => "${n} tracks added to tracklist.";
+  static String m9(n) => "${n} tracks added to tracklist.";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "abortBtn": MessageLookupByLibrary.simpleMessage("Abort"),
-        "aboutPageDescription": MessageLookupByLibrary.simpleMessage(
-            "A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk/mopicon[source code] is available on Github."),
-        "aboutPageHelpDescription": MessageLookupByLibrary.simpleMessage(
-            "https://github.com/nerk/mopicon[Documentation and Help]"),
-        "aboutPageHelpSection": MessageLookupByLibrary.simpleMessage("Help"),
-        "aboutPageLicenseSection":
-            MessageLookupByLibrary.simpleMessage("License"),
-        "aboutPageLinkLaunchError": m0,
         "aboutPageTitle": MessageLookupByLibrary.simpleMessage("About"),
-        "aboutPageVersionSection":
-            MessageLookupByLibrary.simpleMessage("Version"),
-        "albumDateLbl": m1,
-        "albumNumTracksLbl": m2,
+        "albumDateLbl": m0,
+        "albumNumTracksLbl": m1,
         "appName": MessageLookupByLibrary.simpleMessage("Mopicon"),
         "cancelBtn": MessageLookupByLibrary.simpleMessage("Cancel"),
         "clearLogButtonLbl": MessageLookupByLibrary.simpleMessage("Clear Log"),
         "connectingPageConnecting":
             MessageLookupByLibrary.simpleMessage("Connecting..."),
         "connectingPageStopBtn": MessageLookupByLibrary.simpleMessage("Abort"),
-        "deletePlaylistDialogMessage": m3,
+        "deletePlaylistDialogMessage": m2,
         "deletePlaylistDialogTitle":
             MessageLookupByLibrary.simpleMessage("Delete Playlist"),
         "deletePlaylistError": MessageLookupByLibrary.simpleMessage(
@@ -147,10 +135,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "noAlbumInformationError": MessageLookupByLibrary.simpleMessage(
             "No album found for this title."),
         "noBtn": MessageLookupByLibrary.simpleMessage("No"),
-        "nowPlayingBitrateLbl": m4,
-        "nowPlayingDateLbl": m5,
-        "nowPlayingDiscLbl": m6,
-        "nowPlayingTrackNoLbl": m7,
+        "nowPlayingBitrateLbl": m3,
+        "nowPlayingDateLbl": m4,
+        "nowPlayingDiscLbl": m5,
+        "nowPlayingTrackNoLbl": m6,
         "okBtn": MessageLookupByLibrary.simpleMessage("OK"),
         "pageNotFoundMsg":
             MessageLookupByLibrary.simpleMessage("Page not found!"),
@@ -223,12 +211,12 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Select Playlist"),
         "showLogButtonLbl": MessageLookupByLibrary.simpleMessage("Show Log"),
         "submitBtn": MessageLookupByLibrary.simpleMessage("Submit"),
-        "trackAddedToPlaylistMessage": m8,
+        "trackAddedToPlaylistMessage": m7,
         "trackAddedToTracklistMessage":
             MessageLookupByLibrary.simpleMessage("Track added to tracklist."),
         "trackListPageTitle": MessageLookupByLibrary.simpleMessage("Tracks"),
-        "tracksAddedToPlaylistMessage": m9,
-        "tracksAddedToTracklistMessage": m10,
+        "tracksAddedToPlaylistMessage": m8,
+        "tracksAddedToTracklistMessage": m9,
         "yesBtn": MessageLookupByLibrary.simpleMessage("Yes")
       };
 }

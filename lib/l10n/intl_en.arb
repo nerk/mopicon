@@ -42,19 +42,6 @@
   "searchPageTitle": "Search",
   "searchPageNotSupportedMessage": "Search not supported, because Mopidy-Local server extension is not enabled.",
   "aboutPageTitle": "About",
-  "aboutPageDescription": "A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk/mopicon[source code] is available on Github.",
-  "aboutPageLicenseSection": "License",
-  "aboutPageVersionSection": "Version",
-  "aboutPageHelpSection": "Help",
-  "aboutPageHelpDescription": "https://github.com/nerk/mopicon[Documentation and Help]",
-  "aboutPageLinkLaunchError": "Could not launch '{url}'.",
-  "@aboutPageLinkLaunchError": {
-    "placeholders": {
-      "url": {
-        "type": "String"
-      }
-    }
-  },
   "selectPlaylistDialogTitle": "Select Playlist",
   "newPlaylistDialogTitle": "New Playlist",
   "newPlaylistDialogNameLabel": "Name",

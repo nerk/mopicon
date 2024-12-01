@@ -23,6 +23,7 @@ import 'dart:async';
 
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/services/file_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
@@ -40,18 +41,25 @@ class Initializer {
     // configure logger
     _registerServices();
     await _loadSettings();
+    await _initializeFileService();
   }
 
   static void _registerServices() {
     GetIt getIt = GetIt.instance;
     logger.i("starting registering services");
-    getIt.registerLazySingleton<PreferencesController>(() => PreferencesControllerImpl());
+    getIt.registerLazySingleton<PreferencesController>(
+        () => PreferencesControllerImpl());
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
     getIt.registerLazySingleton<CoverService>(() => CoverServiceImpl());
-    getIt.registerLazySingleton<LibraryBrowserController>(() => LibraryBrowserControllerImpl());
-    getIt.registerLazySingleton<TracklistViewController>(() => TracklistViewControllerImpl());
-    getIt.registerLazySingleton<PlaylistViewController>(() => PlaylistControllerImpl());
-    getIt.registerLazySingleton<SearchViewController>(() => SearchViewControllerImpl());
+    getIt.registerLazySingleton<FileService>(() => FileServiceImpl());
+    getIt.registerLazySingleton<LibraryBrowserController>(
+        () => LibraryBrowserControllerImpl());
+    getIt.registerLazySingleton<TracklistViewController>(
+        () => TracklistViewControllerImpl());
+    getIt.registerLazySingleton<PlaylistViewController>(
+        () => PlaylistControllerImpl());
+    getIt.registerLazySingleton<SearchViewController>(
+        () => SearchViewControllerImpl());
     logger.i("finished registering services");
   }
 
@@ -59,5 +67,14 @@ class Initializer {
     logger.i("starting loading settings");
     await GetIt.instance<PreferencesController>().load();
     logger.i("finished loading settings");
+  }
+
+  static Future<void> _initializeFileService() async {
+    try {
+      logger.i("starting initializing file service");
+      return GetIt.instance<FileService>().initialize();
+    } finally {
+      logger.i("finished initializing file service");
+    }
   }
 }

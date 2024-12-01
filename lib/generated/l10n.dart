@@ -470,66 +470,6 @@ class S {
     );
   }
 
-  /// `A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk/mopicon[source code] is available on Github.`
-  String get aboutPageDescription {
-    return Intl.message(
-      'A https://mopidy.com[Mopidy] client implemented with Flutter and Dart.\nThe https://github.com/nerk/mopicon[source code] is available on Github.',
-      name: 'aboutPageDescription',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `License`
-  String get aboutPageLicenseSection {
-    return Intl.message(
-      'License',
-      name: 'aboutPageLicenseSection',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Version`
-  String get aboutPageVersionSection {
-    return Intl.message(
-      'Version',
-      name: 'aboutPageVersionSection',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Help`
-  String get aboutPageHelpSection {
-    return Intl.message(
-      'Help',
-      name: 'aboutPageHelpSection',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `https://github.com/nerk/mopicon[Documentation and Help]`
-  String get aboutPageHelpDescription {
-    return Intl.message(
-      'https://github.com/nerk/mopicon[Documentation and Help]',
-      name: 'aboutPageHelpDescription',
-      desc: '',
-      args: [],
-    );
-  }
-
-  /// `Could not launch '{url}'.`
-  String aboutPageLinkLaunchError(String url) {
-    return Intl.message(
-      'Could not launch \'$url\'.',
-      name: 'aboutPageLinkLaunchError',
-      desc: '',
-      args: [url],
-    );
-  }
-
   /// `Select Playlist`
   String get selectPlaylistDialogTitle {
     return Intl.message(

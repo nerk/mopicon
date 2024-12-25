@@ -86,7 +86,6 @@ flutter:
   assets:
     - assets/about_de.txt
     - assets/about_en.txt
-    - assets/album_default.png
     - assets/jewel_case.png
     - assets/note.png
 

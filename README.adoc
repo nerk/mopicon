@@ -11,6 +11,11 @@ It also compiles into a Web application and could also be turned into a Mopidy s
 image:images/browse_top.png[width=300]{nbsp}
 image:images/albums.png[width=300]
 
+.Browsing TuneIn
+(Requires Mopidy-TuneIn backend extension installed).
+
+image:images/tunein.png[width=300]
+
 .Searching
 image:images/search.png[width=300]
 
@@ -68,22 +73,19 @@ For Development, I used Android Studio 2022.3.1 with `Flutter Intl` plugin insta
 
 This project uses my https://github.com/nerk/mopidy_dart_client[mopidy_dart_client] library for communicating via a Websocket to the Mopidy server.
 
-== TODO
-
-The application is already fully functional and usable.
-Some things to be improved or missing are:
-
-* Help documentation.
-* Shuffle/repeat for tracklist.
-* Python project for installing the web application as a Mopidy extension.
-* Provide ready to install packages for different target machines.
-* Put Android app on Google Playstore.
-
 == Copyright and License
 
 Copyright (C) 2023 Thomas Kern
 
 Licensed under MIT License.
 See link:LICENSE[LICENSE] for details.
+
+The following vectors and icons were provided by https://www.svgrepo.com[SVG Repo]:
+
+jewel_case.svg and jewel_case.png::
+Licensed under CC0 1.0 Universal PD Dedication (Public Domain)
+note.svg and note.png::
+Based on "Music Note 31 Vectors SVG" from "Frexy Glyph Icons" collection, licensed under CC Attribution License by author Frexy.
+
 
 

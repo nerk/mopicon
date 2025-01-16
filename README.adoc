@@ -80,11 +80,12 @@ Copyright (C) 2023 Thomas Kern
 Licensed under MIT License.
 See link:LICENSE[LICENSE] for details.
 
-The following vectors and icons were provided by https://www.svgrepo.com[SVG Repo]:
+Licenses for additional vectors and icons:
 
-jewel_case.svg and jewel_case.png::
+https://www.svgrepo.com/svg/108118/compact-disc[jewel_case.svg and jewel_case.png]::
 Licensed under CC0 1.0 Universal PD Dedication (Public Domain)
-note.svg and note.png::
+
+https://www.svgrepo.com/svg/435016/music-note[note.svg and note.png]::
 Based on "Music Note 31 Vectors SVG" from "Frexy Glyph Icons" collection, licensed under CC Attribution License by author Frexy.
 
 

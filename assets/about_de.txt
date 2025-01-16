@@ -32,3 +32,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+<p>
+Lizenzen für zusätzliche Vektorgrafiken und Icons:
+<dl>
+  <dt>
+     <a href=https://www.svgrepo.com/svg/108118/compact-disc>jewel_case.svg and jewel_case.png</a>
+  </dt>
+  <dd>
+     Licensed under CC0 1.0 Universal PD Dedication (Public Domain)
+  </dd>
+  <dt>
+     <a href="https://www.svgrepo.com/svg/435016/music-note">note.svg and note.png</a>
+  </dt>
+  <dd>
+    Based on "Music Note 31 Vectors SVG" from "Frexy Glyph Icons" collection, licensed under CC Attribution License by author Frexy.
+  </dd>
+</dl>

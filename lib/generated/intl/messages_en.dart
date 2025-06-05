@@ -43,180 +43,213 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
-        "abortBtn": MessageLookupByLibrary.simpleMessage("Abort"),
-        "aboutPageTitle": MessageLookupByLibrary.simpleMessage("About"),
-        "albumDateLbl": m0,
-        "albumNumTracksLbl": m1,
-        "appName": MessageLookupByLibrary.simpleMessage("Mopicon"),
-        "cancelBtn": MessageLookupByLibrary.simpleMessage("Cancel"),
-        "clearLogButtonLbl": MessageLookupByLibrary.simpleMessage("Clear Log"),
-        "connectingPageConnecting":
-            MessageLookupByLibrary.simpleMessage("Connecting..."),
-        "connectingPageStopBtn": MessageLookupByLibrary.simpleMessage("Abort"),
-        "deletePlaylistDialogMessage": m2,
-        "deletePlaylistDialogTitle":
-            MessageLookupByLibrary.simpleMessage("Delete Playlist"),
-        "deletePlaylistError": MessageLookupByLibrary.simpleMessage(
-            "Playlist could not be deleted."),
-        "homePageBrowseLbl": MessageLookupByLibrary.simpleMessage("Browse"),
-        "homePageSearchLbl": MessageLookupByLibrary.simpleMessage("Search"),
-        "homePageTracksLbl": MessageLookupByLibrary.simpleMessage("Tracks"),
-        "libraryBrowserPageTitle":
-            MessageLookupByLibrary.simpleMessage("Browse"),
-        "libraryPlaylistSeparator":
-            MessageLookupByLibrary.simpleMessage("Playlists"),
-        "logDialogTitle": MessageLookupByLibrary.simpleMessage("Log"),
-        "loggingLbl": MessageLookupByLibrary.simpleMessage("Logging"),
-        "menuAbout": MessageLookupByLibrary.simpleMessage("About"),
-        "menuAddToPlaylist":
-            MessageLookupByLibrary.simpleMessage("Add to Playlist"),
-        "menuAddToTracklist":
-            MessageLookupByLibrary.simpleMessage("Add to TrackList"),
-        "menuClearList": MessageLookupByLibrary.simpleMessage("Clear list"),
-        "menuDelete": MessageLookupByLibrary.simpleMessage("Delete"),
-        "menuNewPlaylist":
-            MessageLookupByLibrary.simpleMessage("Create Playlist"),
-        "menuNewStream": MessageLookupByLibrary.simpleMessage("New Stream"),
-        "menuPlayNow": MessageLookupByLibrary.simpleMessage("Play now"),
-        "menuRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
-        "menuRemove": MessageLookupByLibrary.simpleMessage("Remove"),
-        "menuRemoveSelected":
-            MessageLookupByLibrary.simpleMessage("Remove selected"),
-        "menuRenamePlaylist":
-            MessageLookupByLibrary.simpleMessage("Rename Playlist"),
-        "menuSelectAll": MessageLookupByLibrary.simpleMessage("Select all"),
-        "menuSelection": MessageLookupByLibrary.simpleMessage("Selection"),
-        "menuSettings": MessageLookupByLibrary.simpleMessage("Settings"),
-        "nameTranslateAlbums": MessageLookupByLibrary.simpleMessage("Albums"),
-        "nameTranslateArtists": MessageLookupByLibrary.simpleMessage("Artists"),
-        "nameTranslateComposers":
-            MessageLookupByLibrary.simpleMessage("Composers"),
-        "nameTranslateFiles": MessageLookupByLibrary.simpleMessage("Files"),
-        "nameTranslateGenres": MessageLookupByLibrary.simpleMessage("Genres"),
-        "nameTranslateLastMonthsUpdates":
-            MessageLookupByLibrary.simpleMessage("Last Month\'s Updates"),
-        "nameTranslateLastWeeksUpdates":
-            MessageLookupByLibrary.simpleMessage("Last Week\'s Updates"),
-        "nameTranslateLocalMedia":
-            MessageLookupByLibrary.simpleMessage("Local Media"),
-        "nameTranslatePerformers":
-            MessageLookupByLibrary.simpleMessage("Performers"),
-        "nameTranslateReleaseYears":
-            MessageLookupByLibrary.simpleMessage("Release Years"),
-        "nameTranslateTracks": MessageLookupByLibrary.simpleMessage("Tracks"),
-        "newPlaylistCreateError":
-            MessageLookupByLibrary.simpleMessage("Could not create playlist."),
-        "newPlaylistDialogCancelBtn":
-            MessageLookupByLibrary.simpleMessage("Cancel"),
-        "newPlaylistDialogNameHint":
-            MessageLookupByLibrary.simpleMessage("Enter name of new playlist"),
-        "newPlaylistDialogNameLabel":
-            MessageLookupByLibrary.simpleMessage("Name"),
-        "newPlaylistDialogSubmitBtn":
-            MessageLookupByLibrary.simpleMessage("OK"),
-        "newPlaylistDialogTitle":
-            MessageLookupByLibrary.simpleMessage("New Playlist"),
-        "newPlaylistStreamDialogTitle":
-            MessageLookupByLibrary.simpleMessage("Add new stream to Playlist"),
-        "newStreamAccessError": MessageLookupByLibrary.simpleMessage(
-            "Stream cannot be accessed. Invalid URI?"),
-        "newStreamCreateError":
-            MessageLookupByLibrary.simpleMessage("Could not create stream."),
-        "newStreamDialogCancelBtn":
-            MessageLookupByLibrary.simpleMessage("Cancel"),
-        "newStreamDialogSubmitBtn": MessageLookupByLibrary.simpleMessage("OK"),
-        "newStreamDialogUriHint":
-            MessageLookupByLibrary.simpleMessage("Enter URI of new stream"),
-        "newStreamDialogUriLabel": MessageLookupByLibrary.simpleMessage("URI"),
-        "newStreamUriInvalid": MessageLookupByLibrary.simpleMessage(
-            "Please enter a valid URI for the stream."),
-        "newTracklistStreamDialogTitle":
-            MessageLookupByLibrary.simpleMessage("Add new stream to Tracklist"),
-        "noAlbumInformationError": MessageLookupByLibrary.simpleMessage(
-            "No album found for this title."),
-        "noBtn": MessageLookupByLibrary.simpleMessage("No"),
-        "nowPlayingBitrateLbl": m3,
-        "nowPlayingDateLbl": m4,
-        "nowPlayingDiscLbl": m5,
-        "nowPlayingTrackNoLbl": m6,
-        "okBtn": MessageLookupByLibrary.simpleMessage("OK"),
-        "pageNotFoundMsg":
-            MessageLookupByLibrary.simpleMessage("Page not found!"),
-        "playlistAlreadyExistsError":
-            MessageLookupByLibrary.simpleMessage("Playlist already exists."),
-        "playlistNameInvalidError": MessageLookupByLibrary.simpleMessage(
-            "Please enter a valid playlist name."),
-        "playlistPageTitle": MessageLookupByLibrary.simpleMessage("Playlist"),
-        "preferencesPageAppearanceLbl":
-            MessageLookupByLibrary.simpleMessage("Appearance"),
-        "preferencesPageConnectErrorDetails":
-            MessageLookupByLibrary.simpleMessage("Max retries exceeded."),
-        "preferencesPageConnectErrorTitle":
-            MessageLookupByLibrary.simpleMessage(
-                "Connecting to Mopidy server failed."),
-        "preferencesPageConnectionLbl":
-            MessageLookupByLibrary.simpleMessage("Connection"),
-        "preferencesPageHideFileExtensionLbl":
-            MessageLookupByLibrary.simpleMessage("Hide file extension"),
-        "preferencesPageLanguageLbl":
-            MessageLookupByLibrary.simpleMessage("Language"),
-        "preferencesPageLoadError":
-            MessageLookupByLibrary.simpleMessage("Loading preferences failed."),
-        "preferencesPageMopidyPortHintText":
-            MessageLookupByLibrary.simpleMessage("Port of Mopidy server."),
-        "preferencesPageMopidyPortInvalid":
-            MessageLookupByLibrary.simpleMessage(
-                "Please enter a valid port number."),
-        "preferencesPageMopidyPortLblText":
-            MessageLookupByLibrary.simpleMessage("Mopidy server port *"),
-        "preferencesPageMopidyServerHintText":
-            MessageLookupByLibrary.simpleMessage(
-                "IP address or hostname of Mopidy server."),
-        "preferencesPageMopidyServerInvalid":
-            MessageLookupByLibrary.simpleMessage(
-                "Please enter a valid hostname or IP address."),
-        "preferencesPageMopidyServerLblText":
-            MessageLookupByLibrary.simpleMessage("Mopidy server *"),
-        "preferencesPageSaveBtn": MessageLookupByLibrary.simpleMessage("Save"),
-        "preferencesPageSaveError":
-            MessageLookupByLibrary.simpleMessage("Saving preferences failed."),
-        "preferencesPageShowAllMediaCategoriesLbl":
-            MessageLookupByLibrary.simpleMessage("Show all media categories"),
-        "preferencesPageThemeDark":
-            MessageLookupByLibrary.simpleMessage("Dark"),
-        "preferencesPageThemeLbl":
-            MessageLookupByLibrary.simpleMessage("Theme"),
-        "preferencesPageTitle":
-            MessageLookupByLibrary.simpleMessage("Settings"),
-        "preferencesPageTranslateServerNamesLbl":
-            MessageLookupByLibrary.simpleMessage("Translate server names"),
-        "renamePlaylistCreateError":
-            MessageLookupByLibrary.simpleMessage("Could not rename playlist."),
-        "renamePlaylistDialogCancelBtn":
-            MessageLookupByLibrary.simpleMessage("Cancel"),
-        "renamePlaylistDialogNameHint":
-            MessageLookupByLibrary.simpleMessage("Enter playlist new name"),
-        "renamePlaylistDialogNameLabel":
-            MessageLookupByLibrary.simpleMessage("Name"),
-        "renamePlaylistDialogSubmitBtn":
-            MessageLookupByLibrary.simpleMessage("OK"),
-        "renamePlaylistDialogTitle":
-            MessageLookupByLibrary.simpleMessage("Rename Playlist"),
-        "retryBtn": MessageLookupByLibrary.simpleMessage("Retry"),
-        "saveBtn": MessageLookupByLibrary.simpleMessage("Save"),
-        "searchPageNotSupportedMessage": MessageLookupByLibrary.simpleMessage(
-            "Search not supported, because Mopidy-Local server extension is not enabled."),
-        "searchPageTitle": MessageLookupByLibrary.simpleMessage("Search"),
-        "selectPlaylistDialogTitle":
-            MessageLookupByLibrary.simpleMessage("Select Playlist"),
-        "showLogButtonLbl": MessageLookupByLibrary.simpleMessage("Show Log"),
-        "submitBtn": MessageLookupByLibrary.simpleMessage("Submit"),
-        "trackAddedToPlaylistMessage": m7,
-        "trackAddedToTracklistMessage":
-            MessageLookupByLibrary.simpleMessage("Track added to tracklist."),
-        "trackListPageTitle": MessageLookupByLibrary.simpleMessage("Tracks"),
-        "tracksAddedToPlaylistMessage": m8,
-        "tracksAddedToTracklistMessage": m9,
-        "yesBtn": MessageLookupByLibrary.simpleMessage("Yes")
-      };
+    "abortBtn": MessageLookupByLibrary.simpleMessage("Abort"),
+    "aboutPageTitle": MessageLookupByLibrary.simpleMessage("About"),
+    "albumDateLbl": m0,
+    "albumNumTracksLbl": m1,
+    "appName": MessageLookupByLibrary.simpleMessage("Mopicon"),
+    "cancelBtn": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "clearLogButtonLbl": MessageLookupByLibrary.simpleMessage("Clear Log"),
+    "connectingPageConnecting": MessageLookupByLibrary.simpleMessage(
+      "Connecting...",
+    ),
+    "connectingPageStopBtn": MessageLookupByLibrary.simpleMessage("Abort"),
+    "deletePlaylistDialogMessage": m2,
+    "deletePlaylistDialogTitle": MessageLookupByLibrary.simpleMessage(
+      "Delete Playlist",
+    ),
+    "deletePlaylistError": MessageLookupByLibrary.simpleMessage(
+      "Playlist could not be deleted.",
+    ),
+    "homePageBrowseLbl": MessageLookupByLibrary.simpleMessage("Browse"),
+    "homePageSearchLbl": MessageLookupByLibrary.simpleMessage("Search"),
+    "homePageTracksLbl": MessageLookupByLibrary.simpleMessage("Tracks"),
+    "libraryBrowserPageTitle": MessageLookupByLibrary.simpleMessage("Browse"),
+    "libraryPlaylistSeparator": MessageLookupByLibrary.simpleMessage(
+      "Playlists",
+    ),
+    "logDialogTitle": MessageLookupByLibrary.simpleMessage("Log"),
+    "loggingLbl": MessageLookupByLibrary.simpleMessage("Logging"),
+    "menuAbout": MessageLookupByLibrary.simpleMessage("About"),
+    "menuAddToPlaylist": MessageLookupByLibrary.simpleMessage(
+      "Add to Playlist",
+    ),
+    "menuAddToTracklist": MessageLookupByLibrary.simpleMessage(
+      "Add to TrackList",
+    ),
+    "menuClearList": MessageLookupByLibrary.simpleMessage("Clear list"),
+    "menuDelete": MessageLookupByLibrary.simpleMessage("Delete"),
+    "menuNewPlaylist": MessageLookupByLibrary.simpleMessage("Create Playlist"),
+    "menuNewStream": MessageLookupByLibrary.simpleMessage("New Stream"),
+    "menuPlayNow": MessageLookupByLibrary.simpleMessage("Play now"),
+    "menuRefresh": MessageLookupByLibrary.simpleMessage("Refresh"),
+    "menuRemove": MessageLookupByLibrary.simpleMessage("Remove"),
+    "menuRemoveSelected": MessageLookupByLibrary.simpleMessage(
+      "Remove selected",
+    ),
+    "menuRenamePlaylist": MessageLookupByLibrary.simpleMessage(
+      "Rename Playlist",
+    ),
+    "menuSelectAll": MessageLookupByLibrary.simpleMessage("Select all"),
+    "menuSelection": MessageLookupByLibrary.simpleMessage("Selection"),
+    "menuSettings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "nameTranslateAlbums": MessageLookupByLibrary.simpleMessage("Albums"),
+    "nameTranslateArtists": MessageLookupByLibrary.simpleMessage("Artists"),
+    "nameTranslateComposers": MessageLookupByLibrary.simpleMessage("Composers"),
+    "nameTranslateFiles": MessageLookupByLibrary.simpleMessage("Files"),
+    "nameTranslateGenres": MessageLookupByLibrary.simpleMessage("Genres"),
+    "nameTranslateLastMonthsUpdates": MessageLookupByLibrary.simpleMessage(
+      "Last Month\'s Updates",
+    ),
+    "nameTranslateLastWeeksUpdates": MessageLookupByLibrary.simpleMessage(
+      "Last Week\'s Updates",
+    ),
+    "nameTranslateLocalMedia": MessageLookupByLibrary.simpleMessage(
+      "Local Media",
+    ),
+    "nameTranslatePerformers": MessageLookupByLibrary.simpleMessage(
+      "Performers",
+    ),
+    "nameTranslateReleaseYears": MessageLookupByLibrary.simpleMessage(
+      "Release Years",
+    ),
+    "nameTranslateTracks": MessageLookupByLibrary.simpleMessage("Tracks"),
+    "newPlaylistCreateError": MessageLookupByLibrary.simpleMessage(
+      "Could not create playlist.",
+    ),
+    "newPlaylistDialogCancelBtn": MessageLookupByLibrary.simpleMessage(
+      "Cancel",
+    ),
+    "newPlaylistDialogNameHint": MessageLookupByLibrary.simpleMessage(
+      "Enter name of new playlist",
+    ),
+    "newPlaylistDialogNameLabel": MessageLookupByLibrary.simpleMessage("Name"),
+    "newPlaylistDialogSubmitBtn": MessageLookupByLibrary.simpleMessage("OK"),
+    "newPlaylistDialogTitle": MessageLookupByLibrary.simpleMessage(
+      "New Playlist",
+    ),
+    "newPlaylistStreamDialogTitle": MessageLookupByLibrary.simpleMessage(
+      "Add new stream to Playlist",
+    ),
+    "newStreamAccessError": MessageLookupByLibrary.simpleMessage(
+      "Stream cannot be accessed. Invalid URI?",
+    ),
+    "newStreamCreateError": MessageLookupByLibrary.simpleMessage(
+      "Could not create stream.",
+    ),
+    "newStreamDialogCancelBtn": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "newStreamDialogSubmitBtn": MessageLookupByLibrary.simpleMessage("OK"),
+    "newStreamDialogUriHint": MessageLookupByLibrary.simpleMessage(
+      "Enter URI of new stream",
+    ),
+    "newStreamDialogUriLabel": MessageLookupByLibrary.simpleMessage("URI"),
+    "newStreamUriInvalid": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid URI for the stream.",
+    ),
+    "newTracklistStreamDialogTitle": MessageLookupByLibrary.simpleMessage(
+      "Add new stream to Tracklist",
+    ),
+    "noAlbumInformationError": MessageLookupByLibrary.simpleMessage(
+      "No album found for this title.",
+    ),
+    "noBtn": MessageLookupByLibrary.simpleMessage("No"),
+    "nowPlayingBitrateLbl": m3,
+    "nowPlayingDateLbl": m4,
+    "nowPlayingDiscLbl": m5,
+    "nowPlayingTrackNoLbl": m6,
+    "okBtn": MessageLookupByLibrary.simpleMessage("OK"),
+    "pageNotFoundMsg": MessageLookupByLibrary.simpleMessage("Page not found!"),
+    "playlistAlreadyExistsError": MessageLookupByLibrary.simpleMessage(
+      "Playlist already exists.",
+    ),
+    "playlistNameInvalidError": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid playlist name.",
+    ),
+    "playlistPageTitle": MessageLookupByLibrary.simpleMessage("Playlist"),
+    "preferencesPageAppearanceLbl": MessageLookupByLibrary.simpleMessage(
+      "Appearance",
+    ),
+    "preferencesPageConnectErrorDetails": MessageLookupByLibrary.simpleMessage(
+      "Max retries exceeded.",
+    ),
+    "preferencesPageConnectErrorTitle": MessageLookupByLibrary.simpleMessage(
+      "Connecting to Mopidy server failed.",
+    ),
+    "preferencesPageConnectionLbl": MessageLookupByLibrary.simpleMessage(
+      "Connection",
+    ),
+    "preferencesPageHideFileExtensionLbl": MessageLookupByLibrary.simpleMessage(
+      "Hide file extension",
+    ),
+    "preferencesPageLanguageLbl": MessageLookupByLibrary.simpleMessage(
+      "Language",
+    ),
+    "preferencesPageLoadError": MessageLookupByLibrary.simpleMessage(
+      "Loading preferences failed.",
+    ),
+    "preferencesPageMopidyPortHintText": MessageLookupByLibrary.simpleMessage(
+      "Port of Mopidy server.",
+    ),
+    "preferencesPageMopidyPortInvalid": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid port number.",
+    ),
+    "preferencesPageMopidyPortLblText": MessageLookupByLibrary.simpleMessage(
+      "Mopidy server port *",
+    ),
+    "preferencesPageMopidyServerHintText": MessageLookupByLibrary.simpleMessage(
+      "IP address or hostname of Mopidy server.",
+    ),
+    "preferencesPageMopidyServerInvalid": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid hostname or IP address.",
+    ),
+    "preferencesPageMopidyServerLblText": MessageLookupByLibrary.simpleMessage(
+      "Mopidy server *",
+    ),
+    "preferencesPageSaveBtn": MessageLookupByLibrary.simpleMessage("Save"),
+    "preferencesPageSaveError": MessageLookupByLibrary.simpleMessage(
+      "Saving preferences failed.",
+    ),
+    "preferencesPageShowAllMediaCategoriesLbl":
+        MessageLookupByLibrary.simpleMessage("Show all media categories"),
+    "preferencesPageThemeDark": MessageLookupByLibrary.simpleMessage("Dark"),
+    "preferencesPageThemeLbl": MessageLookupByLibrary.simpleMessage("Theme"),
+    "preferencesPageTitle": MessageLookupByLibrary.simpleMessage("Settings"),
+    "preferencesPageTranslateServerNamesLbl":
+        MessageLookupByLibrary.simpleMessage("Translate server names"),
+    "renamePlaylistCreateError": MessageLookupByLibrary.simpleMessage(
+      "Could not rename playlist.",
+    ),
+    "renamePlaylistDialogCancelBtn": MessageLookupByLibrary.simpleMessage(
+      "Cancel",
+    ),
+    "renamePlaylistDialogNameHint": MessageLookupByLibrary.simpleMessage(
+      "Enter playlist new name",
+    ),
+    "renamePlaylistDialogNameLabel": MessageLookupByLibrary.simpleMessage(
+      "Name",
+    ),
+    "renamePlaylistDialogSubmitBtn": MessageLookupByLibrary.simpleMessage("OK"),
+    "renamePlaylistDialogTitle": MessageLookupByLibrary.simpleMessage(
+      "Rename Playlist",
+    ),
+    "retryBtn": MessageLookupByLibrary.simpleMessage("Retry"),
+    "saveBtn": MessageLookupByLibrary.simpleMessage("Save"),
+    "searchPageNotSupportedMessage": MessageLookupByLibrary.simpleMessage(
+      "Search not supported, because Mopidy-Local server extension is not enabled.",
+    ),
+    "searchPageTitle": MessageLookupByLibrary.simpleMessage("Search"),
+    "selectPlaylistDialogTitle": MessageLookupByLibrary.simpleMessage(
+      "Select Playlist",
+    ),
+    "showLogButtonLbl": MessageLookupByLibrary.simpleMessage("Show Log"),
+    "submitBtn": MessageLookupByLibrary.simpleMessage("Submit"),
+    "trackAddedToPlaylistMessage": m7,
+    "trackAddedToTracklistMessage": MessageLookupByLibrary.simpleMessage(
+      "Track added to tracklist.",
+    ),
+    "trackListPageTitle": MessageLookupByLibrary.simpleMessage("Tracks"),
+    "tracksAddedToPlaylistMessage": m8,
+    "tracksAddedToTracklistMessage": m9,
+    "yesBtn": MessageLookupByLibrary.simpleMessage("Yes"),
+  };
 }

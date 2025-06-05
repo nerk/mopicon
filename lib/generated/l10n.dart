@@ -18,8 +18,10 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(_current != null,
-        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
+    assert(
+      _current != null,
+      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
+    );
     return _current!;
   }
 
@@ -41,8 +43,10 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(instance != null,
-        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
+    assert(
+      instance != null,
+      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
+    );
     return instance!;
   }
 
@@ -52,92 +56,47 @@ class S {
 
   /// `Mopicon`
   String get appName {
-    return Intl.message(
-      'Mopicon',
-      name: 'appName',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Mopicon', name: 'appName', desc: '', args: []);
   }
 
   /// `OK`
   String get okBtn {
-    return Intl.message(
-      'OK',
-      name: 'okBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('OK', name: 'okBtn', desc: '', args: []);
   }
 
   /// `Cancel`
   String get cancelBtn {
-    return Intl.message(
-      'Cancel',
-      name: 'cancelBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Cancel', name: 'cancelBtn', desc: '', args: []);
   }
 
   /// `Abort`
   String get abortBtn {
-    return Intl.message(
-      'Abort',
-      name: 'abortBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Abort', name: 'abortBtn', desc: '', args: []);
   }
 
   /// `Yes`
   String get yesBtn {
-    return Intl.message(
-      'Yes',
-      name: 'yesBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Yes', name: 'yesBtn', desc: '', args: []);
   }
 
   /// `No`
   String get noBtn {
-    return Intl.message(
-      'No',
-      name: 'noBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('No', name: 'noBtn', desc: '', args: []);
   }
 
   /// `Retry`
   String get retryBtn {
-    return Intl.message(
-      'Retry',
-      name: 'retryBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Retry', name: 'retryBtn', desc: '', args: []);
   }
 
   /// `Submit`
   String get submitBtn {
-    return Intl.message(
-      'Submit',
-      name: 'submitBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Submit', name: 'submitBtn', desc: '', args: []);
   }
 
   /// `Save`
   String get saveBtn {
-    return Intl.message(
-      'Save',
-      name: 'saveBtn',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Save', name: 'saveBtn', desc: '', args: []);
   }
 
   /// `Connecting...`
@@ -442,12 +401,7 @@ class S {
 
   /// `Search`
   String get searchPageTitle {
-    return Intl.message(
-      'Search',
-      name: 'searchPageTitle',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Search', name: 'searchPageTitle', desc: '', args: []);
   }
 
   /// `Search not supported, because Mopidy-Local server extension is not enabled.`
@@ -462,12 +416,7 @@ class S {
 
   /// `About`
   String get aboutPageTitle {
-    return Intl.message(
-      'About',
-      name: 'aboutPageTitle',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('About', name: 'aboutPageTitle', desc: '', args: []);
   }
 
   /// `Select Playlist`
@@ -762,22 +711,12 @@ class S {
 
   /// `Settings`
   String get menuSettings {
-    return Intl.message(
-      'Settings',
-      name: 'menuSettings',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Settings', name: 'menuSettings', desc: '', args: []);
   }
 
   /// `About`
   String get menuAbout {
-    return Intl.message(
-      'About',
-      name: 'menuAbout',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('About', name: 'menuAbout', desc: '', args: []);
   }
 
   /// `Create Playlist`
@@ -812,22 +751,12 @@ class S {
 
   /// `Play now`
   String get menuPlayNow {
-    return Intl.message(
-      'Play now',
-      name: 'menuPlayNow',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Play now', name: 'menuPlayNow', desc: '', args: []);
   }
 
   /// `Selection`
   String get menuSelection {
-    return Intl.message(
-      'Selection',
-      name: 'menuSelection',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Selection', name: 'menuSelection', desc: '', args: []);
   }
 
   /// `Select all`
@@ -842,12 +771,7 @@ class S {
 
   /// `Refresh`
   String get menuRefresh {
-    return Intl.message(
-      'Refresh',
-      name: 'menuRefresh',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Refresh', name: 'menuRefresh', desc: '', args: []);
   }
 
   /// `Remove selected`
@@ -862,22 +786,12 @@ class S {
 
   /// `Remove`
   String get menuRemove {
-    return Intl.message(
-      'Remove',
-      name: 'menuRemove',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Remove', name: 'menuRemove', desc: '', args: []);
   }
 
   /// `Delete`
   String get menuDelete {
-    return Intl.message(
-      'Delete',
-      name: 'menuDelete',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Delete', name: 'menuDelete', desc: '', args: []);
   }
 
   /// `Clear list`
@@ -1112,22 +1026,12 @@ class S {
 
   /// `Logging`
   String get loggingLbl {
-    return Intl.message(
-      'Logging',
-      name: 'loggingLbl',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Logging', name: 'loggingLbl', desc: '', args: []);
   }
 
   /// `Log`
   String get logDialogTitle {
-    return Intl.message(
-      'Log',
-      name: 'logDialogTitle',
-      desc: '',
-      args: [],
-    );
+    return Intl.message('Log', name: 'logDialogTitle', desc: '', args: []);
   }
 
   /// `Show Log`

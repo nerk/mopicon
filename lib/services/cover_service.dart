@@ -22,11 +22,13 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/utils/logging_utils.dart';
+import 'package:mopicon/utils/cache.dart';
 import 'mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 abstract class CoverService {
-  static final defaultAlbum = Image.asset('assets/jewel_case.png', fit: BoxFit.cover);
+  static final defaultAlbum =
+      Image.asset('assets/jewel_case.png', fit: BoxFit.cover);
   static final defaultTrack = Image.asset('assets/note.png', fit: BoxFit.cover);
 
   Future<Widget?> getImage(String uri);
@@ -37,6 +39,9 @@ abstract class CoverService {
 class CoverServiceImpl extends CoverService {
   final _mopidyService = GetIt.instance<MopidyService>();
   final _preferences = GetIt.instance<PreferencesController>();
+
+  // cache for the
+  final _coverImages = Cache<Widget>(2000, 5000);
 
   @override
   Future<Widget?> getImage(String? uri) async {
@@ -52,31 +57,47 @@ class CoverServiceImpl extends CoverService {
       return {};
     }
 
-    var result = <String, Widget?>{};
-    try {
-      Map<String, List<MImage>> images = await _mopidyService.getImages(uris);
-      for (var uri in images.keys) {
-        Image? img;
-        MImage? mImage;
-        if (images[uri] != null && images[uri]!.isNotEmpty) {
-          mImage = images[uri]!.first;
-        }
-
-        if (mImage != null) {
-          img = Image.network(
-            _preferences.computeNetworkUrl(mImage),
-            errorBuilder: (BuildContext context, Object obj, StackTrace? st) {
-              logger.e(obj.toString());
-              return CoverService.defaultAlbum;
-            },
-          );
-          img = img == CoverService.defaultAlbum ? null : img;
-        }
-        result[uri] = img;
+    var cacheMisses = List<String>.empty(growable: true);
+    var covers = <String, Widget?>{};
+    for (var uri in uris) {
+      var cover = _coverImages.get(uri);
+      if (cover != null) {
+        covers[uri] = cover;
+      } else {
+        cacheMisses.add(uri);
       }
-    } catch (e, s) {
-      logger.e(e, stackTrace: s);
     }
-    return Future.value(result);
+
+    if (cacheMisses.isNotEmpty) {
+      try {
+        Map<String, List<MImage>> images =
+        await _mopidyService.getImages(cacheMisses);
+        for (var uri in images.keys) {
+          Image? img;
+          MImage? mImage;
+          if (images[uri] != null && images[uri]!.isNotEmpty) {
+            mImage = images[uri]!.first;
+          }
+
+          if (mImage != null) {
+            img = Image.network(
+              _preferences.computeNetworkUrl(mImage),
+              errorBuilder: (BuildContext context, Object obj, StackTrace? st) {
+                logger.e(obj.toString());
+                return CoverService.defaultAlbum;
+              },
+            );
+            _coverImages.put(uri, img);
+            covers[uri] = img;
+          } else {
+            _coverImages.put(uri, CoverService.defaultAlbum);
+            covers[uri] = CoverService.defaultAlbum;
+          }
+        }
+      } catch (e, s) {
+        logger.e(e, stackTrace: s);
+      }
+    }
+    return Future.value(covers);
   }
 }

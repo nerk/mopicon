@@ -498,7 +498,7 @@ class MopidyServiceImpl extends MopidyService {
     });
   }
 
-  _loadAlbumExtraData(List<String> uris) async {
+  void _loadAlbumExtraData(List<String> uris) async {
     var notCached = uris
         .map((uri) => !_albumDataCache.contains(uri) ? uri : null)
         .nonNulls
@@ -516,10 +516,7 @@ class MopidyServiceImpl extends MopidyService {
       for (var uri in uris) {
         var tracks = trackMap[uri];
         if (tracks != null && tracks.isNotEmpty) {
-          Album? album = tracks.first.album;
-          if (album != null) {
-            result[uri] = AlbumInfoExtraData(album);
-          }
+          result[uri] = AlbumInfoExtraData(tracks.first);
         }
       }
     }
@@ -1127,11 +1124,13 @@ class AlbumInfoExtraData {
   late int? numTracks;
   late String? date;
 
-  AlbumInfoExtraData(Album album) {
-    artistNames =
-        album.artists.map((artist) => artist.name).toList().join(', ');
-    numTracks = album.numTracks;
-    date = album.date;
-    albumName = album.name;
+  AlbumInfoExtraData(Track track) {
+    if (track.album != null) {
+      Album album = track.album!;
+      artistNames = track.artistNames ?? "";
+      numTracks = album.numTracks;
+      date = album.date;
+      albumName = album.name;
+    }
   }
 }

@@ -94,10 +94,14 @@ extension MopidyTrackExtensions on Track {
 
   /// Returns a comma separated string of artists.
   String? get artistNames {
+    String? albumArtists;
     if (album != null) {
-      return album!.artists.map((artist) => artist.name).toList().join(', ');
+      albumArtists = album!.artists.map((artist) => artist.name).toList().join(', ');
+      if (albumArtists.isEmpty) {
+        albumArtists = artists.map((artist) => artist.name).toList().join(', ');
+      }
     }
-    return null;
+    return albumArtists;
   }
 
   /// Converts a [Track] into a [Ref],

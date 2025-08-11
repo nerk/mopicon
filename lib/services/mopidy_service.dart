@@ -104,7 +104,7 @@ abstract class MopidyService {
   //
   Future<List<Ref>> browse(Ref? parent);
 
-  Future<List<SearchResult>> search(SearchCriteria criteria);
+  Future<List<SearchResult>> search(SearchCriteria criteria, {bool exact});
 
   Future<Map<String, List<MImage>>> getImages(List<String> albumUris);
 
@@ -568,11 +568,11 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<List<SearchResult>> search(SearchCriteria criteria) {
+  Future<List<SearchResult>> search(SearchCriteria criteria, {bool exact = false}) {
     return waitConnected().then((_) {
       try {
         setBusy(true);
-        return _mopidy.library.search(criteria, null, false);
+        return _mopidy.library.search(criteria, null, exact);
       } finally {
         setBusy(false);
       }

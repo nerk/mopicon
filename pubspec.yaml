@@ -22,7 +22,7 @@ homepage: https://github.com/nerk/mopicon
 
 environment:
   sdk: ">=3.8.0"
-  flutter: ">=3.27.2"
+  flutter: "3.32.8"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions

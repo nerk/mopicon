@@ -21,15 +21,13 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/utils/cache.dart';
 import 'mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 abstract class CoverService {
-  static final defaultAlbum =
-      Image.asset('assets/jewel_case.png', fit: BoxFit.cover);
-  static final defaultTrack = Image.asset('assets/note.png', fit: BoxFit.cover);
 
   Future<Widget?> getImage(String uri);
 
@@ -46,7 +44,7 @@ class CoverServiceImpl extends CoverService {
   @override
   Future<Widget?> getImage(String? uri) async {
     if (uri == null) {
-      return CoverService.defaultAlbum;
+      return const Icon(Icons.question_mark);
     }
     return Future<Widget>.value((await getImages([uri]))[uri]);
   }
@@ -84,14 +82,15 @@ class CoverServiceImpl extends CoverService {
               _preferences.computeNetworkUrl(mImage),
               errorBuilder: (BuildContext context, Object obj, StackTrace? st) {
                 logger.e(obj.toString());
-                return CoverService.defaultAlbum;
+                return const Icon(Icons.question_mark);
               },
             );
             _coverImages.put(uri, img);
             covers[uri] = img;
           } else {
-            _coverImages.put(uri, CoverService.defaultAlbum);
-            covers[uri] = CoverService.defaultAlbum;
+            var img = ImageUtils.getIconForType(uri);
+            _coverImages.put(uri, img);
+            covers[uri] = img;
           }
         }
       } catch (e, s) {

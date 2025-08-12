@@ -94,13 +94,10 @@ class _TrackListState extends State<TrackListPage> {
   }
 
   Widget getImage(TlTrack? track) {
-    Widget w = CoverService.defaultTrack;
+    Widget w = Icon(Icons.audiotrack);
     if (track != null) {
       String uri = track.track.uri;
-      w = images[uri] ??
-          (uri.isStreamUri()
-              ? ImageUtils.getIconForType(uri, Ref.typeTrack)
-              : CoverService.defaultTrack);
+      w = images[uri] ?? w;
     }
     return w;
   }

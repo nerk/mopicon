@@ -83,8 +83,6 @@ flutter:
   assets:
     - assets/about_de.txt
     - assets/about_en.txt
-    - assets/jewel_case.png
-    - assets/note.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

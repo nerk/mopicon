@@ -65,12 +65,10 @@ class LibraryListView {
       );
     } else if (item.type == Ref.typeTrack) {
       String? uri = getUri(item);
-      Widget? w = images[uri];
-      w = w ??
-          (uri != null && uri.isStreamUri() ? ImageUtils.getIconForType(uri, item.type) : CoverService.defaultTrack);
+      Widget? w = images[uri] ?? Icon(Icons.audiotrack);
       return FittedBox(fit: BoxFit.cover, child: w);
     } else {
-      return FittedBox(fit: BoxFit.cover, child: ImageUtils.getIconForType(item.uri, item.type));
+      return FittedBox(fit: BoxFit.cover, child: ImageUtils.getIconForType(item.uri));
     }
   }
 
@@ -174,7 +172,7 @@ class LibraryListView {
     return Card(
         child: AlbumListItem(
             item,
-            ImageUtils.roundedCornersWithPadding(images[item.uri] ?? CoverService.defaultAlbum,
+            ImageUtils.roundedCornersWithPadding(images[item.uri] ?? Icon(Icons.album),
                 ImageUtils.defaultCoverSize, ImageUtils.defaultCoverSize),
             item.name,
             artistName,

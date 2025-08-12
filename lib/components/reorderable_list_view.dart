@@ -68,10 +68,7 @@ class ReorderableTrackListView<T extends Object> {
     } else {
       String? uri = getUri(item);
       Widget? w = images[uri];
-      w = w ??
-          (uri != null && uri.isStreamUri()
-              ? ImageUtils.getIconForType(uri, Ref.typeTrack)
-              : CoverService.defaultTrack);
+      w = w ?? const Icon(null);
       return FittedBox(fit: BoxFit.cover, child: w);
     }
   }

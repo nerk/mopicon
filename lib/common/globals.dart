@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-library mopicon.globals;
+library;
 
 import 'package:flutter/material.dart';
 import 'package:mopicon/routes/application_routes.dart';

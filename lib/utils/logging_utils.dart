@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-library mopicon.logging;
+library;
 
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';

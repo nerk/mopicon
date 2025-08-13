@@ -29,8 +29,6 @@ import 'package:mopicon/components/action_buttons.dart';
 import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/utils/logging_utils.dart';
-import 'package:mopicon/utils/image_utils.dart';
-import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';

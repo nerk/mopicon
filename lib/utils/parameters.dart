@@ -30,12 +30,12 @@ class Parameter {
     return json.decode(utf8.decode(base64.decode(bs)));
   }
 
-  static queryParameters(String uri) {
+  static Map<String, String> queryParameters(String uri) {
     Uri u = Uri.parse(uri);
     return u.queryParameters;
   }
 
-  static encodeQueryParameter(String data) {
+  static String encodeQueryParameter(String data) {
     return Uri.encodeQueryComponent(data);
   }
 }

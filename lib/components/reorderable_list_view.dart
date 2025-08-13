@@ -21,7 +21,6 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
@@ -67,9 +66,7 @@ class ReorderableTrackListView<T extends Object> {
       );
     } else {
       String? uri = getUri(item);
-      Widget? w = images[uri];
-      w = w ?? const Icon(null);
-      return FittedBox(fit: BoxFit.cover, child: w);
+      return images[uri] ?? FittedBox(fit: BoxFit.cover, child: Icon(Icons.audiotrack));
     }
   }
 

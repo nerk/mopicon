@@ -63,12 +63,9 @@ class LibraryListView {
           child: const Icon(Icons.check),
         ),
       );
-    } else if (item.type == Ref.typeTrack) {
-      String? uri = getUri(item);
-      Widget? w = images[uri] ?? Icon(Icons.audiotrack);
-      return FittedBox(fit: BoxFit.cover, child: w);
     } else {
-      return FittedBox(fit: BoxFit.cover, child: ImageUtils.getIconForType(item.uri));
+      String? uri = getUri(item);
+      return images[uri] ?? FittedBox(fit: BoxFit.cover, child: Icon(Icons.audiotrack));
     }
   }
 
@@ -173,7 +170,7 @@ class LibraryListView {
         child: AlbumListItem(
             item,
             ImageUtils.roundedCornersWithPadding(images[item.uri] ?? Icon(Icons.album),
-                ImageUtils.defaultCoverSize, ImageUtils.defaultCoverSize),
+                CoverService.defaultCoverSize, CoverService.defaultCoverSize),
             item.name,
             artistName,
             numTracks,

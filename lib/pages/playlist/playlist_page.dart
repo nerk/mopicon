@@ -73,7 +73,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
       trx = await controller.getPlaylistItems(playlist);
       if (trx.isNotEmpty) {
-        await loadImages(trx);
+        images = await trx.getImages();
       }
     } catch (e, s) {
       logger.e(e, stackTrace: s);
@@ -86,10 +86,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
         });
       }
     }
-  }
-
-  Future<void> loadImages(List<Track> tracks) async {
-    images = await tracks.getImages();
   }
 
   void updateSelection() {

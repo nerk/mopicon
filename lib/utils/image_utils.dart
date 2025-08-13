@@ -20,32 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'package:mopidy_client/mopidy_client.dart' hide Image;
-import 'package:mopicon/extensions/mopidy_utils.dart';
-
-var _audioFormats = <String>[
-  '.mp3',
-  '.ogg',
-  '.wav',
-  '.aac',
-  '.aiff',
-  '.m4a',
-  '.flac'
-];
 
 class ImageUtils {
-  static const double defaultThumbnailSize = 100.0;
-  static const double defaultCoverSize = 100.0;
-
-  static Widget getIconForType(String? uri, [double? size]) {
-    if (uri != null) {
-      var iconData = defaultIconData(uri);
-      return FittedBox(
-          child: Icon(iconData));
-    } else {
-      return FittedBox(child: Icon(Icons.question_mark));
-    }
-  }
 
   static Widget pad(dynamic image, double size) {
     return Padding(padding: EdgeInsets.all(size), child: image);
@@ -65,72 +41,5 @@ class ImageUtils {
     return SizedBox.fromSize(
         size: Size(width, height), // Image radius
         child: image);
-  }
-
-  static IconData? defaultIconData(String uri, [double? size]) {
-    if (uri.startsWith('local:directory')) {
-      if (uri.startsWith('local:directory?type=album')) {
-        return Icons.album;
-      } else if (uri.startsWith('local:directory?type=artist')) {
-        return Icons.person;
-      } else if (uri.startsWith('local:directory?type=artist&role=performer')) {
-        return Icons.person;
-      } else if (uri.startsWith('local:directory?type=artist&role=composer')) {
-        return Icons.person;
-      } else if (uri.startsWith('local:directory?type=genre')) {
-        return Icons.folder;
-      } else if (uri.startsWith('local:directory?type=track')) {
-        return Icons.list;
-      } else if (uri.startsWith('local:directory?type=date&format=%25Y')) {
-        // Release years
-        return Icons.folder;
-      } else if (uri.startsWith('local:directory?max-age=604800')) {
-        // week updates
-        return Icons.folder;
-      } else if (uri.startsWith('local:directory?max-age=2592000')) {
-        //  month's updates
-        return Icons.folder;
-      }
-      return Icons.folder;
-    } else if (uri.startsWith('podcast+')) {
-      return Icons.podcasts;
-    } else if (uri.startsWith('tunein:root')) {
-      return Icons.radio;
-    } else if (uri.startsWith('m3u:')) {
-      return Icons.list;
-    } else if (uri.startsWith('dleyna:')) {
-      return Icons.computer;
-    } else if (uri.startsWith('bookmark:')) {
-      return Icons.featured_play_list;
-    } else if (uri.startsWith('local:album:')) {
-      return Icons.album;
-    } else if (uri.startsWith('local:artist:')) {
-      return Icons.person;
-    } else if (uri.startsWith('local:track:')) {
-      return Icons.audiotrack;
-    } else if (uri.startsWith('file:///')) {
-      if (_isAudioFile(uri)) {
-        return Icons.audio_file;
-      } else {
-        return Icons.folder;
-      }
-    } else if (uri.isStreamUri()) {
-      return Icons.radio;
-    }
-    return null;
-  }
-
-
-  static bool _isAudioFile(String uri) {
-    var suffix = _getExtension(uri);
-    return _audioFormats.contains(suffix);
-  }
-
-  static String _getExtension(String uri) {
-    var idx = uri.lastIndexOf('.');
-    if (idx != -1) {
-      return uri.substring(idx);
-    }
-    return "";
   }
 }

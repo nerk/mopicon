@@ -60,22 +60,6 @@ class _SearchPageState extends State<SearchPage> {
 
   final controller = GetIt.instance<SearchViewController>();
 
-  Future<void> loadImages(List<Track> tracks) async {
-    try {
-      for (Track track in tracks) {
-        if (images[track.uri] == null) {
-          var image = await track.getImage();
-          images.putIfAbsent(track.uri, () => image);
-        }
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    } catch (e, s) {
-      logger.e(e, stackTrace: s);
-    }
-  }
-
   void updateSelection() {
     if (mounted) {
       setState(() {
@@ -158,7 +142,7 @@ class _SearchPageState extends State<SearchPage> {
                 await mopidyService.search(SearchCriteria().any([value]));
             trx = searchResult.first.tracks;
             if (trx.isNotEmpty) {
-              await loadImages(trx);
+              images = await trx.getImages();
             }
           } catch (e, s) {
             logger.e(e, stackTrace: s);

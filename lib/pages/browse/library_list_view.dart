@@ -64,7 +64,7 @@ class LibraryListView {
         ),
       );
     } else {
-      String? uri = getUri(item);
+      String uri = item.getUri();
       return images[uri] ?? FittedBox(fit: BoxFit.cover, child: Icon(Icons.audiotrack));
     }
   }

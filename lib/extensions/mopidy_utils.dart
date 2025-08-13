@@ -43,6 +43,15 @@ extension MopiStringExtensions on String {
 }
 
 extension MopidyRefExtensions on Ref {
+
+  String getUri() {
+    return uri;
+  }
+
+  String getName() {
+    return name;
+  }
+
   /// Returns the image for [Ref]
   Future<Widget?> getImage() async {
     return _coverService.getImage(uri);
@@ -87,6 +96,15 @@ extension MopidyTlTrackListExtensions on List<TlTrack> {
 }
 
 extension MopidyTrackExtensions on Track {
+
+  String getName() {
+    return name;
+  }
+
+  String getUri() {
+    return uri;
+  }
+
   /// Returns the image for [Track]
   Future<Widget?> getImage() async {
     return _coverService.getImage(uri);
@@ -111,6 +129,15 @@ extension MopidyTrackExtensions on Track {
 }
 
 extension MopidyTlTrackExtensions on TlTrack {
+
+  String getUri() {
+    return track.uri;
+  }
+
+  String getName() {
+    return track.name;
+  }
+
   /// Converts a [TlTrack] into a [Ref],
   Ref get asRef {
     return Ref(track.uri, track.name, Ref.typeTrack);
@@ -140,15 +167,6 @@ String? getUri(dynamic obj) {
     return obj.uri;
   } else if (obj is TlTrack) {
     return obj.track.uri;
-  }
-  return null;
-}
-
-String? getName(dynamic obj) {
-  if (obj is Ref || obj is Track) {
-    return obj.name;
-  } else if (obj is TlTrack) {
-    return obj.track.name;
   }
   return null;
 }

@@ -94,8 +94,6 @@ abstract class MopidyService {
 
   bool get stopped;
 
-  void notifyRefresh();
-
   // List of URI schemes supported by the server
   Future<List<String>> getUriSchemes();
 
@@ -399,8 +397,7 @@ class MopidyServiceImpl extends MopidyService {
     }
   }
 
-  @override
-  void notifyRefresh() {
+  void _notifyRefresh() {
     _refresh$.add(true);
   }
 
@@ -439,7 +436,7 @@ class MopidyServiceImpl extends MopidyService {
     bool success =
         await _mopidy.connect(webSocketUrl: uri, maxRetries: maxRetries);
     if (success) {
-      notifyRefresh();
+      _notifyRefresh();
     }
     return success;
   }
@@ -459,7 +456,7 @@ class MopidyServiceImpl extends MopidyService {
     _mopidy.disconnect();
     bool success = await _mopidy.connect();
     if (success) {
-      notifyRefresh();
+      _notifyRefresh();
     }
     return success;
   }

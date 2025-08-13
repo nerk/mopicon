@@ -40,7 +40,6 @@ abstract class BaseController {
 
   void notifyRefresh() {
     notifyUnselect();
-    _mopidyService.notifyRefresh();
   }
 
   void notifyUnselect() {

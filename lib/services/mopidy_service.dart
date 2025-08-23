@@ -338,8 +338,6 @@ class MopidyServiceImpl extends MopidyService {
         case ClientState.reconnectionPending:
           _connected = false;
           break;
-        default:
-          break;
       }
     });
 

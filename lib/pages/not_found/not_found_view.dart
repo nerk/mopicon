@@ -28,11 +28,7 @@ class NotFoundView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Center(
-        child: Card(
-          child: Text(S.of(context).pageNotFoundMsg),
-        ),
-      ),
+      child: Center(child: Card(child: Text(S.of(context).pageNotFoundMsg))),
     );
   }
 }

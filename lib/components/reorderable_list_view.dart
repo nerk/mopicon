@@ -21,10 +21,11 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/image_utils.dart';
+
 import '../common/selected_item_positions.dart';
 import 'rd_list_tile.dart';
 
@@ -46,9 +47,16 @@ class ReorderableTrackListView<T extends Object> {
 
   var selectedPositions = SelectedItemPositions();
 
-  ReorderableTrackListView(this.context, this.items, this.images, this.selectionChangedNotifier,
-      this.selectionModeChangedNotifier, this.onReorder, this.onTap,
-      {this.markedItemIndex}) {
+  ReorderableTrackListView(
+    this.context,
+    this.items,
+    this.images,
+    this.selectionChangedNotifier,
+    this.selectionModeChangedNotifier,
+    this.onReorder,
+    this.onTap, {
+    this.markedItemIndex,
+  }) {
     assert(items is List<Track> || items is List<TlTrack>);
     selectedPositions = selectionChangedNotifier.value.clone();
   }
@@ -59,10 +67,7 @@ class ReorderableTrackListView<T extends Object> {
     if (checked) {
       return Padding(
         padding: const EdgeInsets.all(0),
-        child: CircleAvatar(
-          backgroundColor: _preferences.theme.data.colorScheme.inversePrimary,
-          child: const Icon(Icons.check),
-        ),
+        child: CircleAvatar(backgroundColor: _preferences.theme.data.colorScheme.inversePrimary, child: const Icon(Icons.check)),
       );
     } else {
       String? uri = getUri(item);
@@ -72,17 +77,18 @@ class ReorderableTrackListView<T extends Object> {
 
   Widget buildListView() {
     var listView = ReorderableListView.builder(
-        buildDefaultDragHandles: false,
-        shrinkWrap: items.length > 200,
-        itemCount: items.length,
-        itemBuilder: (BuildContext context, int index) => _listItem(items[index], index),
-        onReorder: (int start, int current) {
-          if (onReorder != null) {
-            selectedPositions.move(start, current, items.length);
-            selectionChangedNotifier.value = selectedPositions;
-            onReorder!(start, current);
-          }
-        });
+      buildDefaultDragHandles: false,
+      shrinkWrap: items.length > 200,
+      itemCount: items.length,
+      itemBuilder: (BuildContext context, int index) => _listItem(items[index], index),
+      onReorder: (int start, int current) {
+        if (onReorder != null) {
+          selectedPositions.move(start, current, items.length);
+          selectionChangedNotifier.value = selectedPositions;
+          onReorder!(start, current);
+        }
+      },
+    );
     return Material(child: listView);
   }
 
@@ -94,10 +100,7 @@ class ReorderableTrackListView<T extends Object> {
       key: Key("$index tile"),
       canReorder: onReorder != null,
       leading: ImageUtils.resize(_getImage(item, index, false), 40, 40),
-      title: Text(
-        track.name,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-      ),
+      title: Text(track.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
       subtitle: track.artistNames != null ? Text(track.artistNames!, style: const TextStyle(fontSize: 12)) : null,
       tileColor: index == markedItemIndex ? _preferences.theme.data.colorScheme.inversePrimary : null,
       dismissibleBackgroundColor: _preferences.theme.data.colorScheme.inversePrimary,

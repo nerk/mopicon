@@ -24,8 +24,9 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
-export 'package:logger/logger.dart';
 import 'package:universal_io/io.dart' as io;
+
+export 'package:logger/logger.dart';
 
 /// Global logger.
 Logger logger = createLogger(kDebugMode ? Level.debug : Level.info);
@@ -45,17 +46,19 @@ StringBuffer _logBuffer = StringBuffer();
 
 Logger createLogger(Level? level) {
   return Logger(
-      level: level,
-      filter: _Filter(),
-      output: _LoggerOutput(),
-      printer: PrettyPrinter(
-          lineLength: 120,
-          colors: false,
-          printEmojis: true,
-          methodCount: 4,
-          errorMethodCount: 10,
-          noBoxingByDefault: true,
-          dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart));
+    level: level,
+    filter: _Filter(),
+    output: _LoggerOutput(),
+    printer: PrettyPrinter(
+      lineLength: 120,
+      colors: false,
+      printEmojis: true,
+      methodCount: 4,
+      errorMethodCount: 10,
+      noBoxingByDefault: true,
+      dateTimeFormat: DateTimeFormat.onlyTimeAndSinceStart,
+    ),
+  );
 }
 
 class _LoggerOutput extends LogOutput {

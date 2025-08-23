@@ -20,14 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'dart:async';
+
 import 'package:mopidy_client/mopidy_client.dart' hide Image;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
-import 'app_themes.dart';
-export 'app_themes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'app_locales.dart';
+import 'app_themes.dart';
+
 export 'app_locales.dart';
+export 'app_themes.dart';
 
 abstract class PreferencesController {
   /// Notification about current connection state.
@@ -143,12 +146,8 @@ class PreferencesControllerImpl extends PreferencesController {
   Future<void> save() async {
     if (_dirty) {
       var prefs = await SharedPreferences.getInstance();
-      _host != null
-          ? prefs.setString('mopidy_host', _host!)
-          : prefs.remove('mopidy_host');
-      _port != null
-          ? prefs.setInt('mopidy_port', _port!)
-          : prefs.remove('mopidy_port');
+      _host != null ? prefs.setString('mopidy_host', _host!) : prefs.remove('mopidy_host');
+      _port != null ? prefs.setInt('mopidy_port', _port!) : prefs.remove('mopidy_port');
 
       prefs.setString('theme', _theme.name);
       prefs.setBool('dark', _dark);

@@ -21,16 +21,16 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/common/base_controller.dart';
 import 'package:mopicon/components/error_snackbar.dart';
-import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/components/question_dialog.dart';
-import 'package:mopicon/utils/logging_utils.dart';
-import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
-import 'package:mopicon/common/base_controller.dart';
-import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/pages/playlist/playlist_mixin.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
+import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 
 abstract class LibraryBrowserController extends BaseController with TracklistMethods, PlaylistMethods {
   MenuBuilder<Ref> popupMenu(BuildContext? context, Ref? item, int? index);
@@ -66,28 +66,51 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
 
   MenuBuilder<Ref> albumPopupMenu(BuildContext context) {
     return MenuBuilder<Ref>()
-        .addMenuItem(S.of(context).menuAddToTracklist, Icons.queue_music,
-            (_, track, index) => addItemsToTracklist<Ref>(context, [track!]))
-        .addMenuItem(S.of(context).menuAddToPlaylist, Icons.playlist_add,
-            (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]))
-        .addMenuItem(S.of(context).menuDelete, Icons.delete, deletePlaylist,
-            applicableCallback: (track, index) => track.type == Ref.typePlaylist);
+        .addMenuItem(
+          S.of(context).menuAddToTracklist,
+          Icons.queue_music,
+          (_, track, index) => addItemsToTracklist<Ref>(context, [track!]),
+        )
+        .addMenuItem(
+          S.of(context).menuAddToPlaylist,
+          Icons.playlist_add,
+          (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]),
+        )
+        .addMenuItem(
+          S.of(context).menuDelete,
+          Icons.delete,
+          deletePlaylist,
+          applicableCallback: (track, index) => track.type == Ref.typePlaylist,
+        );
   }
 
   MenuBuilder<Ref> trackPopupMenu(BuildContext context) {
     return MenuBuilder<Ref>()
-        .addMenuItem(S.of(context).menuAddToTracklist, Icons.queue_music,
-            (_, track, index) => addItemsToTracklist<Ref>(context, [track!]))
-        .addMenuItem(S.of(context).menuAddToPlaylist, Icons.playlist_add,
-            (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]))
-        .addMenuItem(S.of(context).menuDelete, Icons.delete, deletePlaylist,
-            applicableCallback: (track, index) => track.type == Ref.typePlaylist);
+        .addMenuItem(
+          S.of(context).menuAddToTracklist,
+          Icons.queue_music,
+          (_, track, index) => addItemsToTracklist<Ref>(context, [track!]),
+        )
+        .addMenuItem(
+          S.of(context).menuAddToPlaylist,
+          Icons.playlist_add,
+          (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]),
+        )
+        .addMenuItem(
+          S.of(context).menuDelete,
+          Icons.delete,
+          deletePlaylist,
+          applicableCallback: (track, index) => track.type == Ref.typePlaylist,
+        );
   }
 
   MenuBuilder<Ref> playlistPopupMenu(BuildContext context) {
     return MenuBuilder<Ref>()
-        .addMenuItem(S.of(context).menuAddToTracklist, Icons.queue_music,
-            (_, track, index) => addItemsToTracklist<Ref>(context, [track!]))
+        .addMenuItem(
+          S.of(context).menuAddToTracklist,
+          Icons.queue_music,
+          (_, track, index) => addItemsToTracklist<Ref>(context, [track!]),
+        )
         .addMenuItem(S.of(context).menuDelete, Icons.delete, deletePlaylist);
   }
 
@@ -95,9 +118,12 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
     var deletePlaylistError = S.of(context).deletePlaylistError;
     if (item != null && item.type == Ref.typePlaylist) {
       try {
-        var ret = await showQuestionDialog(S.of(context).deletePlaylistDialogTitle,
-            S.of(context).deletePlaylistDialogMessage(item.name), [DialogButtonOption.yes, DialogButtonOption.no],
-            defaultOption: DialogButtonOption.no);
+        var ret = await showQuestionDialog(
+          S.of(context).deletePlaylistDialogTitle,
+          S.of(context).deletePlaylistDialogMessage(item.name),
+          [DialogButtonOption.yes, DialogButtonOption.no],
+          defaultOption: DialogButtonOption.no,
+        );
         if (ret != null && ret == DialogButtonOption.yes) {
           await mopidyService.deletePlaylist(item);
         }
@@ -115,9 +141,12 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
     if (!context.mounted) return;
     for (var item in selected) {
       try {
-        var ret = await showQuestionDialog(S.of(context).deletePlaylistDialogTitle,
-            S.of(context).deletePlaylistDialogMessage(item.name), [DialogButtonOption.yes, DialogButtonOption.no],
-            defaultOption: DialogButtonOption.no);
+        var ret = await showQuestionDialog(
+          S.of(context).deletePlaylistDialogTitle,
+          S.of(context).deletePlaylistDialogMessage(item.name),
+          [DialogButtonOption.yes, DialogButtonOption.no],
+          defaultOption: DialogButtonOption.no,
+        );
         if (ret != null && ret == DialogButtonOption.yes) {
           await mopidyService.deletePlaylist(item);
         }

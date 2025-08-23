@@ -27,14 +27,12 @@ import 'package:mopicon/pages/settings/preferences_controller.dart';
 
 /// Displays a [SnackBar] with error icon, [title] and [detail].
 void showError(String title, String? detail) {
-  Globals.rootScaffoldMessengerKey.currentState!
-      .showSnackBar(_ErrorSnackBar(title: title, detail: detail));
+  Globals.rootScaffoldMessengerKey.currentState!.showSnackBar(_ErrorSnackBar(title: title, detail: detail));
 }
 
 /// Displays a [SnackBar] with info icon, [title] and [detail].
 void showInfo(String title, String? detail) {
-  Globals.rootScaffoldMessengerKey.currentState!
-      .showSnackBar(_InfoSnackBar(title: title, detail: detail));
+  Globals.rootScaffoldMessengerKey.currentState!.showSnackBar(_InfoSnackBar(title: title, detail: detail));
 }
 
 /// Closes the current [SnackBar].
@@ -44,40 +42,21 @@ void closeSnackBar() {
 
 class _ErrorSnackBar extends SnackBar {
   _ErrorSnackBar({required String title, String? detail})
-      : super(
-          content: ListTile(
-            leading: const Icon(Icons.error),
-            title: Text(title),
-            subtitle: detail != null ? Text(detail) : null,
-          ),
-          duration: const Duration(seconds: 30),
-          backgroundColor: GetIt.instance<PreferencesController>()
-              .theme
-              .data
-              .colorScheme
-              .errorContainer,
-          showCloseIcon: true,
-          closeIconColor: GetIt.instance<PreferencesController>()
-              .theme
-              .data
-              .colorScheme
-              .onErrorContainer,
-        );
+    : super(
+        content: ListTile(leading: const Icon(Icons.error), title: Text(title), subtitle: detail != null ? Text(detail) : null),
+        duration: const Duration(seconds: 30),
+        backgroundColor: GetIt.instance<PreferencesController>().theme.data.colorScheme.errorContainer,
+        showCloseIcon: true,
+        closeIconColor: GetIt.instance<PreferencesController>().theme.data.colorScheme.onErrorContainer,
+      );
 }
 
 class _InfoSnackBar extends SnackBar {
   _InfoSnackBar({required String title, String? detail})
-      : super(
-            content: ListTile(
-              leading: const Icon(Icons.info),
-              title: Text(title),
-              subtitle: detail != null ? Text(detail) : null,
-            ),
-            duration: const Duration(seconds: 10),
-            backgroundColor: GetIt.instance<PreferencesController>()
-                .theme
-                .data
-                .colorScheme
-                .surfaceContainerHigh,
-            showCloseIcon: false);
+    : super(
+        content: ListTile(leading: const Icon(Icons.info), title: Text(title), subtitle: detail != null ? Text(detail) : null),
+        duration: const Duration(seconds: 10),
+        backgroundColor: GetIt.instance<PreferencesController>().theme.data.colorScheme.surfaceContainerHigh,
+        showCloseIcon: false,
+      );
 }

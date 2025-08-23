@@ -20,9 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'search_view_controller.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/generated/l10n.dart';
+
+import 'search_view_controller.dart';
 
 class SearchAppBarMenu extends StatelessWidget {
   final int numberTracks;

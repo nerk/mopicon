@@ -21,13 +21,14 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'tracklist_view_controller.dart';
-import 'package:mopicon/utils/logging_utils.dart';
-import 'package:mopicon/pages/playlist/new_stream_dialog.dart';
-import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/components/error_snackbar.dart';
-import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/pages/playlist/new_stream_dialog.dart';
+import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/utils/logging_utils.dart';
+
+import 'tracklist_view_controller.dart';
 
 class TracklistAppBarMenu extends StatelessWidget {
   final TracklistViewController controller;

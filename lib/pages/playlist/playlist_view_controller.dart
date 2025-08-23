@@ -21,11 +21,11 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:mopicon/common/base_controller.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
+import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/pages/playlist/playlist_mixin.dart';
-import 'package:mopicon/common/base_controller.dart';
 
 abstract class PlaylistViewController extends BaseController with TracklistMethods, PlaylistMethods {
   ValueNotifier<Playlist?> get playlistChangedNotifier;

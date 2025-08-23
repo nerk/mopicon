@@ -21,13 +21,13 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/generated/l10n.dart';
-import 'package:mopicon/pages/browse/library_browser_controller.dart';
-import 'package:mopicon/pages/browse/rename_playlist_dialog.dart';
-import 'package:mopicon/pages/browse/new_playlist_dialog.dart';
-import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/menu_builder.dart';
+import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/pages/browse/library_browser_controller.dart';
+import 'package:mopicon/pages/browse/new_playlist_dialog.dart';
+import 'package:mopicon/pages/browse/rename_playlist_dialog.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 
 class LibraryBrowserAppBarMenu extends StatelessWidget {
@@ -42,15 +42,12 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     late var menuBuilder = MenuBuilder();
     if (items.indexWhere((e) => e.type != Ref.typeTrack) == -1) {
-      menuBuilder.addMenuItem(
-          S.of(context).menuSelectAll, Icons.select_all, _selectAll);
+      menuBuilder.addMenuItem(S.of(context).menuSelectAll, Icons.select_all, _selectAll);
     }
 
     controller.selectionChanged.value.positions.length != 1
-        ? menuBuilder.addMenuItem(
-            S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
-        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist,
-            Icons.drive_file_rename_outline, _renamePlayList);
+        ? menuBuilder.addMenuItem(S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
+        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist, Icons.drive_file_rename_outline, _renamePlayList);
 
     return menuBuilder
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
@@ -70,14 +67,17 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
     mopidyService.getPlaylists().then((List<Ref> playlists) {
       newPlaylistDialog().then((name) {
         if (name != null && name.isNotEmpty) {
-          mopidyService.createPlaylist(name).then((playlist) {
-            if (playlist == null) {
-              showError(alreadyExistsError, null);
-            }
-          }).onError((e, s) {
-            logger.e(e, stackTrace: s);
-            showError(createError, null);
-          });
+          mopidyService
+              .createPlaylist(name)
+              .then((playlist) {
+                if (playlist == null) {
+                  showError(alreadyExistsError, null);
+                }
+              })
+              .onError((e, s) {
+                logger.e(e, stackTrace: s);
+                showError(createError, null);
+              });
         }
       });
     });

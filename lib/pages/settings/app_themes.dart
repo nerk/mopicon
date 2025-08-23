@@ -49,10 +49,9 @@ class AppTheme {
 
   ThemeData _createTheme(Color color, bool dark) {
     return ThemeData.from(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: color,
-            brightness: dark ? Brightness.dark : Brightness.light),
-        useMaterial3: true);
+      colorScheme: ColorScheme.fromSeed(seedColor: color, brightness: dark ? Brightness.dark : Brightness.light),
+      useMaterial3: true,
+    );
   }
 }
 
@@ -87,23 +86,21 @@ class AppThemes {
 
   AppThemes._privateConstructor();
 
- static AppTheme get(String? name, bool? dark) {
+  static AppTheme get(String? name, bool? dark) {
     if (name == null) {
       return _darkThemes[0];
     }
 
     if (dark == null || dark) {
-      return _darkThemes.firstWhere((e) => e.name == name,
-          orElse: () => _darkThemes[0]);
-
+      return _darkThemes.firstWhere((e) => e.name == name, orElse: () => _darkThemes[0]);
     } else {
-      return _lightThemes.firstWhere((e) => e.name == name,
-          orElse: () => _lightThemes[0]);
+      return _lightThemes.firstWhere((e) => e.name == name, orElse: () => _lightThemes[0]);
     }
   }
 
   static AppTheme get defaultTheme => _darkThemes[0];
 
   static List<AppTheme> get lightThemes => _lightThemes;
+
   static List<AppTheme> get darkThemes => _darkThemes;
 }

@@ -21,17 +21,18 @@
  */
 
 import 'dart:async';
-import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 abstract class FileService {
-
   Future<void> initialize();
+
   String about(Locale locale);
 }
 
 class FileServiceImpl extends FileService {
-  final _about = <String, String> {};
+  final _about = <String, String>{};
 
   @override
   Future<void> initialize() async {

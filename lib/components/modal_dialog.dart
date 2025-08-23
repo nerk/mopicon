@@ -30,8 +30,7 @@ class ModalDialog extends StatefulWidget {
   final int? defaultActionIndex;
   final bool? constrainSize;
 
-  const ModalDialog(this.title, this.content, this.actions,
-      {this.defaultActionIndex, this.constrainSize, super.key});
+  const ModalDialog(this.title, this.content, this.actions, {this.defaultActionIndex, this.constrainSize, super.key});
 
   @override
   State<ModalDialog> createState() => _ModalDialogState();
@@ -40,45 +39,41 @@ class ModalDialog extends StatefulWidget {
 class _ModalDialogState extends State<ModalDialog> {
   @override
   Widget build(BuildContext context) {
-    assert(widget.defaultActionIndex == null ||
-        (widget.defaultActionIndex! >= 0 &&
-            widget.defaultActionIndex! < widget.actions.length));
+    assert(
+      widget.defaultActionIndex == null || (widget.defaultActionIndex! >= 0 && widget.defaultActionIndex! < widget.actions.length),
+    );
 
-    var height = (widget.constrainSize ?? false)
-        ? MediaQuery.of(context).size.height / 2
-        : null;
-    var width = (widget.constrainSize ?? false)
-        ? MediaQuery.of(context).size.width / 1.5
-        : null;
+    var height = (widget.constrainSize ?? false) ? MediaQuery.of(context).size.height / 2 : null;
+    var width = (widget.constrainSize ?? false) ? MediaQuery.of(context).size.width / 1.5 : null;
 
     if (widget.defaultActionIndex != null) {
       return KeyboardListener(
-          focusNode: FocusNode(),
-          autofocus: true,
-          onKeyEvent: (v) {
-            if (v.logicalKey == LogicalKeyboardKey.enter ||
-                v.logicalKey == LogicalKeyboardKey.numpadEnter) {
-              if (widget.defaultActionIndex != null) {
-                var action = widget.actions[widget.defaultActionIndex!];
-                if (action is ButtonStyleButton) {
-                  if (action.onPressed != null) {
-                    action.onPressed!();
-                  }
+        focusNode: FocusNode(),
+        autofocus: true,
+        onKeyEvent: (v) {
+          if (v.logicalKey == LogicalKeyboardKey.enter || v.logicalKey == LogicalKeyboardKey.numpadEnter) {
+            if (widget.defaultActionIndex != null) {
+              var action = widget.actions[widget.defaultActionIndex!];
+              if (action is ButtonStyleButton) {
+                if (action.onPressed != null) {
+                  action.onPressed!();
                 }
               }
             }
-          },
-          child: AlertDialog(
-              title: widget.title,
-              content:
-                  SizedBox(width: width, height: height, child: widget.content),
-              actions: widget.actions));
+          }
+        },
+        child: AlertDialog(
+          title: widget.title,
+          content: SizedBox(width: width, height: height, child: widget.content),
+          actions: widget.actions,
+        ),
+      );
     } else {
       return AlertDialog(
-          title: widget.title,
-          content:
-              SizedBox(width: width, height: height, child: widget.content),
-          actions: widget.actions);
+        title: widget.title,
+        content: SizedBox(width: width, height: height, child: widget.content),
+        actions: widget.actions,
+      );
     }
   }
 }

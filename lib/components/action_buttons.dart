@@ -20,8 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
 
 /// An IconButton with additional ValueListenable to control whether the button is shown.
@@ -45,8 +45,7 @@ class ActionButton<T> extends StatelessWidget {
 
   final bool Function(T value, bool result)? checkEnable;
 
-  const ActionButton(this.iconData, this.onPressed,
-      {this.valueListenable, this.checkEnable, super.key});
+  const ActionButton(this.iconData, this.onPressed, {this.valueListenable, this.checkEnable, super.key});
 
   bool _shouldEnable(T value) {
     bool result = false;
@@ -74,14 +73,15 @@ class ActionButton<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     if (valueListenable != null) {
       return ValueListenableBuilder<T>(
-          valueListenable: valueListenable!,
-          builder: (context, value, child) {
-            if (_shouldEnable(value)) {
-              return IconButton(icon: Icon(iconData), onPressed: onPressed);
-            } else {
-              return const SizedBox();
-            }
-          });
+        valueListenable: valueListenable!,
+        builder: (context, value, child) {
+          if (_shouldEnable(value)) {
+            return IconButton(icon: Icon(iconData), onPressed: onPressed);
+          } else {
+            return const SizedBox();
+          }
+        },
+      );
     } else {
       return IconButton(icon: Icon(iconData), onPressed: onPressed);
     }

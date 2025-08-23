@@ -21,11 +21,11 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
+import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/common/globals.dart';
 
 Future<Ref?> selectPlaylistDialog(List<Ref> playlists) {
   final modalDialogKey = GlobalKey<FormState>(debugLabel: "selectPlaylistDialog");
@@ -38,28 +38,33 @@ Future<Ref?> selectPlaylistDialog(List<Ref> playlists) {
         constrainSize: true,
         Text(S.of(ctx1).selectPlaylistDialogTitle),
         Form(
-            key: modalDialogKey,
-            child: ListView.builder(
-                //itemExtent: 160.0,
-                itemCount: playlists.length,
-                itemBuilder: (BuildContext ctx2, int index) => ListTile(
-                      contentPadding: const EdgeInsets.all(0),
-                      onTap: () {
-                        if (ctx2.mounted) {
-                          Navigator.of(ctx2).pop(playlists[index]);
-                        }
-                      },
-                      title: Text(playlists[index].name),
-                    ))),
+          key: modalDialogKey,
+          child: ListView.builder(
+            //itemExtent: 160.0,
+            itemCount: playlists.length,
+            itemBuilder: (BuildContext ctx2, int index) => ListTile(
+              contentPadding: const EdgeInsets.all(0),
+              onTap: () {
+                if (ctx2.mounted) {
+                  Navigator.of(ctx2).pop(playlists[index]);
+                }
+              },
+              title: Text(playlists[index].name),
+            ),
+          ),
+        ),
         <Widget>[
-          DialogButton.oK(ctx1, onPressed: () {
-            //if (modalDialogKey.currentState?.validate() ?? false) {
-            if (ctx1.mounted) {
-              Navigator.of(ctx1).pop(playlist);
-            }
-            //}
-          }),
-          DialogButton.cancel(ctx1)
+          DialogButton.oK(
+            ctx1,
+            onPressed: () {
+              //if (modalDialogKey.currentState?.validate() ?? false) {
+              if (ctx1.mounted) {
+                Navigator.of(ctx1).pop(playlist);
+              }
+              //}
+            },
+          ),
+          DialogButton.cancel(ctx1),
         ],
         defaultActionIndex: 0,
       );

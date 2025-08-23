@@ -22,24 +22,27 @@
 import 'package:flutter/material.dart';
 
 class ImageUtils {
-
   static Widget pad(dynamic image, double size) {
     return Padding(padding: EdgeInsets.all(size), child: image);
   }
 
   static Widget roundedCornersWithPadding(dynamic image, double width, double height) {
     return Padding(
-        padding: const EdgeInsets.all(4),
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(10), // Image border
-            child: SizedBox.fromSize(
-                size: Size(width, height), // Image radius
-                child: image)));
+      padding: const EdgeInsets.all(4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10), // Image border
+        child: SizedBox.fromSize(
+          size: Size(width, height), // Image radius
+          child: image,
+        ),
+      ),
+    );
   }
 
   static Widget resize(image, double width, double height) {
     return SizedBox.fromSize(
-        size: Size(width, height), // Image radius
-        child: image);
+      size: Size(width, height), // Image radius
+      child: image,
+    );
   }
 }

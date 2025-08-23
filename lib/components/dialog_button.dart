@@ -25,68 +25,55 @@ import 'package:mopicon/generated/l10n.dart';
 
 /// Common buttons used in dialogs
 class DialogButton {
-  static Widget yes(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).yesBtn,
-        onPressed: onPressed, autoFocus: autoFocus);
+  static Widget yes(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(context, S.of(context).yesBtn, onPressed: onPressed, autoFocus: autoFocus);
   }
 
-  static Widget no(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).noBtn,
-        onPressed: onPressed, autoFocus: autoFocus);
+  static Widget no(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(context, S.of(context).noBtn, onPressed: onPressed, autoFocus: autoFocus);
   }
 
-  static Widget oK(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).okBtn,
-        onPressed: onPressed, autoFocus: autoFocus);
+  static Widget oK(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(context, S.of(context).okBtn, onPressed: onPressed, autoFocus: autoFocus);
   }
 
-  static Widget cancel(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).cancelBtn,
-        onPressed: onPressed ??
-            () {
-              if (context.mounted) {
-                Navigator.of(context).pop();
-              }
-            },
-        autoFocus: autoFocus);
+  static Widget cancel(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(
+      context,
+      S.of(context).cancelBtn,
+      onPressed:
+          onPressed ??
+          () {
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+      autoFocus: autoFocus,
+    );
   }
 
-  static Widget retry(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).retryBtn,
-        onPressed: onPressed, autoFocus: autoFocus);
+  static Widget retry(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(context, S.of(context).retryBtn, onPressed: onPressed, autoFocus: autoFocus);
   }
 
-  static Widget abort(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).abortBtn,
-        onPressed: onPressed, autoFocus: autoFocus);
+  static Widget abort(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(context, S.of(context).abortBtn, onPressed: onPressed, autoFocus: autoFocus);
   }
 
-  static Widget submit(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).submitBtn,
-        onPressed: onPressed, autoFocus: autoFocus);
+  static Widget submit(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(context, S.of(context).submitBtn, onPressed: onPressed, autoFocus: autoFocus);
   }
 
-  static Widget save(BuildContext context,
-      {VoidCallback? onPressed, bool? autoFocus}) {
-    return button(context, S.of(context).saveBtn,
-        onPressed: onPressed, autoFocus: autoFocus);
+  static Widget save(BuildContext context, {VoidCallback? onPressed, bool? autoFocus}) {
+    return button(context, S.of(context).saveBtn, onPressed: onPressed, autoFocus: autoFocus);
   }
 
-  static Widget button(BuildContext context, String label,
-      {VoidCallback? onPressed, bool? autoFocus}) {
+  static Widget button(BuildContext context, String label, {VoidCallback? onPressed, bool? autoFocus}) {
     return ElevatedButton(
-        style: TextButton.styleFrom(
-          textStyle: Theme.of(context).textTheme.labelLarge,
-        ),
-        onPressed: onPressed,
-        autofocus: autoFocus ?? false,
-        child: Text(label));
+      style: TextButton.styleFrom(textStyle: Theme.of(context).textTheme.labelLarge),
+      onPressed: onPressed,
+      autofocus: autoFocus ?? false,
+      child: Text(label),
+    );
   }
 }

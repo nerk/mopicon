@@ -22,12 +22,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/pages/tracklist/playing_progress.dart';
-import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/utils/logging_utils.dart';
-import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/components/rd_list_tile.dart';
 import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/pages/tracklist/playing_progress.dart';
+import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/utils/image_utils.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 
 class NowPlaying extends StatelessWidget {
   final bool splitPage;
@@ -41,15 +41,16 @@ class NowPlaying extends StatelessWidget {
   final bool isStream;
 
   const NowPlaying(
-      this.splitPage,
-      this.smallHeight,
-      this.currentTlTrack,
-      this.cover,
-      this.playbackState,
-      this.timePosition,
-      this.streamTitle,
-      this.isStream,
-      {super.key});
+    this.splitPage,
+    this.smallHeight,
+    this.currentTlTrack,
+    this.cover,
+    this.playbackState,
+    this.timePosition,
+    this.streamTitle,
+    this.isStream, {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +78,7 @@ class NowPlaying extends StatelessWidget {
         albumName = currentTlTrack!.track.uri;
       } else {
         title = currentTlTrack!.track.name;
-        artistName = currentTlTrack!.track.artists
-            .map((e) => e.name)
-            .nonNulls
-            .join(', ');
+        artistName = currentTlTrack!.track.artists.map((e) => e.name).nonNulls.join(', ');
         albumName = currentTlTrack!.track.album?.name ?? '';
         discNo = currentTlTrack!.track.discNo ?? 0;
       }
@@ -92,190 +90,179 @@ class NowPlaying extends StatelessWidget {
           : _smallVert(title, artistName, albumName, length, bitrate);
     } else {
       return smallHeight
-          ? _bigHoriz(context, title, artistName, albumName, length, date,
-              discNo, trackNo, bitrate)
-          : _bigVert(context, title, artistName, albumName, length, date,
-              discNo, trackNo, bitrate);
+          ? _bigHoriz(context, title, artistName, albumName, length, date, discNo, trackNo, bitrate)
+          : _bigVert(context, title, artistName, albumName, length, date, discNo, trackNo, bitrate);
     }
   }
 
   Widget _bigVert(
-      BuildContext context,
-      String title,
-      String artistName,
-      String albumName,
-      int length,
-      String date,
-      int discNo,
-      int trackNo,
-      int bitrate) {
+    BuildContext context,
+    String title,
+    String artistName,
+    String albumName,
+    int length,
+    String date,
+    int discNo,
+    int trackNo,
+    int bitrate,
+  ) {
     return Expanded(
-        flex: 1,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Column(mainAxisSize: MainAxisSize.min, children: [
+      flex: 1,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Center(child: ImageUtils.resize(cover, 200, 200))),
+                padding: const EdgeInsets.all(20),
+                child: Center(child: ImageUtils.resize(cover, 200, 200)),
+              ),
+              Center(child: Text(title, style: const TextStyle(fontSize: 18.0))),
+              Center(child: Text(artistName, style: const TextStyle(fontSize: 14.0))),
               Center(
-                  child: Text(title, style: const TextStyle(fontSize: 18.0))),
-              Center(
-                  child:
-                      Text(artistName, style: const TextStyle(fontSize: 14.0))),
-              Center(
-                  child: Text(albumName,
-                      style: const TextStyle(
-                          fontSize: 12.0, fontStyle: FontStyle.italic))),
+                child: Text(albumName, style: const TextStyle(fontSize: 12.0, fontStyle: FontStyle.italic)),
+              ),
               //const SizedBox(height: 20),
-            ]),
-            const Center(),
-            Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  if (!isStream) Text(S.of(context).nowPlayingDiscLbl(discNo)),
-                  if (trackNo != 0)
-                    Text(S.of(context).nowPlayingTrackNoLbl(trackNo)),
-                  if (date.isNotEmpty)
-                    Text(S.of(context).nowPlayingDateLbl(date)),
-                ]),
-            //  )
-            PlayingProgressIndicator(Duration(milliseconds: length),
-                playbackState, timePosition, bitrate, _getButtons, isStream)
-          ],
-        ));
+            ],
+          ),
+          const Center(),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              if (!isStream) Text(S.of(context).nowPlayingDiscLbl(discNo)),
+              if (trackNo != 0) Text(S.of(context).nowPlayingTrackNoLbl(trackNo)),
+              if (date.isNotEmpty) Text(S.of(context).nowPlayingDateLbl(date)),
+            ],
+          ),
+          //  )
+          PlayingProgressIndicator(Duration(milliseconds: length), playbackState, timePosition, bitrate, _getButtons, isStream),
+        ],
+      ),
+    );
   }
 
   Widget _bigHoriz(
-      BuildContext context,
-      String title,
-      String artistName,
-      String albumName,
-      int length,
-      String date,
-      int discNo,
-      int trackNo,
-      int bitrate) {
+    BuildContext context,
+    String title,
+    String artistName,
+    String albumName,
+    int length,
+    String date,
+    int discNo,
+    int trackNo,
+    int bitrate,
+  ) {
     return Expanded(
-        flex: 1,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            const SizedBox(width: 20),
-            Center(child: ImageUtils.resize(cover, 150, 150)),
-            const SizedBox(width: 20),
-            Expanded(
-                flex: 1,
-                child: Center(
-                    child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                      Center(
-                          child: Text(title,
-                              style: const TextStyle(fontSize: 18.0))),
-                      Center(
-                          child: Text(artistName,
-                              style: const TextStyle(fontSize: 14.0))),
-                      Center(
-                          child: Text(albumName,
-                              style: const TextStyle(
-                                  fontSize: 12.0,
-                                  fontStyle: FontStyle.italic))),
-                      const SizedBox(height: 10),
-                      Center(
-                          child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                            if (!isStream)
-                              Text(S.of(context).nowPlayingDiscLbl(discNo)),
-                            if (trackNo != 0)
-                              Text(S.of(context).nowPlayingTrackNoLbl(trackNo)),
-                            if (date.isNotEmpty)
-                              Text(S.of(context).nowPlayingDateLbl(date)),
-                          ])),
-                      PlayingProgressIndicator(
-                          Duration(milliseconds: length),
-                          playbackState,
-                          timePosition,
-                          bitrate,
-                          _getButtons,
-                          isStream)
-                    ]))),
-            const SizedBox(width: 20),
-          ],
-        ));
+      flex: 1,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          const SizedBox(width: 20),
+          Center(child: ImageUtils.resize(cover, 150, 150)),
+          const SizedBox(width: 20),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Center(child: Text(title, style: const TextStyle(fontSize: 18.0))),
+                  Center(child: Text(artistName, style: const TextStyle(fontSize: 14.0))),
+                  Center(
+                    child: Text(albumName, style: const TextStyle(fontSize: 12.0, fontStyle: FontStyle.italic)),
+                  ),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (!isStream) Text(S.of(context).nowPlayingDiscLbl(discNo)),
+                        if (trackNo != 0) Text(S.of(context).nowPlayingTrackNoLbl(trackNo)),
+                        if (date.isNotEmpty) Text(S.of(context).nowPlayingDateLbl(date)),
+                      ],
+                    ),
+                  ),
+                  PlayingProgressIndicator(
+                    Duration(milliseconds: length),
+                    playbackState,
+                    timePosition,
+                    bitrate,
+                    _getButtons,
+                    isStream,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+        ],
+      ),
+    );
   }
 
-  Widget _smallVert(String title, String artistName, String albumName,
-      int length, int bitrate) {
+  Widget _smallVert(String title, String artistName, String albumName, int length, int bitrate) {
     return Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          RdListTile(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        RdListTile(
+          0,
+          //isThreeLine: true,
+          leading: ImageUtils.resize(cover, 40, 40),
+          title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+          subtitle: Text(artistName, style: const TextStyle(fontSize: 12)),
+          //trailing: Row(mainAxisSize: MainAxisSize.min, children: _getButtons()),
+        ),
+        PlayingProgressIndicator(Duration(milliseconds: length), playbackState, timePosition, bitrate, _getButtons, isStream),
+      ],
+    );
+  }
+
+  Widget _smallHoriz(String title, String artistName, String albumName, int length, int bitrate) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: RdListTile(
             0,
             //isThreeLine: true,
             leading: ImageUtils.resize(cover, 40, 40),
-            title: Text(
-              title,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-            ),
+            title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
             subtitle: Text(artistName, style: const TextStyle(fontSize: 12)),
             //trailing: Row(mainAxisSize: MainAxisSize.min, children: _getButtons()),
           ),
-          PlayingProgressIndicator(Duration(milliseconds: length),
-              playbackState, timePosition, bitrate, _getButtons, isStream),
-        ]);
-  }
-
-  Widget _smallHoriz(String title, String artistName, String albumName,
-      int length, int bitrate) {
-    return Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: RdListTile(
-              0,
-              //isThreeLine: true,
-              leading: ImageUtils.resize(cover, 40, 40),
-              title: Text(
-                title,
-                style:
-                    const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-              ),
-              subtitle: Text(artistName, style: const TextStyle(fontSize: 12)),
-              //trailing: Row(mainAxisSize: MainAxisSize.min, children: _getButtons()),
-            ),
+        ),
+        Expanded(
+          flex: 1,
+          child: PlayingProgressIndicator(
+            Duration(milliseconds: length),
+            playbackState,
+            timePosition,
+            bitrate,
+            _getButtons,
+            isStream,
           ),
-          Expanded(
-            flex: 1,
-            child: PlayingProgressIndicator(Duration(milliseconds: length),
-                playbackState, timePosition, bitrate, _getButtons, isStream),
-          )
-        ]);
+        ),
+      ],
+    );
   }
 
   List<Widget> _getButtons() {
     if (playbackState != PlaybackState.stopped) {
-      int length = currentTlTrack?.track.length != null
-          ? currentTlTrack!.track.length!
-          : 0;
+      int length = currentTlTrack?.track.length != null ? currentTlTrack!.track.length! : 0;
       return [
         _PreviousButton(),
         !(isStream && length == 0) ? _Back10Button() : const SizedBox(),
-        playbackState == PlaybackState.playing
-            ? _PauseButton()
-            : _PlayButton(null),
-        !(isStream && length == 0)
-            ? _Forward10Button(length)
-            : const SizedBox(),
+        playbackState == PlaybackState.playing ? _PauseButton() : _PlayButton(null),
+        !(isStream && length == 0) ? _Forward10Button(length) : const SizedBox(),
         _NextButton(),
         _StopButton(),
       ];
@@ -295,18 +282,19 @@ class _PlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () async {
-          try {
-            if (tlid != null) {
-              _mopidyService.playback(PlaybackAction.play, tlid);
-            } else {
-              _mopidyService.playback(PlaybackAction.resume, null);
-            }
-          } catch (e) {
-            logger.e(e);
+      onPressed: () async {
+        try {
+          if (tlid != null) {
+            _mopidyService.playback(PlaybackAction.play, tlid);
+          } else {
+            _mopidyService.playback(PlaybackAction.resume, null);
           }
-        },
-        icon: const Icon(Icons.play_arrow));
+        } catch (e) {
+          logger.e(e);
+        }
+      },
+      icon: const Icon(Icons.play_arrow),
+    );
   }
 }
 
@@ -318,14 +306,15 @@ class _PauseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          try {
-            _mopidyService.playback(PlaybackAction.pause, null);
-          } catch (e) {
-            logger.e(e);
-          }
-        },
-        icon: const Icon(Icons.pause));
+      onPressed: () {
+        try {
+          _mopidyService.playback(PlaybackAction.pause, null);
+        } catch (e) {
+          logger.e(e);
+        }
+      },
+      icon: const Icon(Icons.pause),
+    );
   }
 }
 
@@ -337,14 +326,15 @@ class _StopButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          try {
-            _mopidyService.playback(PlaybackAction.stop, null);
-          } catch (e) {
-            logger.e(e);
-          }
-        },
-        icon: const Icon(Icons.stop));
+      onPressed: () {
+        try {
+          _mopidyService.playback(PlaybackAction.stop, null);
+        } catch (e) {
+          logger.e(e);
+        }
+      },
+      icon: const Icon(Icons.stop),
+    );
   }
 }
 
@@ -356,14 +346,15 @@ class _PreviousButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          try {
-            _mopidyService.playPrevious();
-          } catch (e) {
-            logger.e(e);
-          }
-        },
-        icon: const Icon(Icons.skip_previous));
+      onPressed: () {
+        try {
+          _mopidyService.playPrevious();
+        } catch (e) {
+          logger.e(e);
+        }
+      },
+      icon: const Icon(Icons.skip_previous),
+    );
   }
 }
 
@@ -375,14 +366,15 @@ class _NextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () {
-          try {
-            _mopidyService.playNext();
-          } catch (e) {
-            logger.e(e);
-          }
-        },
-        icon: const Icon(Icons.skip_next));
+      onPressed: () {
+        try {
+          _mopidyService.playNext();
+        } catch (e) {
+          logger.e(e);
+        }
+      },
+      icon: const Icon(Icons.skip_next),
+    );
   }
 }
 
@@ -394,19 +386,20 @@ class _Back10Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () async {
-          try {
-            int? pos = await _mopidyService.getTimePosition();
-            if (pos != null && pos - 10000 >= 0) {
-              _mopidyService.seek(pos - 10000);
-            } else {
-              _mopidyService.seek(0);
-            }
-          } catch (e) {
-            logger.e(e);
+      onPressed: () async {
+        try {
+          int? pos = await _mopidyService.getTimePosition();
+          if (pos != null && pos - 10000 >= 0) {
+            _mopidyService.seek(pos - 10000);
+          } else {
+            _mopidyService.seek(0);
           }
-        },
-        icon: const Icon(Icons.replay_10));
+        } catch (e) {
+          logger.e(e);
+        }
+      },
+      icon: const Icon(Icons.replay_10),
+    );
   }
 }
 
@@ -420,21 +413,21 @@ class _Forward10Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-        onPressed: () async {
-          try {
-            int? pos = await _mopidyService.getTimePosition();
-            if (pos != null) {
-              if (length == 0) {
-                _mopidyService.seek(pos + 10000);
-              } else {
-                _mopidyService
-                    .seek(length - pos > 10000 ? pos + 10000 : length);
-              }
+      onPressed: () async {
+        try {
+          int? pos = await _mopidyService.getTimePosition();
+          if (pos != null) {
+            if (length == 0) {
+              _mopidyService.seek(pos + 10000);
+            } else {
+              _mopidyService.seek(length - pos > 10000 ? pos + 10000 : length);
             }
-          } catch (e) {
-            logger.e(e);
           }
-        },
-        icon: const Icon(Icons.forward_10));
+        } catch (e) {
+          logger.e(e);
+        }
+      },
+      icon: const Icon(Icons.forward_10),
+    );
   }
 }

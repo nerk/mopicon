@@ -35,13 +35,16 @@ class TitledDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.only(top: _defaultTop, bottom: _defaultBottom),
-        child: Row(children: <Widget>[
+      margin: EdgeInsets.only(top: _defaultTop, bottom: _defaultBottom),
+      child: Row(
+        children: <Widget>[
           Text(title),
           Expanded(
             child: Container(margin: const EdgeInsets.only(left: 10.0), child: const Divider()),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 }
 
@@ -52,7 +55,10 @@ class SpacedDivider extends StatelessWidget {
 
   @override
   build(BuildContext context) {
-    return Container(margin: EdgeInsets.only(top: _defaultTop, bottom: _defaultBottom), child: const Divider());
+    return Container(
+      margin: EdgeInsets.only(top: _defaultTop, bottom: _defaultBottom),
+      child: const Divider(),
+    );
   }
 }
 

@@ -35,15 +35,17 @@ Future<void> showTextDialog(BuildContext context, String? title, String text) {
         title != null ? Text(title) : const SizedBox(),
         SingleChildScrollView(
           scrollDirection: Axis.vertical,
-          child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal, child: Text(text)),
+          child: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Text(text)),
         ),
         <Widget>[
-          DialogButton.oK(ctx, onPressed: () {
-            if (ctx.mounted) {
-              Navigator.of(ctx).pop();
-            }
-          }),
+          DialogButton.oK(
+            ctx,
+            onPressed: () {
+              if (ctx.mounted) {
+                Navigator.of(ctx).pop();
+              }
+            },
+          ),
         ],
       );
     },

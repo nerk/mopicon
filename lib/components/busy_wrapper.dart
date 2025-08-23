@@ -23,10 +23,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
-import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 
 /// Shows a modal busy indicator.
 ///
@@ -43,8 +43,7 @@ class BusyWrapper extends StatefulWidget {
   State<BusyWrapper> createState() => _BusyWrapperState();
 }
 
-class _BusyWrapperState extends State<BusyWrapper>
-    with TickerProviderStateMixin {
+class _BusyWrapperState extends State<BusyWrapper> with TickerProviderStateMixin {
   final preferences = GetIt.instance<PreferencesController>();
   final mopidyService = GetIt.instance<MopidyService>();
 
@@ -56,7 +55,6 @@ class _BusyWrapperState extends State<BusyWrapper>
   late AnimationController _secondaryController;
   late Animation<double> _connectionAnimation;
   late Animation<double> _busyAnimation;
-
 
   void _startAnimation() {
     _stopAnimation();
@@ -84,25 +82,13 @@ class _BusyWrapperState extends State<BusyWrapper>
   initState() {
     super.initState();
 
-     _primaryController = AnimationController(
-      duration: const Duration(seconds: 5),
-      vsync: this,
-    );
+    _primaryController = AnimationController(duration: const Duration(seconds: 5), vsync: this);
 
-    _secondaryController = AnimationController(
-      duration: const Duration(seconds: 10),
-      vsync: this,
-    );
+    _secondaryController = AnimationController(duration: const Duration(seconds: 10), vsync: this);
 
-    _connectionAnimation = CurvedAnimation(
-      parent: _secondaryController,
-      curve: Curves.easeIn,
-    );
+    _connectionAnimation = CurvedAnimation(parent: _secondaryController, curve: Curves.easeIn);
 
-    _busyAnimation = CurvedAnimation(
-      parent: _primaryController,
-      curve: Curves.easeIn,
-    );
+    _busyAnimation = CurvedAnimation(parent: _primaryController, curve: Curves.easeIn);
 
     busy = widget.busy;
     if (busy) {
@@ -141,49 +127,46 @@ class _BusyWrapperState extends State<BusyWrapper>
     }
 
     return Material(
-        child: Stack(
-      children: [
-        widget.child,
-        Opacity(
-          opacity: opacity,
-          child: ModalBarrier(
-              dismissible: false,
-              color: preferences.theme.data.dialogBackgroundColor),
-        ),
-        FadeTransition(
-          opacity: _busyAnimation,
-          child: Center(
-              child: Container(
-                  padding: const EdgeInsets.all(40),
-                  child: const CircularProgressIndicator())),
-        ),
-        mopidyService.connected == false
-            ? Center(
-                child: FadeTransition(
-                  opacity: _connectionAnimation,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        S.of(context).connectingPageConnecting,
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
+      child: Stack(
+        children: [
+          widget.child,
+          Opacity(
+            opacity: opacity,
+            child: ModalBarrier(dismissible: false, color: preferences.theme.data.dialogBackgroundColor),
+          ),
+          FadeTransition(
+            opacity: _busyAnimation,
+            child: Center(
+              child: Container(padding: const EdgeInsets.all(40), child: const CircularProgressIndicator()),
+            ),
+          ),
+          mopidyService.connected == false
+              ? Center(
+                  child: FadeTransition(
+                    opacity: _connectionAnimation,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          S.of(context).connectingPageConnecting,
+                          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      const SizedBox(height: 100),
-                      ElevatedButton(
+                        const SizedBox(height: 100),
+                        ElevatedButton(
                           onPressed: stop,
-                          child: Text(S.of(context).connectingPageStopBtn,
-                              style: const TextStyle(
-                                  fontSize: 32, fontWeight: FontWeight.bold)))
-                    ],
+                          child: Text(
+                            S.of(context).connectingPageStopBtn,
+                            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              )
-            : const SizedBox(),
-      ],
-    ));
+                )
+              : const SizedBox(),
+        ],
+      ),
+    );
   }
 }

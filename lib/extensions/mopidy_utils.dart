@@ -20,21 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-import 'package:mopicon/services/mopidy_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/services/cover_service.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 
 final _coverService = GetIt.instance<CoverService>();
 
 /// Tests if a string represents a stream URI.
 extension MopiStringExtensions on String {
   bool isStreamUri() {
-    return ['http:', 'https:', 'mms:', 'rtmp:', 'rtmps:', 'rtsp:', 'tunein', 'podcast']
-        .map((e) => startsWith(e) ? true : null)
-        .nonNulls
-        .toList()
-        .isNotEmpty;
+    return [
+      'http:',
+      'https:',
+      'mms:',
+      'rtmp:',
+      'rtmps:',
+      'rtsp:',
+      'tunein',
+      'podcast',
+    ].map((e) => startsWith(e) ? true : null).nonNulls.toList().isNotEmpty;
   }
 
   bool isPodcastUri() {
@@ -43,7 +48,6 @@ extension MopiStringExtensions on String {
 }
 
 extension MopidyRefExtensions on Ref {
-
   String getUri() {
     return uri;
   }
@@ -104,7 +108,6 @@ extension MopidyTlTrackListExtensions on List<TlTrack> {
 }
 
 extension MopidyTrackExtensions on Track {
-
   String getName() {
     return name;
   }
@@ -137,7 +140,6 @@ extension MopidyTrackExtensions on Track {
 }
 
 extension MopidyTlTrackExtensions on TlTrack {
-
   String getUri() {
     return track.uri;
   }

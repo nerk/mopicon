@@ -21,11 +21,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/initializer.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'generated/l10n.dart';
 
 void main() async {
@@ -43,24 +44,25 @@ class AppWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<void>(
-        stream: preferences.preferencesChanged$,
-        builder: (_, __) {
-          return MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            key: Globals.rootNavigatorKey,
-            scaffoldMessengerKey: Globals.rootScaffoldMessengerKey,
-            title: 'Mopicon',
-            theme: preferences.theme.data,
-            routerConfig: Globals.applicationRoutes.router,
-            localizationsDelegates: const [
-              S.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: S.delegate.supportedLocales,
-            locale: preferences.appLocale.locale,
-          );
-        });
+      stream: preferences.preferencesChanged$,
+      builder: (_, __) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          key: Globals.rootNavigatorKey,
+          scaffoldMessengerKey: Globals.rootScaffoldMessengerKey,
+          title: 'Mopicon',
+          theme: preferences.theme.data,
+          routerConfig: Globals.applicationRoutes.router,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: S.delegate.supportedLocales,
+          locale: preferences.appLocale.locale,
+        );
+      },
+    );
   }
 }

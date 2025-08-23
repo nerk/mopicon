@@ -38,28 +38,34 @@ Future<ItemActionOption?> showActionDialog(List<ItemActionOption> buttons) {
       for (var button in buttons) {
         switch (button) {
           case ItemActionOption.play:
-            actions.add(IconButton(
-              icon: const Icon(Icons.play_arrow),
-              onPressed: () {
-                Navigator.of(context).pop(ItemActionOption.play);
-              },
-            ));
+            actions.add(
+              IconButton(
+                icon: const Icon(Icons.play_arrow),
+                onPressed: () {
+                  Navigator.of(context).pop(ItemActionOption.play);
+                },
+              ),
+            );
             break;
           case ItemActionOption.addToTracklist:
-            actions.add(IconButton(
-              icon: const Icon(Icons.queue_music),
-              onPressed: () {
-                Navigator.of(context).pop(ItemActionOption.addToTracklist);
-              },
-            ));
+            actions.add(
+              IconButton(
+                icon: const Icon(Icons.queue_music),
+                onPressed: () {
+                  Navigator.of(context).pop(ItemActionOption.addToTracklist);
+                },
+              ),
+            );
             break;
           case ItemActionOption.addToPlaylist:
-            actions.add(IconButton(
-              icon: const Icon(Icons.playlist_add),
-              onPressed: () {
-                Navigator.of(context).pop(ItemActionOption.addToPlaylist);
-              },
-            ));
+            actions.add(
+              IconButton(
+                icon: const Icon(Icons.playlist_add),
+                onPressed: () {
+                  Navigator.of(context).pop(ItemActionOption.addToPlaylist);
+                },
+              ),
+            );
             break;
         }
       }

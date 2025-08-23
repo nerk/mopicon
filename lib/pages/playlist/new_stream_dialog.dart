@@ -21,11 +21,11 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/generated/l10n.dart';
 
 Future<String?> newStreamDialog(String title) {
   final modalDialogKey = GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
@@ -37,32 +37,35 @@ Future<String?> newStreamDialog(String title) {
       return ModalDialog(
         Text(title),
         Form(
-            key: modalDialogKey,
-            child: TextFormField(
-              keyboardType: TextInputType.text,
-              initialValue: '',
-              autocorrect: false,
-              decoration: InputDecoration(
-                  icon: const Icon(Icons.add_link),
-                  hintText: S.of(context).newStreamDialogUriHint,
-                  labelText: S.of(context).newStreamDialogUriLabel),
-              onChanged: (String value) {
-                streamUri = value.trim();
-              },
-              validator: (String? value) {
-                return value != null && value.isNotEmpty && value.trim().isStreamUri()
-                    ? null
-                    : S.of(context).newStreamUriInvalid;
-              },
-              maxLength: 100,
-            )),
+          key: modalDialogKey,
+          child: TextFormField(
+            keyboardType: TextInputType.text,
+            initialValue: '',
+            autocorrect: false,
+            decoration: InputDecoration(
+              icon: const Icon(Icons.add_link),
+              hintText: S.of(context).newStreamDialogUriHint,
+              labelText: S.of(context).newStreamDialogUriLabel,
+            ),
+            onChanged: (String value) {
+              streamUri = value.trim();
+            },
+            validator: (String? value) {
+              return value != null && value.isNotEmpty && value.trim().isStreamUri() ? null : S.of(context).newStreamUriInvalid;
+            },
+            maxLength: 100,
+          ),
+        ),
         <Widget>[
-          DialogButton.oK(context, onPressed: () {
-            if (modalDialogKey.currentState?.validate() ?? false) {
-              Navigator.of(context).pop(streamUri);
-            }
-          }),
-          DialogButton.cancel(context)
+          DialogButton.oK(
+            context,
+            onPressed: () {
+              if (modalDialogKey.currentState?.validate() ?? false) {
+                Navigator.of(context).pop(streamUri);
+              }
+            },
+          ),
+          DialogButton.cancel(context),
         ],
         defaultActionIndex: 0,
       );

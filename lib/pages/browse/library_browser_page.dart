@@ -20,26 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'dart:async';
-import 'package:get_it/get_it.dart';
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/components/material_page_frame.dart';
-import 'package:mopicon/components/error_snackbar.dart';
-import 'package:mopicon/components/volume_control.dart';
-import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
-import 'package:mopicon/utils/parameters.dart';
-import 'package:mopicon/components/action_buttons.dart';
-import 'package:mopicon/utils/logging_utils.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mopicon/common/globals.dart';
-import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
+import 'package:mopicon/components/action_buttons.dart';
+import 'package:mopicon/components/error_snackbar.dart';
+import 'package:mopicon/components/item_action_dialog.dart';
+import 'package:mopicon/components/material_page_frame.dart';
+import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/utils/logging_utils.dart';
+import 'package:mopicon/utils/parameters.dart';
 
+import 'library_appbar_menu.dart';
 import 'library_browser_controller.dart';
 import 'library_list_view.dart';
-import 'library_appbar_menu.dart';
-import 'package:mopicon/common/selected_item_positions.dart';
-import 'package:mopicon/components/item_action_dialog.dart';
 
 class LibraryBrowserPage extends StatefulWidget {
   final String? title;

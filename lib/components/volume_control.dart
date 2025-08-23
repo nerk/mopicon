@@ -20,10 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'package:mopicon/services/mopidy_service.dart';
-
-import 'package:mopicon/utils/logging_utils.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/utils/logging_utils.dart';
 
 /// Volume control an muting for Mopidy server.
 class VolumeControl extends StatefulWidget {
@@ -86,66 +85,70 @@ class _VolumeControlState extends State<VolumeControl> {
   @override
   Widget build(BuildContext context) {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          MenuAnchor(
-              childFocusNode: _buttonFocusNode,
-              menuChildren: <Widget>[
-                Row(children: <Widget>[
-                  IconButton(
-                    icon: muted ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
-                    focusNode: _buttonFocusNode,
-                    onPressed: () async {
-                      var m = !muted;
-                      setState(() {
-                        muted = m;
-                      });
-                      try {
-                        await _mopidyService.setMute(m);
-                      } catch (e) {
-                        logger.e(e);
-                      }
-                    },
-                  ),
-                  Slider(
-                    min: 0.0,
-                    max: 100.0,
-                    value: volume.toDouble(),
-                    label: volume.round().toString(),
-                    divisions: 100,
-                    onChangeEnd: (double value) async {
-                      try {
-                        await _mopidyService.setVolume(value.toInt());
-                        setState(() {
-                          volume = value.toInt();
-                        });
-                      } catch (e) {
-                        logger.e(e);
-                      }
-                    },
-                    onChanged: (double value) {
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        MenuAnchor(
+          childFocusNode: _buttonFocusNode,
+          menuChildren: <Widget>[
+            Row(
+              children: <Widget>[
+                IconButton(
+                  icon: muted ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
+                  focusNode: _buttonFocusNode,
+                  onPressed: () async {
+                    var m = !muted;
+                    setState(() {
+                      muted = m;
+                    });
+                    try {
+                      await _mopidyService.setMute(m);
+                    } catch (e) {
+                      logger.e(e);
+                    }
+                  },
+                ),
+                Slider(
+                  min: 0.0,
+                  max: 100.0,
+                  value: volume.toDouble(),
+                  label: volume.round().toString(),
+                  divisions: 100,
+                  onChangeEnd: (double value) async {
+                    try {
+                      await _mopidyService.setVolume(value.toInt());
                       setState(() {
                         volume = value.toInt();
                       });
-                    },
-                  )
-                ])
-              ],
-              builder: (BuildContext context, MenuController controller, Widget? child) {
-                return IconButton(
-                  icon: muted ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
-                  focusNode: _buttonFocusNode,
-                  onPressed: () {
-                    if (controller.isOpen) {
-                      controller.close();
-                    } else {
-                      //updateState();
-                      controller.open();
+                    } catch (e) {
+                      logger.e(e);
                     }
                   },
-                );
-              }),
-        ]);
+                  onChanged: (double value) {
+                    setState(() {
+                      volume = value.toInt();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ],
+          builder: (BuildContext context, MenuController controller, Widget? child) {
+            return IconButton(
+              icon: muted ? const Icon(Icons.volume_off) : const Icon(Icons.volume_up),
+              focusNode: _buttonFocusNode,
+              onPressed: () {
+                if (controller.isOpen) {
+                  controller.close();
+                } else {
+                  //updateState();
+                  controller.open();
+                }
+              },
+            );
+          },
+        ),
+      ],
+    );
   }
 }

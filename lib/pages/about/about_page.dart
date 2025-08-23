@@ -21,12 +21,12 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:fwfh_url_launcher/fwfh_url_launcher.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/services/file_service.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:fwfh_url_launcher/fwfh_url_launcher.dart';
 
 /// Displays information about this program, with links to sourcecode
 /// and documentation.
@@ -39,25 +39,18 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String about = _fileService.about(_preferences.appLocale.locale);
-    about = about.replaceAll(
-        RegExp(r'\{\{\s*version\s*\}\}'), _preferences.version);
-    about = about.replaceAll(
-        RegExp(r'\{\{\s*build\s*\}\}'), _preferences.buildNumber);
+    about = about.replaceAll(RegExp(r'\{\{\s*version\s*\}\}'), _preferences.version);
+    about = about.replaceAll(RegExp(r'\{\{\s*build\s*\}\}'), _preferences.buildNumber);
 
     return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          centerTitle: true,
-          title: Text(S.of(context).aboutPageTitle),
+      appBar: AppBar(automaticallyImplyLeading: true, centerTitle: true, title: Text(S.of(context).aboutPageTitle)),
+      body: Material(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(left: 30, right: 30),
+          child: Center(child: HtmlWidget(about, factoryBuilder: () => MyWidgetFactory())),
         ),
-        body: Material(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(left: 30, right: 30),
-            child: Center(
-                child:
-                    HtmlWidget(about, factoryBuilder: () => MyWidgetFactory())),
-          ),
-        ));
+      ),
+    );
   }
 }
 

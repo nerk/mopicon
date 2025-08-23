@@ -19,8 +19,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
 
@@ -57,10 +57,16 @@ class MenuBuilder<T extends Object> {
     return this;
   }
 
-  MenuBuilder<T> addMenuItem(String label, IconData? iconData, MenuCallbackFunction<T>? callback,
-      {ValueListenable<T>? valueListenable, MenuItemApplicableCallback? applicableCallback}) {
-    menuItems.add(MenuItem(label,
-        iconData: iconData, callback: callback, valueListenable: valueListenable, applicable: applicableCallback));
+  MenuBuilder<T> addMenuItem(
+    String label,
+    IconData? iconData,
+    MenuCallbackFunction<T>? callback, {
+    ValueListenable<T>? valueListenable,
+    MenuItemApplicableCallback? applicableCallback,
+  }) {
+    menuItems.add(
+      MenuItem(label, iconData: iconData, callback: callback, valueListenable: valueListenable, applicable: applicableCallback),
+    );
     return this;
   }
 
@@ -87,13 +93,15 @@ class MenuBuilder<T extends Object> {
         if (menuItem == null) {
           menuEntries.add(const PopupMenuDivider());
         } else if (menuItem.isApplicable(arg, index)) {
-          menuEntries.add(PopupMenuItem<MenuCallbackFunction>(
-            value: (BuildContext context, arg, index) {
-              menuItem.callback != null ? menuItem.callback!(context, arg, index) : null;
-            },
-            enabled: menuItem.valueListenable != null ? _shouldEnable(menuItem.valueListenable!.value) : true,
-            child: ListTile(leading: Icon(menuItem.iconData), title: Text(menuItem.label)),
-          ));
+          menuEntries.add(
+            PopupMenuItem<MenuCallbackFunction>(
+              value: (BuildContext context, arg, index) {
+                menuItem.callback != null ? menuItem.callback!(context, arg, index) : null;
+              },
+              enabled: menuItem.valueListenable != null ? _shouldEnable(menuItem.valueListenable!.value) : true,
+              child: ListTile(leading: Icon(menuItem.iconData), title: Text(menuItem.label)),
+            ),
+          );
         }
       }
 

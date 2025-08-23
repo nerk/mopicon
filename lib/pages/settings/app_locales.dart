@@ -26,7 +26,7 @@ import 'package:universal_io/io.dart';
 class AppLocale {
   static final labels = <String, Map<String, String>>{
     'en': {'en': 'English', 'de': 'German'},
-    'de': {'en': 'Englisch', 'de': 'Deutsch'}
+    'de': {'en': 'Englisch', 'de': 'Deutsch'},
   };
 
   static AppLocale defaultLocale = AppLocale.system();
@@ -63,8 +63,7 @@ class AppLocale {
   }
 
   @override
-  bool operator ==(other) =>
-      other is AppLocale && locale.languageCode == other.locale.languageCode;
+  bool operator ==(other) => other is AppLocale && locale.languageCode == other.locale.languageCode;
 
   @override
   int get hashCode => locale.languageCode.hashCode;
@@ -84,17 +83,18 @@ class AppLocales {
   AppLocale getByLanguageCode(String? languageCode) {
     languageCode = languageCode ?? Platform.localeName;
 
-    return _locales.firstWhere((e) => e.locale.languageCode == languageCode,
-        orElse: () {
-      return _resolveFallback(languageCode!);
-    });
+    return _locales.firstWhere(
+      (e) => e.locale.languageCode == languageCode,
+      orElse: () {
+        return _resolveFallback(languageCode!);
+      },
+    );
   }
 
   List<AppLocale> get locales => _locales;
 
   AppLocale _resolveFallback(String languageCode) {
     final lang = languageCode.split('-')[0].split('_')[0];
-    return _locales.firstWhere((e) => e.locale.languageCode == lang,
-        orElse: () => AppLocale.defaultLocale);
+    return _locales.firstWhere((e) => e.locale.languageCode == lang, orElse: () => AppLocale.defaultLocale);
   }
 }

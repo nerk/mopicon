@@ -20,13 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'package:flutter/material.dart';
-import 'package:mopicon/utils/logging_utils.dart';
-import 'playlist_view_controller.dart';
-import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/components/error_snackbar.dart';
-import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/services/mopidy_service.dart';
+import 'package:mopicon/utils/logging_utils.dart';
+
 import 'new_stream_dialog.dart';
+import 'playlist_view_controller.dart';
 
 class PlaylistAppBarMenu extends StatelessWidget {
   final PlaylistViewController controller;

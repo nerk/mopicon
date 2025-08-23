@@ -21,10 +21,10 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/components/modal_dialog.dart';
-import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/generated/l10n.dart';
 
 Future<String?> newPlaylistDialog() {
   final modalDialogKey = GlobalKey<FormState>(debugLabel: "newPlaylistDialog");
@@ -36,30 +36,35 @@ Future<String?> newPlaylistDialog() {
       return ModalDialog(
         Text(S.of(context).newPlaylistDialogTitle),
         Form(
-            key: modalDialogKey,
-            child: TextFormField(
-              keyboardType: TextInputType.text,
-              initialValue: '',
-              autocorrect: false,
-              decoration: InputDecoration(
-                  icon: const Icon(Icons.playlist_add),
-                  hintText: S.of(context).newPlaylistDialogNameHint,
-                  labelText: S.of(context).newPlaylistDialogNameLabel),
-              onChanged: (String value) {
-                newName = value;
-              },
-              validator: (String? value) {
-                return value != null && value.isNotEmpty ? null : S.of(context).playlistNameInvalidError;
-              },
-              maxLength: 30,
-            )),
+          key: modalDialogKey,
+          child: TextFormField(
+            keyboardType: TextInputType.text,
+            initialValue: '',
+            autocorrect: false,
+            decoration: InputDecoration(
+              icon: const Icon(Icons.playlist_add),
+              hintText: S.of(context).newPlaylistDialogNameHint,
+              labelText: S.of(context).newPlaylistDialogNameLabel,
+            ),
+            onChanged: (String value) {
+              newName = value;
+            },
+            validator: (String? value) {
+              return value != null && value.isNotEmpty ? null : S.of(context).playlistNameInvalidError;
+            },
+            maxLength: 30,
+          ),
+        ),
         <Widget>[
-          DialogButton.oK(context, onPressed: () {
-            if (modalDialogKey.currentState?.validate() ?? false) {
-              Navigator.of(context).pop(newName);
-            }
-          }),
-          DialogButton.cancel(context)
+          DialogButton.oK(
+            context,
+            onPressed: () {
+              if (modalDialogKey.currentState?.validate() ?? false) {
+                Navigator.of(context).pop(newName);
+              }
+            },
+          ),
+          DialogButton.cancel(context),
         ],
         defaultActionIndex: 0,
       );

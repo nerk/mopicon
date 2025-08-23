@@ -20,25 +20,25 @@
  * DEALINGS IN THE SOFTWARE.
  */
 import 'dart:async';
-import 'package:get_it/get_it.dart';
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/components/error_snackbar.dart';
-import 'package:mopicon/components/material_page_frame.dart';
+import 'package:get_it/get_it.dart';
+import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/action_buttons.dart';
+import 'package:mopicon/components/error_snackbar.dart';
+import 'package:mopicon/components/item_action_dialog.dart';
+import 'package:mopicon/components/material_page_frame.dart';
+import 'package:mopicon/components/reorderable_list_view.dart';
 import 'package:mopicon/components/volume_control.dart';
+import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/utils/parameters.dart';
-import 'package:mopicon/generated/l10n.dart';
-import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/components/reorderable_list_view.dart';
-import 'package:mopicon/common/selected_item_positions.dart';
-import 'package:mopicon/common/globals.dart';
-import 'package:mopicon/components/item_action_dialog.dart';
 
-import 'playlist_view_controller.dart';
 import 'playlist_appbar_menu.dart';
+import 'playlist_view_controller.dart';
 
 class PlaylistPage extends StatefulWidget {
   final String? title;
@@ -124,101 +124,96 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     var listView = ReorderableTrackListView<Track>(
-        context,
-        tracks,
-        images,
-        controller.selectionChanged,
-        controller.selectionModeChanged, (int start, int current) async {
-      try {
-        if (start < current) {
-          await controller.mopidyService
-              .movePlaylistItem(playlist, start, current - 1);
-        } else {
-          await controller.mopidyService
-              .movePlaylistItem(playlist, start, current);
+      context,
+      tracks,
+      images,
+      controller.selectionChanged,
+      controller.selectionModeChanged,
+      (int start, int current) async {
+        try {
+          if (start < current) {
+            await controller.mopidyService.movePlaylistItem(playlist, start, current - 1);
+          } else {
+            await controller.mopidyService.movePlaylistItem(playlist, start, current);
+          }
+        } catch (e) {
+          logger.e(e);
         }
-      } catch (e) {
-        logger.e(e);
-      }
-    }, (Track track, int index) async {
-      var r = await showActionDialog([
-        ItemActionOption.play,
-        ItemActionOption.addToTracklist,
-        ItemActionOption.addToPlaylist
-      ]);
-      if (!context.mounted) return;
-      switch (r) {
-        case ItemActionOption.play:
-          await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
-          controller.mopidyService.play(track.asRef);
-          break;
-        case ItemActionOption.addToTracklist:
-          await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
-          break;
-        case ItemActionOption.addToPlaylist:
-          await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
-          break;
-        default:
-      }
-    }).buildListView();
+      },
+      (Track track, int index) async {
+        var r = await showActionDialog([ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
+        if (!context.mounted) return;
+        switch (r) {
+          case ItemActionOption.play:
+            await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
+            controller.mopidyService.play(track.asRef);
+            break;
+          case ItemActionOption.addToTracklist:
+            await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
+            break;
+          case ItemActionOption.addToPlaylist:
+            await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
+            break;
+          default:
+        }
+      },
+    ).buildListView();
 
     return Scaffold(
       appBar: AppBar(
-          title: Text(widget.title ?? S.of(context).playlistPageTitle),
-          centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-          //automaticallyImplyLeading: true,
-          leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
-            if (controller.isSelectionEmpty) {
-              Navigator.of(context).pop();
-            } else {
-              controller.notifyUnselect();
+        title: Text(widget.title ?? S.of(context).playlistPageTitle),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
+        //automaticallyImplyLeading: true,
+        leading: ActionButton<SelectedItemPositions>(Icons.arrow_back, () {
+          if (controller.isSelectionEmpty) {
+            Navigator.of(context).pop();
+          } else {
+            controller.notifyUnselect();
+          }
+        }),
+        actions: [
+          ActionButton<SelectedItemPositions>(
+            Icons.delete,
+            valueListenable: controller.selectionChanged,
+            () => controller.deleteSelectedPlaylistItems(playlist),
+          ),
+          ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+            var selectedItems = await controller.getSelectedItems(playlist);
+            if (context.mounted) {
+              await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
             }
-          }),
-          actions: [
-            ActionButton<SelectedItemPositions>(
-                Icons.delete,
-                valueListenable: controller.selectionChanged,
-                () => controller.deleteSelectedPlaylistItems(playlist)),
-            ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
+            controller.notifyUnselect();
+          }, valueListenable: controller.selectionChanged),
+          ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
+            var selectedItems = await controller.getSelectedItems(playlist);
+            if (context.mounted) {
+              await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+            }
+            controller.notifyUnselect();
+          }, valueListenable: controller.selectionChanged),
+          ActionButton<SelectedItemPositions>(
+            Icons.album,
+            () async {
               var selectedItems = await controller.getSelectedItems(playlist);
               if (context.mounted) {
-                await controller.addItemsToTracklist<Ref>(
-                    context, selectedItems.asRef);
+                if (selectedItems.length == 1 && selectedItems[0].album != null) {
+                  Globals.applicationRoutes.gotoAlbum(selectedItems[0].album!);
+                } else {
+                  showError(S.of(context).noAlbumInformationError, null);
+                }
               }
               controller.notifyUnselect();
-            }, valueListenable: controller.selectionChanged),
-            ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
-              var selectedItems = await controller.getSelectedItems(playlist);
-              if (context.mounted) {
-                await controller.addItemsToPlaylist<Ref>(
-                    context, selectedItems.asRef);
-              }
-              controller.notifyUnselect();
-            }, valueListenable: controller.selectionChanged),
-            ActionButton<SelectedItemPositions>(
-                Icons.album,
-                () async {
-                  var selectedItems =
-                      await controller.getSelectedItems(playlist);
-                  if (context.mounted) {
-                    if (selectedItems.length == 1 &&
-                        selectedItems[0].album != null) {
-                      Globals.applicationRoutes
-                          .gotoAlbum(selectedItems[0].album!);
-                    } else {
-                      showError(S.of(context).noAlbumInformationError, null);
-                    }
-                  }
-                  controller.notifyUnselect();
-                },
-                valueListenable: controller.selectionChanged,
-                checkEnable: (value, result) {
-                  return value.positions.length == 1;
-                }),
-            VolumeControl(),
-            PlaylistAppBarMenu(controller, playlist)
-          ]),
+            },
+            valueListenable: controller.selectionChanged,
+            checkEnable: (value, result) {
+              return value.positions.length == 1;
+            },
+          ),
+          VolumeControl(),
+          PlaylistAppBarMenu(controller, playlist),
+        ],
+      ),
       body: MaterialPageFrame(child: listView),
     );
   }

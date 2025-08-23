@@ -22,9 +22,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopidy_client/mopidy_client.dart' hide Image;
-import 'package:mopicon/generated/l10n.dart';
 
 class AlbumListItem extends StatelessWidget {
   final _controller = GetIt.instance<LibraryBrowserController>();
@@ -37,8 +37,7 @@ class AlbumListItem extends StatelessWidget {
   final int? numTracks;
   final void Function()? onTap;
 
-  AlbumListItem(this.albumRef, this.thumbnail, this.title, this.artist, this.numTracks, this.date, this.onTap,
-      {super.key});
+  AlbumListItem(this.albumRef, this.thumbnail, this.title, this.artist, this.numTracks, this.date, this.onTap, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +50,8 @@ class AlbumListItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             thumbnail,
-            Expanded(
-              child: _AlbumDescription(title, artist, numTracks, date),
-            ),
-            _controller.popupMenu(context, albumRef, null).build(context, albumRef, null)
+            Expanded(child: _AlbumDescription(title, artist, numTracks, date)),
+            _controller.popupMenu(context, albumRef, null).build(context, albumRef, null),
           ],
         ),
       ),
@@ -77,17 +74,9 @@ class _AlbumDescription extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0,
-            ),
-          ),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
           const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
-          Text(
-            artist,
-          ),
+          Text(artist),
           const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
           numTracks != null ? Text('$numTracks Tracks', style: const TextStyle(fontSize: 10.0)) : const SizedBox(),
           date != null && context.mounted ? Text(S.of(context).albumDateLbl(date!)) : const SizedBox(),

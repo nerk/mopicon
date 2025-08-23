@@ -22,11 +22,11 @@ import 'package:flutter/material.dart';
  */
 
 import 'package:flutter/material.dart';
+import 'package:mopicon/common/base_controller.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/pages/playlist/playlist_mixin.dart';
-import 'package:mopicon/common/base_controller.dart';
 
 abstract class TracklistViewController extends BaseController {
   // Whether window is split between list of tracks and NowPlaying section.

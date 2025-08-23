@@ -20,9 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
-import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 import 'package:mopicon/common/base_controller.dart';
+import 'package:mopicon/pages/playlist/playlist_mixin.dart';
+import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 
 abstract class SearchViewController extends BaseController with TracklistMethods, PlaylistMethods {}
 

@@ -21,19 +21,19 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/components/titled_divider.dart';
-import 'package:mopicon/components/rd_list_tile.dart';
-import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/services/cover_service.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
-import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'package:mopicon/common/selected_item_positions.dart';
-import 'package:mopicon/generated/l10n.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mopicon/common/selected_item_positions.dart';
+import 'package:mopicon/components/rd_list_tile.dart';
+import 'package:mopicon/components/titled_divider.dart';
+import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/pages/browse/album_list_item.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/routes/application_routes.dart';
-import 'package:mopicon/utils/parameters.dart';
+import 'package:mopicon/services/cover_service.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/image_utils.dart';
+import 'package:mopicon/utils/parameters.dart';
 
 class LibraryListView {
   // uri/image map
@@ -47,8 +47,14 @@ class LibraryListView {
   var selectedPositions = SelectedItemPositions();
   final preferences = GetIt.instance<PreferencesController>();
 
-  LibraryListView(this.parent, this.items, this.images, this.selectionChangedNotifier,
-      this.selectionModeChangedNotifier, this.onTap) {
+  LibraryListView(
+    this.parent,
+    this.items,
+    this.images,
+    this.selectionChangedNotifier,
+    this.selectionModeChangedNotifier,
+    this.onTap,
+  ) {
     selectedPositions = selectionChangedNotifier.value.clone();
   }
 
@@ -58,10 +64,7 @@ class LibraryListView {
     if (checked) {
       return Padding(
         padding: const EdgeInsets.all(0),
-        child: CircleAvatar(
-          backgroundColor: preferences.theme.data.colorScheme.inversePrimary,
-          child: const Icon(Icons.check),
-        ),
+        child: CircleAvatar(backgroundColor: preferences.theme.data.colorScheme.inversePrimary, child: const Icon(Icons.check)),
       );
     } else {
       String uri = item.getUri();
@@ -74,7 +77,8 @@ class LibraryListView {
       shrinkWrap: items.length > 200,
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) => _buildItem(context, index),
-      separatorBuilder: (BuildContext context, int index) => parent == null &&
+      separatorBuilder: (BuildContext context, int index) =>
+          parent == null &&
               items[index].type == Ref.typeDirectory &&
               index < items.length - 1 &&
               items[index + 1].type == Ref.typePlaylist
@@ -89,8 +93,7 @@ class LibraryListView {
   Widget _buildItem(BuildContext context, int index) {
     Ref item = items[index];
     void onTapped() {
-      if (selectionModeChangedNotifier.value == SelectionMode.on &&
-          (item.type == Ref.typeTrack || item.type == Ref.typePlaylist)) {
+      if (selectionModeChangedNotifier.value == SelectionMode.on && (item.type == Ref.typeTrack || item.type == Ref.typePlaylist)) {
         selectedPositions.toggle(index);
         selectionChangedNotifier.value = selectedPositions.clone();
         selectionModeChangedNotifier.value = selectedPositions.isEmpty ? SelectionMode.off : SelectionMode.on;
@@ -99,26 +102,32 @@ class LibraryListView {
         selectionChangedNotifier.value = SelectedItemPositions();
         selectionModeChangedNotifier.value = SelectionMode.off;
         if (item.type == Ref.typePlaylist) {
-          context.pushNamed(ApplicationRoutes.playlist,
-              queryParameters: <String, String>{'title': item.name},
-              pathParameters: <String, String>{'parent': Parameter.toBase64(item.toMap())});
+          context.pushNamed(
+            ApplicationRoutes.playlist,
+            queryParameters: <String, String>{'title': item.name},
+            pathParameters: <String, String>{'parent': Parameter.toBase64(item.toMap())},
+          );
         } else if (item.type != Ref.typeTrack) {
-          context.pushNamed(ApplicationRoutes.down,
-              queryParameters: <String, String>{'title': item.name},
-              pathParameters: <String, String>{'parent': Parameter.toBase64(item.toMap())});
+          context.pushNamed(
+            ApplicationRoutes.down,
+            queryParameters: <String, String>{'title': item.name},
+            pathParameters: <String, String>{'parent': Parameter.toBase64(item.toMap())},
+          );
         } else if (onTap != null) {
           onTap!(item, index);
         }
       }
     }
 
-    return Builder(builder: (context) {
-      if (item.type == Ref.typeAlbum) {
-        return _albumItem(context, index, parent, onTapped);
-      } else {
-        return _listItem(context, index, onTapped);
-      }
-    });
+    return Builder(
+      builder: (context) {
+        if (item.type == Ref.typeAlbum) {
+          return _albumItem(context, index, parent, onTapped);
+        } else {
+          return _listItem(context, index, onTapped);
+        }
+      },
+    );
   }
 
   Widget _listItem(BuildContext context, int index, void Function() onTapped) {
@@ -136,10 +145,7 @@ class LibraryListView {
           : null,
       onTap: onTapped,
       leading: ImageUtils.resize(_getImage(item, index, false), 40, 40),
-      title: Text(
-        item.name,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-      ),
+      title: Text(item.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
       subtitle: item.artistNames != null ? Text(item.artistNames!, style: const TextStyle(fontSize: 12)) : null,
       dismissibleBackgroundColor: preferences.theme.data.colorScheme.inversePrimary,
       canReorder: false,
@@ -167,14 +173,19 @@ class LibraryListView {
       date = (item.extraData as AlbumInfoExtraData).date;
     }
     return Card(
-        child: AlbumListItem(
-            item,
-            ImageUtils.roundedCornersWithPadding(images[item.uri] ?? Icon(Icons.album),
-                CoverService.defaultCoverSize, CoverService.defaultCoverSize),
-            item.name,
-            artistName,
-            numTracks,
-            date,
-            onTapped));
+      child: AlbumListItem(
+        item,
+        ImageUtils.roundedCornersWithPadding(
+          images[item.uri] ?? Icon(Icons.album),
+          CoverService.defaultCoverSize,
+          CoverService.defaultCoverSize,
+        ),
+        item.name,
+        artistName,
+        numTracks,
+        date,
+        onTapped,
+      ),
+    );
   }
 }

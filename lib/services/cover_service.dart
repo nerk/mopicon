@@ -21,22 +21,23 @@
  */
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/utils/logging_utils.dart';
-import 'package:mopicon/utils/cache.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'mopidy_service.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/utils/cache.dart';
+import 'package:mopicon/utils/logging_utils.dart';
+
+import 'mopidy_service.dart';
 
 abstract class CoverService {
   static const double defaultThumbnailSize = 100.0;
   static const double defaultCoverSize = 100.0;
 
   Future<Widget?> getImage(String uri);
+
   Future<Map<String, Widget?>> getImages(List<String> uris);
 }
 
 class CoverServiceImpl extends CoverService {
-
   final _mopidyService = GetIt.instance<MopidyService>();
   final _preferences = GetIt.instance<PreferencesController>();
 
@@ -70,8 +71,7 @@ class CoverServiceImpl extends CoverService {
 
     if (cacheMisses.isNotEmpty) {
       try {
-        Map<String, List<MImage>> images =
-        await _mopidyService.getImages(cacheMisses);
+        Map<String, List<MImage>> images = await _mopidyService.getImages(cacheMisses);
         for (var uri in images.keys) {
           Image? img;
           MImage? mImage;
@@ -162,16 +162,7 @@ class CoverServiceImpl extends CoverService {
   }
 
   static bool _isAudioFile(String uri) {
-
-    const audioFormats = <String>[
-      '.mp3',
-      '.ogg',
-      '.wav',
-      '.aac',
-      '.aiff',
-      '.m4a',
-      '.flac'
-    ];
+    const audioFormats = <String>['.mp3', '.ogg', '.wav', '.aac', '.aiff', '.m4a', '.flac'];
 
     var suffix = _getExtension(uri);
     return audioFormats.contains(suffix);

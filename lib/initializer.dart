@@ -22,14 +22,14 @@
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
-import 'package:mopicon/pages/settings/preferences_controller.dart';
-import 'package:mopicon/services/file_service.dart';
-import 'package:mopicon/services/mopidy_service.dart';
-import 'package:mopicon/services/cover_service.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_view_controller.dart';
-import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
+import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
+import 'package:mopicon/services/cover_service.dart';
+import 'package:mopicon/services/file_service.dart';
+import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 
 /// Registers all services and loads preferences.
@@ -47,19 +47,14 @@ class Initializer {
   static void _registerServices() {
     GetIt getIt = GetIt.instance;
     logger.i("starting registering services");
-    getIt.registerLazySingleton<PreferencesController>(
-        () => PreferencesControllerImpl());
+    getIt.registerLazySingleton<PreferencesController>(() => PreferencesControllerImpl());
     getIt.registerLazySingleton<MopidyService>(() => MopidyServiceImpl());
     getIt.registerLazySingleton<CoverService>(() => CoverServiceImpl());
     getIt.registerLazySingleton<FileService>(() => FileServiceImpl());
-    getIt.registerLazySingleton<LibraryBrowserController>(
-        () => LibraryBrowserControllerImpl());
-    getIt.registerLazySingleton<TracklistViewController>(
-        () => TracklistViewControllerImpl());
-    getIt.registerLazySingleton<PlaylistViewController>(
-        () => PlaylistControllerImpl());
-    getIt.registerLazySingleton<SearchViewController>(
-        () => SearchViewControllerImpl());
+    getIt.registerLazySingleton<LibraryBrowserController>(() => LibraryBrowserControllerImpl());
+    getIt.registerLazySingleton<TracklistViewController>(() => TracklistViewControllerImpl());
+    getIt.registerLazySingleton<PlaylistViewController>(() => PlaylistControllerImpl());
+    getIt.registerLazySingleton<SearchViewController>(() => SearchViewControllerImpl());
     logger.i("finished registering services");
   }
 

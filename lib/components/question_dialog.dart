@@ -21,8 +21,8 @@
  */
 
 import 'package:flutter/material.dart';
-import 'package:mopicon/components/dialog_button.dart';
 import 'package:mopicon/common/globals.dart';
+import 'package:mopicon/components/dialog_button.dart';
 
 /// Confirmation options for question dialogs.
 enum DialogButtonOption { yes, no, ok, cancel, retry, abort, submit, save }
@@ -31,8 +31,12 @@ enum DialogButtonOption { yes, no, ok, cancel, retry, abort, submit, save }
 /// If [defaultOption] is provided, the corresponding button gets the autofocus.
 /// Upon closing, either the pressed dialog option is returned or `null` if
 /// no button was pressed.
-Future<DialogButtonOption?> showQuestionDialog(String title, String message, List<DialogButtonOption> buttons,
-    {DialogButtonOption? defaultOption}) {
+Future<DialogButtonOption?> showQuestionDialog(
+  String title,
+  String message,
+  List<DialogButtonOption> buttons, {
+  DialogButtonOption? defaultOption,
+}) {
   return showDialog<DialogButtonOption>(
     context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
@@ -40,44 +44,92 @@ Future<DialogButtonOption?> showQuestionDialog(String title, String message, Lis
       for (var button in buttons) {
         switch (button) {
           case DialogButtonOption.yes:
-            actions.add(DialogButton.yes(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.yes);
-            }, autoFocus: defaultOption == DialogButtonOption.yes));
+            actions.add(
+              DialogButton.yes(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.yes);
+                },
+                autoFocus: defaultOption == DialogButtonOption.yes,
+              ),
+            );
             break;
           case DialogButtonOption.no:
-            actions.add(DialogButton.no(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.no);
-            }, autoFocus: defaultOption == DialogButtonOption.no));
+            actions.add(
+              DialogButton.no(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.no);
+                },
+                autoFocus: defaultOption == DialogButtonOption.no,
+              ),
+            );
             break;
           case DialogButtonOption.ok:
-            actions.add(DialogButton.oK(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.ok);
-            }, autoFocus: defaultOption == DialogButtonOption.ok));
+            actions.add(
+              DialogButton.oK(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.ok);
+                },
+                autoFocus: defaultOption == DialogButtonOption.ok,
+              ),
+            );
             break;
           case DialogButtonOption.cancel:
-            actions.add(DialogButton.cancel(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.cancel);
-            }, autoFocus: defaultOption == DialogButtonOption.cancel));
+            actions.add(
+              DialogButton.cancel(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.cancel);
+                },
+                autoFocus: defaultOption == DialogButtonOption.cancel,
+              ),
+            );
             break;
           case DialogButtonOption.retry:
-            actions.add(DialogButton.retry(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.retry);
-            }, autoFocus: defaultOption == DialogButtonOption.retry));
+            actions.add(
+              DialogButton.retry(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.retry);
+                },
+                autoFocus: defaultOption == DialogButtonOption.retry,
+              ),
+            );
             break;
           case DialogButtonOption.abort:
-            actions.add(DialogButton.abort(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.abort);
-            }, autoFocus: defaultOption == DialogButtonOption.abort));
+            actions.add(
+              DialogButton.abort(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.abort);
+                },
+                autoFocus: defaultOption == DialogButtonOption.abort,
+              ),
+            );
             break;
           case DialogButtonOption.submit:
-            actions.add(DialogButton.submit(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.submit);
-            }, autoFocus: defaultOption == DialogButtonOption.submit));
+            actions.add(
+              DialogButton.submit(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.submit);
+                },
+                autoFocus: defaultOption == DialogButtonOption.submit,
+              ),
+            );
             break;
           case DialogButtonOption.save:
-            actions.add(DialogButton.save(context, onPressed: () {
-              Navigator.of(context).pop(DialogButtonOption.save);
-            }, autoFocus: defaultOption == DialogButtonOption.save));
+            actions.add(
+              DialogButton.save(
+                context,
+                onPressed: () {
+                  Navigator.of(context).pop(DialogButtonOption.save);
+                },
+                autoFocus: defaultOption == DialogButtonOption.save,
+              ),
+            );
             break;
         }
       }

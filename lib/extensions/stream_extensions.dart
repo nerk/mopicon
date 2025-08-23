@@ -23,10 +23,7 @@ import 'package:flutter/foundation.dart';
 
 extension StreamExtensions<T> on Stream<T> {
   /// Returns a [ValueListenable] for a stream.
-  ValueListenable<T> toValueNotifier(
-    T initialValue, {
-    bool Function(T previous, T current)? notifyWhen,
-  }) {
+  ValueListenable<T> toValueNotifier(T initialValue, {bool Function(T previous, T current)? notifyWhen}) {
     final notifier = ValueNotifier<T>(initialValue);
     listen((value) {
       if (notifyWhen == null || notifyWhen(notifier.value, value)) {
@@ -37,9 +34,7 @@ extension StreamExtensions<T> on Stream<T> {
   }
 
   /// Returns a nullable [ValueListenable] for a stream.
-  ValueListenable<T?> toNullableValueNotifier({
-    bool Function(T? previous, T? current)? notifyWhen,
-  }) {
+  ValueListenable<T?> toNullableValueNotifier({bool Function(T? previous, T? current)? notifyWhen}) {
     final notifier = ValueNotifier<T?>(null);
     listen((value) {
       if (notifyWhen == null || notifyWhen(notifier.value, value)) {

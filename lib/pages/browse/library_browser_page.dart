@@ -208,7 +208,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
             },
             valueListenable: libraryController.selectionChanged,
             checkEnable: (value, result) {
-              return value.positions.length == 1;
+              return value.positions.length == 1 && parent?.type != Ref.typeAlbum;
             },
           ),
           VolumeControl(),

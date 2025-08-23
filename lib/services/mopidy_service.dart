@@ -102,9 +102,11 @@ abstract class MopidyService {
   //
   Future<List<Ref>> browse(Ref? parent);
 
+  Future<Track?> lookupTrack(Ref parent);
+
   Future<List<SearchResult>> search(SearchCriteria criteria, {bool exact});
 
-  Future<Map<String, List<MImage>>> getImages(List<String> albumUris);
+  Future<Map<String, List<MImage>>> getImages(List<String> uris);
 
   /// Returns a flattened list for [items].
   ///
@@ -562,6 +564,26 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
+  Future<Track?> lookupTrack(Ref track) async {
+    assert(track.type == Ref.typeTrack);
+    return waitConnected().then((_) async {
+      try {
+        setBusy(true);
+        Map<String,List<Track>> trackMap = await _mopidy.library.lookup([track.uri]);
+        if (trackMap.isNotEmpty) {
+            var tracks = trackMap[track.uri];
+            if (tracks != null && tracks.isNotEmpty) {
+              return Future.value(tracks.first);
+            }
+          }
+      } finally {
+        setBusy(false);
+      }
+      return Future.value(null);
+    });
+  }
+
+  @override
   Future<List<SearchResult>> search(SearchCriteria criteria, {bool exact = false}) {
     return waitConnected().then((_) {
       try {
@@ -574,11 +596,11 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<Map<String, List<MImage>>> getImages(List<String> albumUris) {
+  Future<Map<String, List<MImage>>> getImages(List<String> uris) {
     return waitConnected().then((_) {
       try {
         setBusy(true);
-        return _mopidy.library.getImages(albumUris);
+        return _mopidy.library.getImages(uris);
       } finally {
         setBusy(false);
       }
@@ -1116,6 +1138,7 @@ class MopidyServiceImpl extends MopidyService {
 }
 
 class AlbumInfoExtraData {
+  late String uri;
   late String albumName;
   late String artistNames;
   late int? numTracks;
@@ -1124,6 +1147,7 @@ class AlbumInfoExtraData {
   AlbumInfoExtraData(Track track) {
     if (track.album != null) {
       Album album = track.album!;
+      uri = track.uri;
       artistNames = track.artistNames ?? "";
       numTracks = album.numTracks;
       date = album.date;

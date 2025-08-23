@@ -72,6 +72,14 @@ extension MopidyRefExtensions on Ref {
     }
     return null;
   }
+
+  /// Returns the URI of an album.
+  String? get albumUri {
+    if (extraData != null) {
+      return (extraData as AlbumInfoExtraData).uri;
+    }
+    return null;
+  }
 }
 
 extension MopidyRefListExtensions on List<Ref> {

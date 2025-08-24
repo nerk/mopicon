@@ -97,17 +97,8 @@ class _HomeViewState extends State<HomeView> {
     return BusyWrapper(
       Scaffold(
         body: widget.navigationShell,
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(icon: const Icon(Icons.search), label: S.of(context).homePageSearchLbl),
-            BottomNavigationBarItem(icon: const Icon(Icons.library_music), label: S.of(context).homePageBrowseLbl),
-            BottomNavigationBarItem(
-              icon: Badge(isLabelVisible: trackListCount > 0, label: Text('$trackListCount'), child: const Icon(Icons.queue_music)),
-              label: S.of(context).homePageTracksLbl,
-            ),
-          ],
-          currentIndex: widget.navigationShell.currentIndex,
-          onTap: (int index) {
+        bottomNavigationBar: NavigationBar(
+          onDestinationSelected: (int index) {
             widget.navigationShell.goBranch(
               index,
               // A common pattern when using bottom navigation bars is to support
@@ -117,6 +108,15 @@ class _HomeViewState extends State<HomeView> {
               initialLocation: index == widget.navigationShell.currentIndex,
             );
           },
+          selectedIndex: widget.navigationShell.currentIndex,
+          destinations: <Widget>[
+            NavigationDestination(icon: const Icon(Icons.search), label: S.of(context).homePageSearchLbl),
+            NavigationDestination(icon: const Icon(Icons.library_music), label: S.of(context).homePageBrowseLbl),
+            NavigationDestination(
+              icon: Badge(isLabelVisible: trackListCount > 0, label: Text('$trackListCount'), child: const Icon(Icons.queue_music)),
+              label: S.of(context).homePageTracksLbl,
+            ),
+          ],
         ),
       ),
       showBusy,

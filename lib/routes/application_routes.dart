@@ -30,6 +30,8 @@ import 'package:mopicon/pages/playlist/playlist_page.dart';
 import 'package:mopicon/pages/playlist/playlist_view_controller.dart';
 import 'package:mopicon/pages/search/search_page.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
+import 'package:mopicon/pages/radio_browser/radio_browser_page.dart';
+import 'package:mopicon/pages/radio_browser/radio_browser_controller.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/pages/settings/preferences_page.dart';
 import 'package:mopicon/pages/tracklist/tracklist_page.dart';
@@ -50,6 +52,8 @@ class ApplicationRoutes {
   static const String tracksPath = '/tracks';
   static const String search = 'search';
   static const String searchPath = '/search';
+  static const String radio = 'radio';
+  static const String radioPath = '/radio';
 
   final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
   late final GoRouter _router;
@@ -96,6 +100,21 @@ class ApplicationRoutes {
                   path: searchPath,
                   builder: (BuildContext context, GoRouterState state) {
                     return const SearchPage();
+                  },
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  onExit: (BuildContext c, _) {
+                    GetIt.instance<RadioBrowserController>().reset();
+                    return true;
+                  },
+                  name: radio,
+                  path: radioPath,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const RadioBrowserPage();
                   },
                 ),
               ],

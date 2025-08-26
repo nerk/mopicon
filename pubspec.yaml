@@ -58,6 +58,8 @@ dependencies:
   flutter_widget_from_html_core: ^0.16.0
   fwfh_url_launcher: ^0.16.0
   cupertino_icons: ^1.0.8
+  radio_browser_api: ^2.0.0+1
+  dnsolve: ^1.0.2
 
 dev_dependencies:
 

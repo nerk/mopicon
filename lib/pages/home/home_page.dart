@@ -42,6 +42,8 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final mopidyService = GetIt.instance<MopidyService>();
 
+  final preferences = GetIt.instance<PreferencesController>();
+
   int trackListCount = 0;
   bool showBusy = true;
 
@@ -68,7 +70,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    GetIt.instance<MopidyService>().connect(GetIt.instance<PreferencesController>().url);
+    GetIt.instance<MopidyService>().connect(preferences.url);
     showBusy = true;
     connectionSubscription = mopidyService.connectionState$.listen((MopidyConnectionState state) {
       setState(() {
@@ -111,6 +113,7 @@ class _HomeViewState extends State<HomeView> {
           selectedIndex: widget.navigationShell.currentIndex,
           destinations: <Widget>[
             NavigationDestination(icon: const Icon(Icons.search), label: S.of(context).homePageSearchLbl),
+            NavigationDestination(icon: const Icon(Icons.radio), label: S.of(context).radioBrowserLbl),
             NavigationDestination(icon: const Icon(Icons.library_music), label: S.of(context).homePageBrowseLbl),
             NavigationDestination(
               icon: Badge(isLabelVisible: trackListCount > 0, label: Text('$trackListCount'), child: const Icon(Icons.queue_music)),

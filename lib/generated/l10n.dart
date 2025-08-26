@@ -129,6 +129,11 @@ class S {
     );
   }
 
+  /// `Radio`
+  String get radioBrowserLbl {
+    return Intl.message('Radio', name: 'radioBrowserLbl', desc: '', args: []);
+  }
+
   /// `Browse`
   String get homePageBrowseLbl {
     return Intl.message(

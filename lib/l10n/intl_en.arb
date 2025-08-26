@@ -12,6 +12,7 @@
   "connectingPageConnecting": "Connecting...",
   "connectingPageStopBtn": "Abort",
   "homePageSearchLbl": "Search",
+  "radioBrowserLbl": "Radio",
   "homePageBrowseLbl": "Browse",
   "homePageTracksLbl": "Tracks",
   "pageNotFoundMsg": "Page not found!",

@@ -25,6 +25,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/pages/browse/library_browser_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_view_controller.dart';
 import 'package:mopicon/pages/search/search_view_controller.dart';
+import 'package:mopicon/pages/radio_browser/radio_browser_controller.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/pages/tracklist/tracklist_view_controller.dart';
 import 'package:mopicon/services/cover_service.dart';
@@ -55,6 +56,7 @@ class Initializer {
     getIt.registerLazySingleton<TracklistViewController>(() => TracklistViewControllerImpl());
     getIt.registerLazySingleton<PlaylistViewController>(() => PlaylistControllerImpl());
     getIt.registerLazySingleton<SearchViewController>(() => SearchViewControllerImpl());
+    getIt.registerLazySingleton<RadioBrowserController>(() => RadioBrowserControllerImpl());
     logger.i("finished registering services");
   }
 

@@ -53,7 +53,7 @@ Future<String?> newStreamDialog(String title) {
             validator: (String? value) {
               return value != null && value.isNotEmpty && value.trim().isStreamUri() ? null : S.of(context).newStreamUriInvalid;
             },
-            maxLength: 100,
+            maxLength: 300,
           ),
         ),
         <Widget>[

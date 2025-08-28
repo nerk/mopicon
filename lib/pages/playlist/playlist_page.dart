@@ -145,14 +145,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
         if (!context.mounted) return;
         switch (r) {
           case ItemActionOption.play:
-            await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
+            await controller.addItemsToTracklist(context, [track.asRef]);
             controller.mopidyService.play(track.asRef);
             break;
           case ItemActionOption.addToTracklist:
-            await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
+            await controller.addItemsToTracklist(context, [track.asRef]);
             break;
           case ItemActionOption.addToPlaylist:
-            await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
+            await controller.addItemsToPlaylist(context, [track.asRef]);
             break;
           default:
         }
@@ -181,14 +181,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
           ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
             var selectedItems = await controller.getSelectedItems(playlist);
             if (context.mounted) {
-              await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+              await controller.addItemsToTracklist(context, selectedItems.asRef);
             }
             controller.notifyUnselect();
           }, valueListenable: controller.selectionChanged),
           ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
             var selectedItems = await controller.getSelectedItems(playlist);
             if (context.mounted) {
-              await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+              await controller.addItemsToPlaylist(context, selectedItems.asRef);
             }
             controller.notifyUnselect();
           }, valueListenable: controller.selectionChanged),

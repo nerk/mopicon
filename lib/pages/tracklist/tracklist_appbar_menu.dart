@@ -53,7 +53,7 @@ class TracklistAppBarMenu extends StatelessWidget {
         // Server looks up a stream by its URI and assigns
         // the correct name. We therefore just pass an empty name.
         Ref track = Ref(uri, '', Ref.typeTrack);
-        await controller.addItemsToTracklist<Ref>(context, [track]);
+        await controller.addItemsToTracklist(context, [track]);
       } catch (e, s) {
         logger.e(e, stackTrace: s);
         if (context.mounted) {

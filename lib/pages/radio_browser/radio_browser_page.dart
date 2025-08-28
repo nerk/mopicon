@@ -165,63 +165,73 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
       if (!context.mounted) return;
       print(stations[index].urlResolved);
       print(stations[index].url);
-        Ref track = Ref(station.urlResolved ?? station.url, station.name, Ref.typeTrack);
-        switch (r) {
-          case ItemActionOption.play:
-            await controller.addItemsToTracklist<Ref>(context, [track]);
-            controller.mopidyService.play(track);
-            break;
-          case ItemActionOption.addToTracklist:
-            await controller.addItemsToTracklist<Ref>(context, [track]);
-            break;
-          case ItemActionOption.addToPlaylist:
-            await controller.addItemsToPlaylist<Ref>(context, [track]);
-            break;
-          default:
-        }
+      Ref track = Ref(station.urlResolved ?? station.url, station.name, Ref.typeTrack);
+      switch (r) {
+        case ItemActionOption.play:
+          await controller.addItemsToTracklist(context, [track]);
+          controller.mopidyService.play(track);
+          break;
+        case ItemActionOption.addToTracklist:
+          await controller.addItemsToTracklist(context, [track]);
+          break;
+        case ItemActionOption.addToPlaylist:
+          await controller.addItemsToPlaylist(context, [track]);
+          break;
+        default:
+      }
     });
 
     var pageContent = Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        SearchBar(
-          controller: textEditingController,
-          padding: const WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 16.0)),
-          onSubmitted: (String value) async {
-            searchTerm = value;
-            updateStations();
-          },
-          leading: const Icon(Icons.search),
-          trailing: <Widget>[
-            IconButton(
-              onPressed: () {
-                searchTerm = null;
-                textEditingController.clear();
-                updateStations();
-              },
-              icon: const Icon(Icons.clear),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(
+              child: SearchBar(
+                controller: textEditingController,
+                padding: const WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 16.0)),
+                onSubmitted: (String value) async {
+                  searchTerm = value;
+                  updateStations();
+                },
+                leading: const Icon(Icons.search),
+                trailing: <Widget>[
+                  IconButton(
+                    onPressed: () {
+                      searchTerm = null;
+                      textEditingController.clear();
+                      updateStations();
+                    },
+                    icon: const Icon(Icons.clear),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: DropdownMenu<radio.Country>(
+                expandedInsets: const EdgeInsets.only(left: 30),
+                requestFocusOnTap: false,
+                initialSelection: selectedCountry,
+                label: Text(S.of(context).preferencesPageThemeLbl),
+                dropdownMenuEntries: dropDownCountries,
+                onSelected: (radio.Country? country) async {
+                  if (country != unselectedCountry || searchTerm != null) {
+                    setState(() {
+                      selectedCountry = country;
+                    });
+                    updateStations();
+                  } else {
+                    setState(() {
+                      selectedCountry = unselectedCountry;
+                      stations = [];
+                    });
+                  }
+                },
+              ),
             ),
           ],
-        ),
-        DropdownMenu<radio.Country>(
-          expandedInsets: const EdgeInsets.only(left: 30),
-          requestFocusOnTap: false,
-          initialSelection: selectedCountry,
-          label: Text(S.of(context).preferencesPageThemeLbl),
-          dropdownMenuEntries: dropDownCountries,
-          onSelected: (radio.Country? country) async {
-            if (country != unselectedCountry || searchTerm != null) {
-              setState(() {
-                selectedCountry = country;
-              });
-              updateStations();
-            } else {
-              setState(() {
-                selectedCountry = unselectedCountry;
-                stations = [];
-              });
-            }
-          },
         ),
         Expanded(
           child: Padding(padding: const EdgeInsets.only(top: 12), child: listView),
@@ -246,12 +256,12 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
         actions: [
           ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
             var selectedItems = controller.selectionChanged.value.filterSelected(stations);
-            await controller.addItemsToTracklist<Ref>(context, stationsAsRef(selectedItems));
+            await controller.addItemsToTracklist(context, stationsAsRef(selectedItems));
             controller.notifyUnselect();
           }, valueListenable: controller.selectionChanged),
           ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
             var selectedItems = controller.selectionChanged.value.filterSelected(stations);
-            await controller.addItemsToPlaylist<Ref>(context, stationsAsRef(selectedItems));
+            await controller.addItemsToPlaylist(context, stationsAsRef(selectedItems));
             controller.notifyUnselect();
           }, valueListenable: controller.selectionChanged),
           VolumeControl(),

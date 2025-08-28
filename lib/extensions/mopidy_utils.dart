@@ -84,12 +84,21 @@ extension MopidyRefExtensions on Ref {
     }
     return null;
   }
+
+  /// Converts a [Ref] into a [Track],
+  Track get asTrack {
+    return Track(uri, name, [], null, [], [], null, null, null, null, null, null, null, null, null);
+  }
 }
 
 extension MopidyRefListExtensions on List<Ref> {
   /// Returns the images for [List<Ref>]
   Future<Map<String, Widget?>> getImages() async {
     return _coverService.getImages(map((e) => e.uri).toList());
+  }
+
+  List<Track> get asTracks {
+    return map((r) => r.asTrack).toList();
   }
 }
 

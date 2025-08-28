@@ -69,12 +69,12 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
         .addMenuItem(
           S.of(context).menuAddToTracklist,
           Icons.queue_music,
-          (_, track, index) => addItemsToTracklist<Ref>(context, [track!]),
+          (_, track, index) => addItemsToTracklist(context, [track!]),
         )
         .addMenuItem(
           S.of(context).menuAddToPlaylist,
           Icons.playlist_add,
-          (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]),
+          (_, track, index) => addItemsToPlaylist(context, [track!]),
         )
         .addMenuItem(
           S.of(context).menuDelete,
@@ -89,12 +89,12 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
         .addMenuItem(
           S.of(context).menuAddToTracklist,
           Icons.queue_music,
-          (_, track, index) => addItemsToTracklist<Ref>(context, [track!]),
+          (_, track, index) => addItemsToTracklist(context, [track!]),
         )
         .addMenuItem(
           S.of(context).menuAddToPlaylist,
           Icons.playlist_add,
-          (_, track, index) => addItemsToPlaylist<Ref>(context, [track!]),
+          (_, track, index) => addItemsToPlaylist(context, [track!]),
         )
         .addMenuItem(
           S.of(context).menuDelete,
@@ -109,7 +109,7 @@ class LibraryBrowserControllerImpl extends LibraryBrowserController {
         .addMenuItem(
           S.of(context).menuAddToTracklist,
           Icons.queue_music,
-          (_, track, index) => addItemsToTracklist<Ref>(context, [track!]),
+          (_, track, index) => addItemsToTracklist(context, [track!]),
         )
         .addMenuItem(S.of(context).menuDelete, Icons.delete, deletePlaylist);
   }

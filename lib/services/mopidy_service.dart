@@ -120,9 +120,9 @@ abstract class MopidyService {
   //
   // Tracklist methods
   //
-  Future<List<TlTrack>> addTracksToTracklist<T>(List<T> tracks);
+  Future<List<TlTrack>> addTracksToTracklist(List<Ref> tracks);
 
-  Future<List<TlTrack>> addTrackToTracklist<T>(T track);
+  Future<List<TlTrack>> addTrackToTracklist(Ref track);
 
   Future<int> getTracklistLength();
 
@@ -174,7 +174,7 @@ abstract class MopidyService {
 
   Future<bool> deletePlaylist(Ref playlist);
 
-  Future<Playlist?> addToPlaylist<T>(BuildContext context, Ref playlist, List<T> items);
+  Future<Playlist?> addToPlaylist(BuildContext context, Ref playlist, List<Ref> items);
 
   Future<void> movePlaylistItem(Ref playlist, int from, int to);
 
@@ -594,18 +594,11 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<List<TlTrack>> addTracksToTracklist<T>(List<T> tracks) async {
-    assert(tracks is List<Ref> || tracks is List<Track> || tracks is List<TlTrack>);
-
+  Future<List<TlTrack>> addTracksToTracklist(List<Ref> tracks) async {
     return waitConnected().then((_) {
       try {
         setBusy(true);
-        var uris = List<String>.empty(growable: true);
-        for (var track in tracks) {
-          String uri = getUri(track)!;
-          uris.add(uri);
-        }
-        return _mopidy.tracklist.add(uris, null);
+        return _mopidy.tracklist.add(tracks.asTracks, null);
       } finally {
         setBusy(false);
       }
@@ -665,7 +658,7 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<List<TlTrack>> addTrackToTracklist<T>(T track) {
+  Future<List<TlTrack>> addTrackToTracklist(Ref track) {
     return waitConnected().then((_) {
       try {
         setBusy(true);
@@ -993,8 +986,7 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<Playlist?> addToPlaylist<T>(BuildContext context, Ref playlist, List<T> items) async {
-    assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
+  Future<Playlist?> addToPlaylist(BuildContext context, Ref playlist, List<Ref> items) async {
     return waitConnected().then((_) async {
       try {
         setBusy(true);
@@ -1002,30 +994,17 @@ class MopidyServiceImpl extends MopidyService {
         bool trackAdded = false;
         if (pl != null) {
           for (var item in items) {
-            if (item is Ref) {
-              Track tr = (await _mopidy.library.lookup([item.uri])).values.first[0];
-              // Special error handling if this is a stream uri and lookup fails if the stream is invalid
-              // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
-              if (tr.name != 'INVALID_STREAM_ERROR') {
-                pl.addTrack(tr);
-                trackAdded = true;
-              } else {
-                if (context.mounted) {
-                  showError(S.of(context).newStreamAccessError, tr.uri);
-                }
-              }
-            } else if (item is TlTrack) {
-              pl.addTrack(item.track);
-              trackAdded = true;
+            Track tr = (await _mopidy.library.lookup([item.uri])).values.first[0];
+            // Special error handling if this is a stream uri and lookup fails if the stream is invalid
+            // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
+            if (tr.name != 'INVALID_STREAM_ERROR') {
+              pl.addTrack(tr);
             } else {
-              pl.addTrack(item as Track);
-              trackAdded = true;
+              pl.addTrack(item.asTrack);
             }
           }
-          if (trackAdded) {
-            Playlist? result = await _mopidy.playlists.save(pl);
-            return Future.value(result);
-          }
+          Playlist? result = await _mopidy.playlists.save(pl);
+          return Future.value(result);
         }
         return Future.value(null);
       } finally {

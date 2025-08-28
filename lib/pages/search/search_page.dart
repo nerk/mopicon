@@ -46,7 +46,6 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final mopidyService = GetIt.instance<MopidyService>();
   final TextEditingController textEditingController = TextEditingController();
 
   List<Track> tracks = [];
@@ -73,7 +72,7 @@ class _SearchPageState extends State<SearchPage> {
       // Search is only supported if the Mopidy-Local extension is
       // enabled for the server. Just set a flag we can
       // check later.
-      var canSearch = (await mopidyService.getUriSchemes()).contains('local');
+      var canSearch = (await controller.mopidyService.getUriSchemes()).contains('local');
       setState(() {
         searchSupported = canSearch;
       });
@@ -111,14 +110,14 @@ class _SearchPageState extends State<SearchPage> {
         if (!context.mounted) return;
         switch (r) {
           case ItemActionOption.play:
-            await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
-            mopidyService.play(track.asRef);
+            await controller.addItemsToTracklist(context, [track.asRef]);
+            controller.mopidyService.play(track.asRef);
             break;
           case ItemActionOption.addToTracklist:
-            await controller.addItemsToTracklist<Ref>(context, [track.asRef]);
+            await controller.addItemsToTracklist(context, [track.asRef]);
             break;
           case ItemActionOption.addToPlaylist:
-            await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
+            await controller.addItemsToPlaylist(context, [track.asRef]);
             break;
           default:
         }
@@ -136,7 +135,7 @@ class _SearchPageState extends State<SearchPage> {
             try {
               controller.mopidyService.setBusy(true);
 
-              List<SearchResult> searchResult = await mopidyService.search(SearchCriteria().any([value]));
+              List<SearchResult> searchResult = await controller.mopidyService.search(SearchCriteria().any([value]));
               trx = searchResult.first.tracks;
               if (trx.isNotEmpty) {
                 images = await trx.getImages();
@@ -187,12 +186,12 @@ class _SearchPageState extends State<SearchPage> {
         actions: [
           ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
             var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-            await controller.addItemsToTracklist<Ref>(context, selectedItems.asRef);
+            await controller.addItemsToTracklist(context, selectedItems.asRef);
             controller.notifyUnselect();
           }, valueListenable: controller.selectionChanged),
           ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
             var selectedItems = controller.selectionChanged.value.filterSelected(tracks);
-            await controller.addItemsToPlaylist<Ref>(context, selectedItems.asRef);
+            await controller.addItemsToPlaylist(context, selectedItems.asRef);
             controller.notifyUnselect();
           }, valueListenable: controller.selectionChanged),
           ActionButton<SelectedItemPositions>(

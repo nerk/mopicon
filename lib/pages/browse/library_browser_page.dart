@@ -60,15 +60,13 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
   SelectionMode selectionMode = SelectionMode.off;
 
   final libraryController = GetIt.instance<LibraryBrowserController>();
-  final mopidyService = GetIt.instance<MopidyService>();
-
   final preferences = GetIt.instance<PreferencesController>();
 
   StreamSubscription? refreshSubscription;
 
   Future updateItems() async {
     try {
-      mopidyService.setBusy(true);
+      libraryController.mopidyService.setBusy(true);
       if (widget.parent != null) {
         parent = Ref.fromMap(Parameter.fromBase64(widget.parent!));
       }
@@ -83,7 +81,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       if (mounted) {
         setState(() {});
       }
-      mopidyService.setBusy(false);
+      libraryController.mopidyService.setBusy(false);
     }
   }
 
@@ -102,7 +100,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
       await updateItems();
     });
 
-    mopidyService.playlistsChangedNotifier.addListener(updateItems);
+    libraryController.mopidyService.playlistsChangedNotifier.addListener(updateItems);
     libraryController.selectionModeChanged.addListener(updateSelection);
     libraryController.selectionChanged.addListener(updateSelection);
     updateSelection();
@@ -136,14 +134,14 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
         if (!context.mounted) return;
         switch (r) {
           case ItemActionOption.play:
-            await libraryController.addItemsToTracklist<Ref>(context, [item]);
-            mopidyService.play(item);
+            await libraryController.addItemsToTracklist(context, [item]);
+            libraryController.mopidyService.play(item);
             break;
           case ItemActionOption.addToTracklist:
-            await libraryController.addItemsToTracklist<Ref>(context, [item]);
+            await libraryController.addItemsToTracklist(context, [item]);
             break;
           case ItemActionOption.addToPlaylist:
-            await libraryController.addItemsToPlaylist<Ref>(context, [item]);
+            await libraryController.addItemsToPlaylist(context, [item]);
             break;
           default:
         }
@@ -175,14 +173,14 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
           ActionButton<SelectedItemPositions>(Icons.queue_music, () async {
             var selectedItems = await libraryController.getSelectedItems(parent);
             if (context.mounted) {
-              await libraryController.addItemsToTracklist<Ref>(context, selectedItems);
+              await libraryController.addItemsToTracklist(context, selectedItems);
             }
             libraryController.notifyUnselect();
           }, valueListenable: libraryController.selectionChanged),
           ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
             var selectedItems = await libraryController.getSelectedItems(parent);
             if (context.mounted) {
-              await libraryController.addItemsToPlaylist<Ref>(context, selectedItems);
+              await libraryController.addItemsToPlaylist(context, selectedItems);
             }
             libraryController.notifyUnselect();
           }, valueListenable: libraryController.selectionChanged),
@@ -195,7 +193,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                 if (selectedItems.length == 1) {
                   var item = selectedItems[0];
                   if (item.type == Ref.typeTrack) {
-                    track = await mopidyService.lookupTrack(item);
+                    track = await libraryController.mopidyService.lookupTrack(item);
                   }
                 }
                 if (track != null) {

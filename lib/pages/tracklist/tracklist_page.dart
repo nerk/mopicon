@@ -284,7 +284,7 @@ class _TrackListState extends State<TrackListPage> {
           break;
         case ItemActionOption.addToPlaylist:
           if (context.mounted) {
-            await controller.addItemsToPlaylist<Ref>(context, [track.asRef]);
+            await controller.addItemsToPlaylist(context, [track.asRef]);
           }
           break;
         default:
@@ -401,7 +401,7 @@ class _TrackListState extends State<TrackListPage> {
           ActionButton<SelectedItemPositions>(Icons.playlist_add, () async {
             var selectedItems = await controller.getSelectedItems();
             if (context.mounted) {
-              await controller.addItemsToPlaylist<Ref>(context, selectedItems);
+              await controller.addItemsToPlaylist(context, selectedItems);
             }
             controller.notifyUnselect();
           }, valueListenable: controller.selectionChanged),

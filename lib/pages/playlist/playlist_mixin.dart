@@ -42,10 +42,9 @@ mixin PlaylistMethods {
     }
   }
 
-  Future<void> addItemsToPlaylist<T>(BuildContext context, List<T> tracks, {Ref? playlist}) async {
-    assert(tracks is List<Ref> || tracks is List<Track> || tracks is List<TlTrack>);
+  Future<void> addItemsToPlaylist(BuildContext context, List<Ref> tracks, {Ref? playlist}) async {
     Playlist? plst;
-    List<T> flattened = await _mopidyService.flatten<T>(tracks);
+    List<Ref> flattened = await _mopidyService.flatten<Ref>(tracks);
     try {
       if (playlist == null) {
         var playlists = await _mopidyService.getPlaylists();
@@ -59,11 +58,11 @@ mixin PlaylistMethods {
         if (pl != null) {
           recentPlaylist = pl;
           if (!context.mounted) return;
-          plst = await _mopidyService.addToPlaylist<T>(context, pl, flattened);
+          plst = await _mopidyService.addToPlaylist(context, pl, flattened);
         }
       } else {
         if (!context.mounted) return;
-        plst = await _mopidyService.addToPlaylist<T>(context, playlist, flattened);
+        plst = await _mopidyService.addToPlaylist(context, playlist, flattened);
       }
     } catch (e, s) {
       logger.e(e, stackTrace: s);

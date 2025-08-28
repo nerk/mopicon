@@ -46,9 +46,9 @@ abstract class TracklistViewController extends BaseController {
 
   List<TlTrack> getSelectedTracks();
 
-  Future<void> addItemsToPlaylist<T>(BuildContext context, List<T> tracks, {Ref? playlist});
+  Future<void> addItemsToPlaylist(BuildContext context, List<Ref> tracks, {Ref? playlist});
 
-  Future<void> addItemsToTracklist<T>(BuildContext context, List<T> tracks);
+  Future<void> addItemsToTracklist(BuildContext context, List<Ref> tracks);
 }
 
 class TracklistViewControllerImpl extends TracklistViewController with PlaylistMethods, TracklistMethods {

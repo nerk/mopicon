@@ -35,10 +35,9 @@ mixin TracklistMethods {
   /// Adds all [items] to the tracklist and returns the resulting added
   /// [TlTrack] objects. If an item on [items] has children, add its children
   /// instead of the item itself.
-  Future<List<TlTrack>> addItemsToTracklist<T>(BuildContext context, List<T> items) async {
-    assert(items is List<Ref> || items is List<Track> || items is List<TlTrack>);
+  Future<List<TlTrack>> addItemsToTracklist(BuildContext context, List<Ref> items) async {
 
-    List<T> flattened = await _mopidyService.flatten<T>(items);
+    List<Ref> flattened = await _mopidyService.flatten<Ref>(items);
     var tl = <TlTrack>[];
     try {
       tl = await _mopidyService.addTracksToTracklist(flattened);

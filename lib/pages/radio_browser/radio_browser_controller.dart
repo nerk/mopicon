@@ -132,9 +132,10 @@ class RadioBrowserControllerImpl extends RadioBrowserController {
     var stations = response.items.map((e) {
       if (e.lastCheckOk) {
         // TODO: Mopidy cannot handle HLS streams yet.
-        if (!e.url.endsWith('.m3u8')) {
-          return e;
-        }
+        //if (!e.url.endsWith('.m3u8')) {
+          //return e;
+        //}
+        return e;
       }
       return null;
     }).nonNulls.toList();

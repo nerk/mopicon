@@ -51,7 +51,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
         // Server looks up a stream by its URI and assigns
         // the correct name. We therefore just pass an empty name.
         Ref track = Ref(uri, '', Ref.typeTrack);
-        await controller.addItemsToPlaylist<Ref>(context, [track], playlist: playlist);
+        await controller.addItemsToPlaylist(context, [track], playlist: playlist);
       } catch (e, s) {
         logger.e(e, stackTrace: s);
         if (context.mounted) {

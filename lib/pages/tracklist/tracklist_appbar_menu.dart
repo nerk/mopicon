@@ -24,7 +24,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/generated/l10n.dart';
-import 'package:mopicon/pages/playlist/new_stream_dialog.dart';
+import 'package:mopicon/components/new_stream_dialog.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 
@@ -47,12 +47,10 @@ class TracklistAppBarMenu extends StatelessWidget {
   }
 
   void _newStream(BuildContext context, _, __) async {
-    var uri = await newStreamDialog(S.of(context).newTracklistStreamDialogTitle);
-    if (uri != null && context.mounted) {
+    var record = await newStreamDialog(S.of(context).newTracklistStreamDialogTitle);
+    if (record != null && context.mounted) {
       try {
-        // Server looks up a stream by its URI and assigns
-        // the correct name. We therefore just pass an empty name.
-        Ref track = Ref(uri, '', Ref.typeTrack);
+        Ref track = Ref(record.uri, record.name, Ref.typeTrack);
         await controller.addItemsToTracklist(context, [track]);
       } catch (e, s) {
         logger.e(e, stackTrace: s);

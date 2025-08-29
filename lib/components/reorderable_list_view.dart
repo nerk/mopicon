@@ -97,7 +97,7 @@ class ReorderableTrackListView<T extends Object> {
 
     return RdListTile(
       index,
-      key: Key("$index tile"),
+      key: Key("$index/${track.uri}/${track.name}"),
       canReorder: onReorder != null,
       leading: ImageUtils.resize(_getImage(item, index, false), 40, 40),
       title: Text(track.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),

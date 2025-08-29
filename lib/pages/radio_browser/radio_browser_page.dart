@@ -24,7 +24,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/action_buttons.dart';
-import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/item_action_dialog.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/volume_control.dart';
@@ -143,7 +142,6 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
 
     // create dropdown list of all countries
     final List<DropdownMenuEntry<radio.Country>> dropDownCountries = <DropdownMenuEntry<radio.Country>>[];
@@ -237,10 +235,6 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
           child: Padding(padding: const EdgeInsets.only(top: 12), child: listView),
         ),
       ],
-    );
-
-    var notSupported = Center(
-      child: Text(S.of(context).searchPageNotSupportedMessage, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
     );
 
     return Scaffold(

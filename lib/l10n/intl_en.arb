@@ -70,10 +70,13 @@
   "deletePlaylistError": "Playlist could not be deleted.",
   "newPlaylistStreamDialogTitle": "Add new stream to Playlist",
   "newTracklistStreamDialogTitle": "Add new stream to Tracklist",
+  "newStreamDialogNameLabel": "Name",
+  "newStreamDialogNameHint": "Name of the stream.",
   "newStreamDialogUriLabel": "URI",
   "newStreamDialogUriHint": "Enter URI of new stream",
   "newStreamDialogSubmitBtn": "OK",
   "newStreamDialogCancelBtn": "Cancel",
+  "newStreamNameInvalid": "Please a name for the stream.",
   "newStreamUriInvalid": "Please enter a valid URI for the stream.",
   "newStreamCreateError": "Could not create stream.",
   "newStreamAccessError": "Stream cannot be accessed. Invalid URI?",
@@ -113,6 +116,7 @@
     }
   },
   "trackAddedToTracklistMessage": "Track added to tracklist.",
+  "couldNotAddTracksToTracklistError": "Could not add tracks to tracklist.",
   "tracksAddedToPlaylistMessage": "{n} tracks added to playlist {p}.",
   "@tracksAddedToPlaylistMessage": {
     "placeholders": {
@@ -126,6 +130,14 @@
   },
   "trackAddedToPlaylistMessage": "Track added to playlist {p}.",
   "@trackAddedToPlaylistMessage": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotAddTracksToPlaylistError": "Could not add tracks to Playlist '{p}'.",
+  "@couldNotAddTracksToPlaylistMessage": {
     "placeholders": {
       "p": {
         "type": "String"

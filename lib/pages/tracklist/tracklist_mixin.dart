@@ -43,11 +43,12 @@ mixin TracklistMethods {
       tl = await _mopidyService.addTracksToTracklist(flattened);
     } catch (e, s) {
       logger.e(e, stackTrace: s);
+      context.mounted ? showError(S.of(context).couldNotAddTracksToTracklistError, null) : null;
     } finally {
       if (context.mounted) {
         if (tl.length > 1) {
           showInfo(S.of(context).tracksAddedToTracklistMessage(tl.length), null);
-        } else {
+        } else if (tl.length == 1){
           showInfo(S.of(context).trackAddedToTracklistMessage, null);
         }
       }

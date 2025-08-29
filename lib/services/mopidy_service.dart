@@ -22,12 +22,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart' show BuildContext, ValueNotifier;
+import 'package:flutter/material.dart' show ValueNotifier;
 import 'package:flutter/services.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
-import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
-import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/utils/cache.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/utils/open_value_notifier.dart';
@@ -174,7 +172,7 @@ abstract class MopidyService {
 
   Future<bool> deletePlaylist(Ref playlist);
 
-  Future<Playlist?> addToPlaylist(BuildContext context, Ref playlist, List<Ref> items);
+  Future<Playlist?> addToPlaylist(Ref playlist, List<Ref> items);
 
   Future<void> movePlaylistItem(Ref playlist, int from, int to);
 
@@ -595,10 +593,37 @@ class MopidyServiceImpl extends MopidyService {
 
   @override
   Future<List<TlTrack>> addTracksToTracklist(List<Ref> tracks) async {
-    return waitConnected().then((_) {
+    return waitConnected().then((_) async {
+      var tlTracks = <TlTrack>[];
       try {
         setBusy(true);
-        return _mopidy.tracklist.add(tracks.asTracks, null);
+        // Try to add add uris and let the server perform
+        // the lookup. This will potentially fail for streams.
+        var uris = tracks.map((t) => t.uri).toList();
+        tlTracks = await _mopidy.tracklist.add(uris, null);
+        // Check tracks with failed lookup.
+        var failedTlids = tlTracks
+            .map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.tlid : null)
+            .nonNulls
+            .toList();
+        if (failedTlids.isNotEmpty) {
+          logger.w("Lookup failed for track. Reverting to default name.");
+          // Remove the tracks with failed lookup from tracklist
+          await _mopidy.tracklist.remove(FilterCriteria().tlid(failedTlids).toMap());
+          // Find matching entries from the parameter list
+          var failedUris = tlTracks
+              .map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.track.uri : null)
+              .nonNulls
+              .toList();
+          var readd = tracks
+              .map((t) => failedUris.contains(t.uri) ? t : null)
+              .nonNulls
+              .toList();
+          await _mopidy.tracklist.add(readd.asTracks, null);
+          // return final tracklist
+          tlTracks = await _mopidy.tracklist.getTlTracks();
+        }
+        return tlTracks;
       } finally {
         setBusy(false);
       }
@@ -986,21 +1011,22 @@ class MopidyServiceImpl extends MopidyService {
   }
 
   @override
-  Future<Playlist?> addToPlaylist(BuildContext context, Ref playlist, List<Ref> items) async {
+  Future<Playlist?> addToPlaylist(Ref playlist, List<Ref> items) async {
     return waitConnected().then((_) async {
       try {
         setBusy(true);
         Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
-        bool trackAdded = false;
         if (pl != null) {
           for (var item in items) {
             Track tr = (await _mopidy.library.lookup([item.uri])).values.first[0];
             // Special error handling if this is a stream uri and lookup fails if the stream is invalid
             // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
-            if (tr.name != 'INVALID_STREAM_ERROR') {
-              pl.addTrack(tr);
-            } else {
+            if (tr.name == 'INVALID_STREAM_ERROR') {
+              // Fall back to inserting a track created directly from item
               pl.addTrack(item.asTrack);
+            } else {
+              // add track
+              pl.addTrack(tr);
             }
           }
           Playlist? result = await _mopidy.playlists.save(pl);

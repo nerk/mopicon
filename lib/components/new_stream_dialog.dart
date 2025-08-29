@@ -27,33 +27,56 @@ import 'package:mopicon/components/modal_dialog.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
 import 'package:mopicon/generated/l10n.dart';
 
-Future<String?> newStreamDialog(String title) {
+Future<({String name, String uri})?> newStreamDialog(String title) {
   final modalDialogKey = GlobalKey<FormState>(debugLabel: "renamePlaylistDialog");
+  String streamName = '';
   String streamUri = '';
 
-  return showDialog<String>(
+  return showDialog<({String name, String uri})>(
     context: Globals.applicationRoutes.rootNavigatorKey.currentState!.overlay!.context,
     builder: (BuildContext context) {
       return ModalDialog(
         Text(title),
         Form(
           key: modalDialogKey,
-          child: TextFormField(
-            keyboardType: TextInputType.text,
-            initialValue: '',
-            autocorrect: false,
-            decoration: InputDecoration(
-              icon: const Icon(Icons.add_link),
-              hintText: S.of(context).newStreamDialogUriHint,
-              labelText: S.of(context).newStreamDialogUriLabel,
-            ),
-            onChanged: (String value) {
-              streamUri = value.trim();
-            },
-            validator: (String? value) {
-              return value != null && value.isNotEmpty && value.trim().isStreamUri() ? null : S.of(context).newStreamUriInvalid;
-            },
-            maxLength: 300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                keyboardType: TextInputType.text,
+                initialValue: '',
+                autocorrect: false,
+                decoration: InputDecoration(
+                  icon: const Icon(Icons.stream),
+                  hintText: S.of(context).newStreamDialogNameHint,
+                  labelText: S.of(context).newStreamDialogNameLabel,
+                ),
+                onChanged: (String value) {
+                  streamName = value.trim();
+                },
+                validator: (String? value) {
+                  return value != null && value.trim().isNotEmpty ? null : S.of(context).newStreamNameInvalid;
+                },
+                maxLength: 100,
+              ),
+              TextFormField(
+                keyboardType: TextInputType.text,
+                initialValue: '',
+                autocorrect: false,
+                decoration: InputDecoration(
+                  icon: const Icon(Icons.add_link),
+                  hintText: S.of(context).newStreamDialogUriHint,
+                  labelText: S.of(context).newStreamDialogUriLabel,
+                ),
+                onChanged: (String value) {
+                  streamUri = value.trim();
+                },
+                validator: (String? value) {
+                  return value != null && value.trim().isNotEmpty && value.trim().isStreamUri() ? null : S.of(context).newStreamUriInvalid;
+                },
+                maxLength: 300,
+              ),
+            ],
           ),
         ),
         <Widget>[
@@ -61,7 +84,7 @@ Future<String?> newStreamDialog(String title) {
             context,
             onPressed: () {
               if (modalDialogKey.currentState?.validate() ?? false) {
-                Navigator.of(context).pop(streamUri);
+                Navigator.of(context).pop((name: streamName, uri: streamUri));
               }
             },
           ),

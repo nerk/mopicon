@@ -29,7 +29,6 @@ import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 import 'package:mopicon/utils/open_value_notifier.dart';
-import 'package:rxdart/rxdart.dart';
 
 const _hostLookup = "_api._tcp.radio-browser.info";
 

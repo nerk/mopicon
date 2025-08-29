@@ -23,7 +23,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
 import 'package:mopicon/components/rd_list_tile.dart';
-import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/utils/logging_utils.dart';
@@ -103,7 +102,7 @@ class RadioBrowserStationListView extends StatelessWidget {
 
     return RdListTile(
       index,
-      key: Key("$index$item.uri"),
+      key: Key("$index/$item.uri/$item.name"),
       onLongPress: () {
         selectionModeChangedNotifier.value = SelectionMode.on;
         selectedPositions.set(index);
@@ -112,7 +111,7 @@ class RadioBrowserStationListView extends StatelessWidget {
       onTap: onTapped,
       leading: _getImage(item, index, false),
       title: Text("${item.name} (${item.clickCount})", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
-      subtitle: Text(item.urlResolved ?? item.url, style: const TextStyle(fontSize: 12)),
+      subtitle: Text(item.url, style: const TextStyle(fontSize: 12)),
       dismissibleBackgroundColor: preferences.theme.data.colorScheme.inversePrimary,
       canReorder: false,
       confirmDismiss: (direction) async {

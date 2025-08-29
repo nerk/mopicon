@@ -70,10 +70,13 @@
   "deletePlaylistError": "Playlist konnte nicht gelöscht werden.",
   "newPlaylistStreamDialogTitle": "Neuen Stream zur Playlist hinzufügen",
   "newTracklistStreamDialogTitle": "Neuen Stream zur Wiedergabeliste hinzufügen",
+  "newStreamDialogNameLabel": "Name",
+  "newStreamDialogNameHint": "Name des Streams.",
   "newStreamDialogUriLabel": "URI",
   "newStreamDialogUriHint": "URI des Streams.",
   "newStreamDialogSubmitBtn": "OK",
   "newStreamDialogCancelBtn": "Cancel",
+  "newStreamNameInvalid": "Bitte Namen des Streams eingeben.",
   "newStreamUriInvalid": "Bitte gültigen URI des Streams eingeben.",
   "newStreamCreateError": "Stream konnte nicht angelegt werden.",
   "newStreamAccessError": "Zugriff auf den Stream gescheitert. Ungültiger URI?",
@@ -113,6 +116,7 @@
     }
   },
   "trackAddedToTracklistMessage": "Titel zu Wiedergabeliste hinzugefügt.",
+  "couldNotAddTracksToTracklistError": "Titel konnten nicht zur Wiedergabeliste hinzugefügt werden.",
   "tracksAddedToPlaylistMessage": "{n} Titel zu Playlist '{p}' hinzugefügt.",
   "@tracksAddedToPlaylistMessage": {
     "placeholders": {
@@ -126,6 +130,14 @@
   },
   "trackAddedToPlaylistMessage": "Titel zu Playlist '{p}' hinzugefügt.",
   "@trackAddedToPlaylistMessage": {
+    "placeholders": {
+      "p": {
+        "type": "String"
+      }
+    }
+  },
+  "couldNotAddTracksToPlaylistError": "Titel konnten nicht zu Playlist '{p}' hinzugefügt werden.",
+  "@couldNotAddTracksToPlaylistError": {
     "placeholders": {
       "p": {
         "type": "String"

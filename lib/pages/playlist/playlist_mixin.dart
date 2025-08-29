@@ -57,21 +57,20 @@ mixin PlaylistMethods {
         Ref? pl = await selectPlaylistDialog(playlists);
         if (pl != null) {
           recentPlaylist = pl;
-          if (!context.mounted) return;
-          plst = await _mopidyService.addToPlaylist(context, pl, flattened);
+          plst = await _mopidyService.addToPlaylist(pl, flattened);
         }
       } else {
-        if (!context.mounted) return;
-        plst = await _mopidyService.addToPlaylist(context, playlist, flattened);
+        plst = await _mopidyService.addToPlaylist(playlist, flattened);
       }
     } catch (e, s) {
       logger.e(e, stackTrace: s);
+      context.mounted && plst != null ? showError(S.of(context).couldNotAddTracksToPlaylistError(plst.name), null) : null;
     } finally {
       if (context.mounted) {
         if (plst != null) {
           if (flattened.length > 1) {
             showInfo(S.of(context).tracksAddedToPlaylistMessage(flattened.length, plst.name), null);
-          } else {
+          } else if (flattened.length == 1){
             showInfo(S.of(context).trackAddedToPlaylistMessage(plst.name), null);
           }
         }

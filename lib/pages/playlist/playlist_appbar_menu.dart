@@ -26,7 +26,7 @@ import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 
-import 'new_stream_dialog.dart';
+import '../../components/new_stream_dialog.dart';
 import 'playlist_view_controller.dart';
 
 class PlaylistAppBarMenu extends StatelessWidget {
@@ -45,12 +45,10 @@ class PlaylistAppBarMenu extends StatelessWidget {
   }
 
   void _newStream(BuildContext context, _, __) async {
-    var uri = await newStreamDialog(S.of(context).newPlaylistStreamDialogTitle);
-    if (uri != null && context.mounted) {
+    var record = await newStreamDialog(S.of(context).newPlaylistStreamDialogTitle);
+    if (record != null && context.mounted) {
       try {
-        // Server looks up a stream by its URI and assigns
-        // the correct name. We therefore just pass an empty name.
-        Ref track = Ref(uri, '', Ref.typeTrack);
+        Ref track = Ref(record.uri, record.name, Ref.typeTrack);
         await controller.addItemsToPlaylist(context, [track], playlist: playlist);
       } catch (e, s) {
         logger.e(e, stackTrace: s);

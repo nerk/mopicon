@@ -45,9 +45,14 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
       menuBuilder.addMenuItem(S.of(context).menuSelectAll, Icons.select_all, _selectAll);
     }
 
-    controller.selectionChanged.value.positions.length != 1
-        ? menuBuilder.addMenuItem(S.of(context).menuNewPlaylist, Icons.playlist_add, _newPlayList)
-        : menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist, Icons.drive_file_rename_outline, _renamePlayList);
+    if (controller.selectionChanged.value.positions.length == 1 &&
+       items[controller.selectionChanged.value.positions.first].type == Ref.typePlaylist) {
+       menuBuilder.addMenuItem(S.of(context).menuRenamePlaylist, Icons.drive_file_rename_outline, _renamePlayList);
+    } else {
+      menuBuilder.addMenuItem(S
+          .of(context)
+          .menuNewPlaylist, Icons.playlist_add, _newPlayList);
+    }
 
     return menuBuilder
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)

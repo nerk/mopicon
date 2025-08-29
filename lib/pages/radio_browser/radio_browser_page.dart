@@ -161,8 +161,6 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
     ) async {
       var r = await showActionDialog([ItemActionOption.play, ItemActionOption.addToTracklist, ItemActionOption.addToPlaylist]);
       if (!context.mounted) return;
-      print(stations[index].urlResolved);
-      print(stations[index].url);
       Ref track = Ref(station.urlResolved ?? station.url, station.name, Ref.typeTrack);
       switch (r) {
         case ItemActionOption.play:
@@ -268,9 +266,6 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
 
   static List<Ref> stationsAsRef(List<radio.Station> stations) {
     return List.generate(stations.length, (index) {
-      //return Ref(stations[index].urlResolved ?? stations[index].url, stations[index].name, Ref.typeTrack);
-      print(stations[index].urlResolved);
-      print(stations[index].url);
       return Ref(stations[index].urlResolved ?? stations[index].url, stations[index].name, Ref.typeTrack);
     });
   }

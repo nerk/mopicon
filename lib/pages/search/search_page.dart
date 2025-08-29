@@ -209,7 +209,11 @@ class _SearchPageState extends State<SearchPage> {
             },
             valueListenable: controller.selectionChanged,
             checkEnable: (value, result) {
-              return value.positions.length == 1;
+              if (value.positions.length != 1) {
+                return false;
+              }
+              var item = value.filterSelected(tracks).first;
+              return !(item.uri.isStreamUri() || item.uri.isPodcastUri());
             },
           ),
           VolumeControl(),

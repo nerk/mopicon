@@ -206,7 +206,11 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
             },
             valueListenable: libraryController.selectionChanged,
             checkEnable: (value, result) {
-              return value.positions.length == 1 && parent?.type != Ref.typeAlbum;
+              if (value.positions.length != 1) {
+                return false;
+              }
+              var item = value.filterSelected(items).first;
+              return !(item.uri.isStreamUri() || item.uri.isPodcastUri());
             },
           ),
           VolumeControl(),

@@ -84,6 +84,17 @@ class ApplicationRoutes {
             return AboutPage();
           },
         ),
+        GoRoute(
+          onExit: (BuildContext c, _) {
+            GetIt.instance<RadioBrowserController>().reset();
+            return true;
+          },
+          name: radio,
+          path: radioPath,
+          builder: (BuildContext context, GoRouterState state) {
+            return const RadioBrowserPage();
+          },
+        ),
         StatefulShellRoute.indexedStack(
           builder: (BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
             return HomeView(navigationShell);
@@ -100,21 +111,6 @@ class ApplicationRoutes {
                   path: searchPath,
                   builder: (BuildContext context, GoRouterState state) {
                     return const SearchPage();
-                  },
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
-                  onExit: (BuildContext c, _) {
-                    GetIt.instance<RadioBrowserController>().reset();
-                    return true;
-                  },
-                  name: radio,
-                  path: radioPath,
-                  builder: (BuildContext context, GoRouterState state) {
-                    return const RadioBrowserPage();
                   },
                 ),
               ],
@@ -208,6 +204,10 @@ class ApplicationRoutes {
 
   void gotoSearch() {
     GoRouter.of(rootNavigatorKey.currentContext!).push(searchPath);
+  }
+
+  void gotoRadio() {
+    GoRouter.of(rootNavigatorKey.currentContext!).push(radioPath);
   }
 
   void gotoAlbum(Album album) {

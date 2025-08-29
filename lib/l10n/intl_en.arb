@@ -87,6 +87,7 @@
   "menuNewPlaylist": "Create Playlist",
   "menuRenamePlaylist": "Rename Playlist",
   "menuNewStream": "New Stream",
+  "menuRadioBrowser": "Radio Browser",
   "menuPlayNow": "Play now",
   "menuSelection": "Selection",
   "menuSelectAll": "Select all",
@@ -187,6 +188,7 @@
   "loggingLbl": "Logging",
   "logDialogTitle": "Log",
   "showLogButtonLbl": "Show Log",
-  "clearLogButtonLbl": "Clear Log"
+  "clearLogButtonLbl": "Clear Log",
+  "radioBrowserTitle": "RadioBrowser"
 }
 

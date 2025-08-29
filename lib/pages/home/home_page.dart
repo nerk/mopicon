@@ -113,7 +113,6 @@ class _HomeViewState extends State<HomeView> {
           selectedIndex: widget.navigationShell.currentIndex,
           destinations: <Widget>[
             NavigationDestination(icon: const Icon(Icons.search), label: S.of(context).homePageSearchLbl),
-            NavigationDestination(icon: const Icon(Icons.radio), label: S.of(context).radioBrowserLbl),
             NavigationDestination(icon: const Icon(Icons.library_music), label: S.of(context).homePageBrowseLbl),
             NavigationDestination(
               icon: Badge(isLabelVisible: trackListCount > 0, label: Text('$trackListCount'), child: const Icon(Icons.queue_music)),

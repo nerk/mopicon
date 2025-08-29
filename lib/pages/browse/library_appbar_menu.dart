@@ -30,6 +30,8 @@ import 'package:mopicon/pages/browse/rename_playlist_dialog.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 
+import 'package:mopicon/common/globals.dart';
+
 class LibraryBrowserAppBarMenu extends StatelessWidget {
   final mopidyService = GetIt.instance<MopidyService>();
 
@@ -57,6 +59,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
     return menuBuilder
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
         .addDivider()
+        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, __, ___) { Globals.applicationRoutes.gotoRadio();})
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
         .build(context, null, null);

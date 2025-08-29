@@ -46,8 +46,8 @@ abstract class RadioBrowserController extends BaseController with TracklistMetho
   Future<List<String>> getRadiobrowserHosts();
   Future<List<Country>> getCountries();
   Future<List<Station>> getStations({String? country, String? name, bool? nameExact});
+  void clickStation(String uuid);
   void reset();
-  void listAll();
 }
 
 class RadioBrowserControllerImpl extends RadioBrowserController {
@@ -130,10 +130,6 @@ class RadioBrowserControllerImpl extends RadioBrowserController {
 
     var stations = response.items.map((e) {
       if (e.lastCheckOk) {
-        // TODO: Mopidy cannot handle HLS streams yet.
-        //if (!e.url.endsWith('.m3u8')) {
-          //return e;
-        //}
         return e;
       }
       return null;
@@ -142,18 +138,9 @@ class RadioBrowserControllerImpl extends RadioBrowserController {
   }
 
   @override
-  void listAll() async {
-    try {
-      var countries = await getCountries();
-      print(countries.map((e) => e.name).toList());
-
-      //var stations = await getStations(country: "Germany", name: "Hochstift");
-      var stations = await getStations(country: "The United States Of America", name: "106");
-      print(stations.map((e) => e.name).toList());
-      print(stations.length);
-    } catch (e) {
-      print(e);
-    }
+  void clickStation(String uuid) async {
+    RadioBrowserApi api = await getApi();
+    await api.clickStation(uuid: uuid);
   }
 
   @override

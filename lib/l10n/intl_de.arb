@@ -12,7 +12,6 @@
   "connectingPageConnecting": "Verbinden...",
   "connectingPageStopBtn": "Abbrechen",
   "homePageSearchLbl": "Suche",
-  "radioBrowserLbl": "Radio",
   "homePageBrowseLbl": "Bibliothek",
   "homePageTracksLbl": "Wiedergabe",
   "pageNotFoundMsg": "Seite nicht gefunden!",
@@ -87,6 +86,7 @@
   "menuNewPlaylist": "Neue Playlist",
   "menuRenamePlaylist": "Playlist umbenennen",
   "menuNewStream": "Neuer Stream",
+  "menuRadioBrowser": "Radio Browser",
   "menuPlayNow": "Abspielen",
   "menuSelection": "Auswahl",
   "menuSelectAll": "Alles auswählen",
@@ -187,5 +187,6 @@
   "loggingLbl": "Logging",
   "logDialogTitle": "Log",
   "showLogButtonLbl": "Log anzeigen",
-  "clearLogButtonLbl": "Log löschen"
+  "clearLogButtonLbl": "Log löschen",
+  "radioBrowserTitle": "Radio Browser"
 }

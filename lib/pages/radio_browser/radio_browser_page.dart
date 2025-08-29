@@ -237,7 +237,7 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(S.of(context).searchPageTitle),
+        title: Text(S.of(context).radioBrowserTitle),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         leading: controller.selectionChanged.value.isNotEmpty

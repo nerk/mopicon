@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/error_snackbar.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/generated/l10n.dart';
+import 'package:mopicon/common/globals.dart';
 import 'package:mopicon/services/mopidy_service.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 
@@ -71,6 +72,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
         .addMenuItem(S.of(context).menuClearList, Icons.delete, _deleteAll)
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
         .addDivider()
+        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, __, ___) { Globals.applicationRoutes.gotoRadio();})
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
         .build(context, null, null);

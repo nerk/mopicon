@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:mopicon/components/menu_builder.dart';
 import 'package:mopicon/generated/l10n.dart';
 
+import 'package:mopicon/common/globals.dart';
 import 'search_view_controller.dart';
 
 class SearchAppBarMenu extends StatelessWidget {
@@ -40,6 +41,7 @@ class SearchAppBarMenu extends StatelessWidget {
     return MenuBuilder()
         .addMenuItem(S.of(context).menuSelectAll, Icons.select_all, _selectAll)
         .addDivider()
+        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, __, ___) { Globals.applicationRoutes.gotoRadio();})
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
         .build(context, null, null);

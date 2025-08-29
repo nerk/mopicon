@@ -75,7 +75,7 @@ class NowPlaying extends StatelessWidget {
         if (title == artistName) {
           artistName = '';
         }
-        albumName = currentTlTrack!.track.uri;
+        //albumName = currentTlTrack!.track.uri;
       } else {
         title = currentTlTrack!.track.name;
         artistName = currentTlTrack!.track.artists.map((e) => e.name).nonNulls.join(', ');

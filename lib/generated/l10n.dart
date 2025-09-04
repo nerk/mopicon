@@ -1128,6 +1128,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Filter by country...`
+  String get radioBrowserFilterByCountry {
+    return Intl.message(
+      'Filter by country...',
+      name: 'radioBrowserFilterByCountry',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

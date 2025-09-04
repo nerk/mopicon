@@ -619,9 +619,7 @@ class MopidyServiceImpl extends MopidyService {
               .map((t) => failedUris.contains(t.uri) ? t : null)
               .nonNulls
               .toList();
-          await _mopidy.tracklist.add(readd.asTracks, null);
-          // return final tracklist
-          tlTracks = await _mopidy.tracklist.getTlTracks();
+          tlTracks = await _mopidy.tracklist.add(readd.asTracks, null);
         }
         return tlTracks;
       } finally {

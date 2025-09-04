@@ -32,7 +32,6 @@ import 'generated/l10n.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Initializer.initialize();
-
   return runApp(AppWidget());
 }
 

@@ -188,5 +188,6 @@
   "logDialogTitle": "Log",
   "showLogButtonLbl": "Log anzeigen",
   "clearLogButtonLbl": "Log löschen",
-  "radioBrowserTitle": "Radio Browser"
+  "radioBrowserTitle": "Radio Browser",
+  "radioBrowserFilterByCountry": "Filtern nach Land..."
 }

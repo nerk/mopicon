@@ -55,7 +55,7 @@ class _InfoSnackBar extends SnackBar {
   _InfoSnackBar({required String title, String? detail})
     : super(
         content: ListTile(leading: const Icon(Icons.info), title: Text(title), subtitle: detail != null ? Text(detail) : null),
-        duration: const Duration(seconds: 10),
+        duration: const Duration(seconds: 5),
         backgroundColor: GetIt.instance<PreferencesController>().theme.data.colorScheme.surfaceContainerHigh,
         showCloseIcon: false,
       );

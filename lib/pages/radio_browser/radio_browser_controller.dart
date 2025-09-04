@@ -21,10 +21,12 @@
  */
 
 import 'dart:math';
+import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import 'package:radio_browser_api/radio_browser_api.dart';
 import 'package:dnsolve/dnsolve.dart';
 import 'package:mopicon/common/base_controller.dart';
+import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/pages/playlist/playlist_mixin.dart';
 import 'package:mopicon/pages/tracklist/tracklist_mixin.dart';
 import 'package:mopicon/utils/logging_utils.dart';
@@ -35,25 +37,43 @@ const _hostLookup = "_api._tcp.radio-browser.info";
 typedef RadioBrowserCountriesChanged = ValueNotifier<List<Country>>;
 typedef RadioBrowserStationsChanged = ValueNotifier<List<Station>>;
 
-abstract class RadioBrowserController extends BaseController with TracklistMethods, PlaylistMethods {
+final _preferences = GetIt.instance<PreferencesController>();
 
-  /// Notification to trigger refresh.
+/// Defines the interface for a controller that interacts with the Radio Browser API.
+abstract class RadioBrowserController extends BaseController with TracklistMethods, PlaylistMethods {
+  /// Notification to trigger a refresh of the station list.
   var resetNotifier = OpenValueNotifier<bool>(false);
 
+  /// Notifier for when the list of countries changes.
   var countriesChanged = RadioBrowserCountriesChanged([]);
+
+  /// Notifier for when the list of stations changes.
   var stationsChanged = RadioBrowserStationsChanged([]);
 
+  /// Returns a list of available Radio Browser hosts.
   Future<List<String>> getRadiobrowserHosts();
+
+  /// Returns a list of all available countries.
   Future<List<Country>> getCountries();
+
+  /// Returns a list of stations, optionally filtered by country and/or name.
   Future<List<Station>> getStations({String? country, String? name, bool? nameExact});
+
+  /// Returns display information for a country, such as its flag.
+  CountryInfo? getCountryInfo(String iso31661);
+
+  /// Increments the click count for a station.
   void clickStation(String uuid);
+
+  /// Notifies listeners to reset the station list.
   void reset();
 }
 
+/// Implementation of the [RadioBrowserController] interface.
 class RadioBrowserControllerImpl extends RadioBrowserController {
-
   RadioBrowserApi? _api;
 
+  /// Returns a [RadioBrowserApi] instance, creating one if it doesn't exist.
   Future<RadioBrowserApi> getApi() async {
     if (_api != null) {
       return _api!;
@@ -77,6 +97,7 @@ class RadioBrowserControllerImpl extends RadioBrowserController {
     return hosts;
   }
 
+  // Retrieves a [RadioBrowserApi] instance by randomly selecting a host and testing it.
   Future<RadioBrowserApi> _retrieveApi() async {
     var hosts = await getRadiobrowserHosts();
     var idx = Random().nextInt(hosts.length);
@@ -98,11 +119,12 @@ class RadioBrowserControllerImpl extends RadioBrowserController {
     throw Exception("Could not retrieve RadioBrowser API");
   }
 
+  // Checks the response from the Radio Browser API for errors.
   void _checkResponse(RadioBrowserListResponse response) {
     // TODO
     if (response.statusCode != 200) {
-        logger.e(response.statusCode);
-        throw Exception(response.error);
+      logger.e(response.statusCode);
+      throw Exception(response.error);
     }
   }
 
@@ -121,7 +143,7 @@ class RadioBrowserControllerImpl extends RadioBrowserController {
     RadioBrowserListResponse<Station> response;
     if (country == null && name == null) {
       response = await api.getAllStations(parameters: hideBroken);
-    } else if (country != null && name == null){
+    } else if (country != null && name == null) {
       response = await api.getStationsByCountry(country: country, parameters: hideBroken);
     } else {
       response = await api.advancedStationSearch(country: country, name: name, nameExact: nameExact, parameters: hideBroken);
@@ -135,6 +157,11 @@ class RadioBrowserControllerImpl extends RadioBrowserController {
       return null;
     }).nonNulls.toList();
     return stations;
+  }
+
+  @override
+  CountryInfo? getCountryInfo(String iso31661) {
+    return _preferences.appLocale.countries[iso31661];
   }
 
   @override

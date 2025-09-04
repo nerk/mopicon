@@ -22,6 +22,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:universal_io/io.dart';
+import 'package:country/country.dart';
+import 'package:country_flags/country_flags.dart';
+
+class CountryInfo {
+  String iso31661;
+  String displayName;
+  Widget flag;
+
+  CountryInfo(this.iso31661, this.displayName, this.flag);
+
+  @override
+  String toString() {
+    return "$iso31661,$displayName";
+  }
+}
 
 class AppLocale {
   static final labels = <String, Map<String, String>>{
@@ -32,6 +47,8 @@ class AppLocale {
   static AppLocale defaultLocale = AppLocale.system();
 
   late Locale locale;
+
+  late Map<String, CountryInfo> countries;
 
   String getLabel(String currentLanguageCode) {
     var label = labels.containsKey(currentLanguageCode)
@@ -46,20 +63,39 @@ class AppLocale {
   }
 
   AppLocale.english() {
-    locale = const Locale('en');
+    locale = const Locale('en', 'GB');
+    countries = _countryInfoListByLocale(locale);
   }
 
   AppLocale.german() {
-    locale = const Locale('de');
+    locale = const Locale('de', 'DE');
+    countries = _countryInfoListByLocale(locale);
   }
 
   AppLocale.system() {
     var lang = _language(Intl.systemLocale);
-    locale = labels[lang] != null ? Locale(lang) : const Locale('en');
+    var country = _country(Intl.systemLocale);
+    locale = labels[lang] != null ? Locale(lang, country) : const Locale('en', 'GB');
+    countries = _countryInfoListByLocale(locale);
   }
 
   static String _language(String languageCode) {
     return languageCode.split('-')[0].split('_')[0];
+  }
+
+  static String _country(String languageCode) {
+    return languageCode.split('-')[0].split('_')[1];
+  }
+
+  static Map<String, CountryInfo> _countryInfoListByLocale(Locale lc) {
+    var map = <String, CountryInfo>{};
+    var cc = lc.languageCode;
+    for (var c in Countries.values) {
+      String s = c.isoShortNameByLocale[cc.toLowerCase()] ?? '';
+      var flag = CountryFlag.fromCountryCode(c.alpha2, width: 40, height: 20);
+      map[c.alpha2] = CountryInfo(c.alpha2, s, flag);
+    }
+    return map;
   }
 
   @override

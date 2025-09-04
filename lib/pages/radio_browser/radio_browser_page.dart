@@ -36,6 +36,7 @@ import 'radio_browser_appbar_menu.dart';
 import 'radio_browser_controller.dart';
 import 'radio_browser_station_view.dart';
 
+/// A page that displays a list of radio stations from the Radio Browser API.
 class RadioBrowserPage extends StatefulWidget {
   const RadioBrowserPage({super.key});
 
@@ -45,29 +46,31 @@ class RadioBrowserPage extends StatefulWidget {
 
 class _RadioBrowserPageState extends State<RadioBrowserPage> {
   final controller = GetIt.instance<RadioBrowserController>();
-  final TextEditingController textEditingController = TextEditingController();
+  final TextEditingController searchTextEditingController = TextEditingController();
+  final TextEditingController countryFilterEditingController = TextEditingController();
   final unselectedCountry = radio.Country(name: "", iso31661: "", stationCount: 0);
 
   List<radio.Country> countries = [];
   radio.Country? selectedCountry;
   List<radio.Station> stations = [];
-  String? searchTerm;
   var images = <String, Widget?>{};
+  Key dropdownKey = UniqueKey();
 
   // selection mode (single/multiple) of track list view
   SelectionMode selectionMode = SelectionMode.off;
 
+  // Called when the user wants to reset the station list.
   void resetHandler() async {
     if (mounted) {
       setState(() {
-        searchTerm = null;
         stations = [];
         selectedCountry = unselectedCountry;
       });
-      textEditingController.clear();
+      searchTextEditingController.clear();
     }
   }
 
+  // Called when the selection mode or the selection changes.
   void updateSelection() {
     if (mounted) {
       setState(() {
@@ -76,13 +79,15 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
     }
   }
 
+  // Fetches stations from the Radio Browser API and updates the UI.
   void updateStations() async {
-    if (selectedCountry != unselectedCountry || searchTerm != null) {
+    var searchTerm = searchTextEditingController.text;
+    if (selectedCountry != unselectedCountry || searchTerm.isNotEmpty) {
       List<radio.Station> rdStations = [];
       try {
         String? country = selectedCountry == unselectedCountry ? null : selectedCountry?.name;
         controller.mopidyService.setBusy(true);
-        rdStations = await controller.getStations(country: country, name: searchTerm);
+        rdStations = await controller.getStations(country: country, name: searchTerm.isNotEmpty ? searchTerm : null);
       } catch (e, s) {
         logger.e(e, stackTrace: s);
         rdStations = [];
@@ -99,6 +104,7 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
     }
   }
 
+  // Fetches the list of countries from the Radio Browser API and updates the UI.
   void initCountries() async {
     var cntrs = List<radio.Country>.empty(growable: true);
     cntrs.add(unselectedCountry);
@@ -136,24 +142,43 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
     controller.selectionModeChanged.removeListener(updateSelection);
     controller.selectionChanged.removeListener(updateSelection);
     controller.resetNotifier.removeListener(resetHandler);
-    textEditingController.dispose();
+    searchTextEditingController.dispose();
+    countryFilterEditingController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     // create dropdown list of all countries
-    final List<DropdownMenuEntry<radio.Country>> dropDownCountries = <DropdownMenuEntry<radio.Country>>[];
+    var dropDownCountries = <DropdownMenuEntry<radio.Country>>[];
     for (final radio.Country country in countries) {
-      dropDownCountries.add(
-        DropdownMenuEntry<radio.Country>(
-          value: country,
-          label: country.name,
-          //leadingIcon: Container(width: 20, height: 20, color: theme.data.colorScheme.primaryContainer),
-        ),
-      );
+      var countryInfo = controller.getCountryInfo(country.iso31661);
+      if (countryInfo != null) {
+        dropDownCountries.add(
+          DropdownMenuEntry<radio.Country>(
+            value: country,
+            label: "${countryInfo.displayName} (${country.stationCount})",
+            leadingIcon: countryInfo.flag,
+          ),
+        );
+      }
     }
+    dropDownCountries = dropDownCountries.sortedBy((e) => e.label);
+
+    var clearIcon = Transform.translate(
+      offset: Offset(-5, -5),
+      child: IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          setState(() {
+            selectedCountry = unselectedCountry;
+            countryFilterEditingController.clear();
+            dropdownKey = UniqueKey();
+          });
+          updateStations();
+        },
+      ),
+    );
 
     var listView = RadioBrowserStationListView(stations, controller.selectionChanged, controller.selectionModeChanged, (
       radio.Station station,
@@ -180,51 +205,61 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
     var pageContent = Column(
       mainAxisSize: MainAxisSize.max,
       children: [
+        DropdownMenu<radio.Country>(
+          key: dropdownKey,
+          menuHeight: 400,
+          expandedInsets: const EdgeInsets.all(0),
+          requestFocusOnTap: true,
+          enableSearch: true,
+          controller: countryFilterEditingController,
+          initialSelection: unselectedCountry,
+          label: Text(S.of(context).radioBrowserFilterByCountry),
+          inputDecorationTheme: InputDecorationTheme(
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            constraints: BoxConstraints.tight(const Size.fromHeight(48)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+
+          dropdownMenuEntries: dropDownCountries,
+          onSelected: (radio.Country? country) async {
+            if (country != unselectedCountry || searchTextEditingController.text.isNotEmpty) {
+              setState(() {
+                selectedCountry = country;
+              });
+              updateStations();
+            } else {
+              setState(() {
+                selectedCountry = unselectedCountry;
+                stations = [];
+              });
+            }
+          },
+          selectedTrailingIcon: clearIcon,
+          trailingIcon: clearIcon,
+        ),
+        SizedBox(height: 10),
         Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
               child: SearchBar(
-                controller: textEditingController,
+                controller: searchTextEditingController,
                 padding: const WidgetStatePropertyAll<EdgeInsets>(EdgeInsets.symmetric(horizontal: 16.0)),
                 onSubmitted: (String value) async {
-                  searchTerm = value;
                   updateStations();
                 },
                 leading: const Icon(Icons.search),
                 trailing: <Widget>[
                   IconButton(
                     onPressed: () {
-                      searchTerm = null;
-                      textEditingController.clear();
+                      searchTextEditingController.clear();
                       updateStations();
                     },
                     icon: const Icon(Icons.clear),
                   ),
                 ],
-              ),
-            ),
-            Expanded(
-              child: DropdownMenu<radio.Country>(
-                expandedInsets: const EdgeInsets.only(left: 30),
-                requestFocusOnTap: false,
-                initialSelection: selectedCountry,
-                label: Text(S.of(context).preferencesPageThemeLbl),
-                dropdownMenuEntries: dropDownCountries,
-                onSelected: (radio.Country? country) async {
-                  if (country != unselectedCountry || searchTerm != null) {
-                    setState(() {
-                      selectedCountry = country;
-                    });
-                    updateStations();
-                  } else {
-                    setState(() {
-                      selectedCountry = unselectedCountry;
-                      stations = [];
-                    });
-                  }
-                },
               ),
             ),
           ],
@@ -264,6 +299,7 @@ class _RadioBrowserPageState extends State<RadioBrowserPage> {
     );
   }
 
+  /// Converts a list of [radio.Station] objects to a list of [Ref] objects.
   static List<Ref> stationsAsRef(List<radio.Station> stations) {
     return List.generate(stations.length, (index) {
       return Ref(stations[index].urlResolved ?? stations[index].url, stations[index].name, Ref.typeTrack);

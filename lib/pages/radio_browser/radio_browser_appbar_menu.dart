@@ -25,12 +25,14 @@ import 'package:mopicon/generated/l10n.dart';
 
 import 'radio_browser_controller.dart';
 
+/// Defines the app bar menu for the radio browser page.
 class RadioBrowserAppBarMenu extends StatelessWidget {
   final int numberTracks;
   final RadioBrowserController controller;
 
   const RadioBrowserAppBarMenu(this.numberTracks, this.controller, {super.key});
 
+  // Called when the user selects the "Select All" menu item.
   void _selectAll(BuildContext context, _, __) async {
     controller.notifySelectAll(numberTracks);
   }

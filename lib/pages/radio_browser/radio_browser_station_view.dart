@@ -28,6 +28,7 @@ import 'package:mopicon/utils/image_utils.dart';
 import 'package:mopicon/utils/logging_utils.dart';
 import 'package:radio_browser_api/radio_browser_api.dart' as radio;
 
+/// A list view that displays a list of radio stations.
 class RadioBrowserStationListView extends StatelessWidget {
   final List<radio.Station> stations;
   final SelectionChangedNotifier selectionChangedNotifier;
@@ -47,13 +48,14 @@ class RadioBrowserStationListView extends StatelessWidget {
     selectedPositions = selectionChangedNotifier.value.clone();
   }
 
+  // Returns a widget that displays the station's favicon or a checkmark if the station is selected.
   Widget _getImage(radio.Station station, int index, bool toggle) {
     bool checked = selectedPositions.isSet(index);
     checked = toggle ? !checked : checked;
     if (checked) {
       return Padding(
         padding: const EdgeInsets.all(0),
-        child: CircleAvatar(backgroundColor: preferences.theme.data.colorScheme.inversePrimary, child: const Icon(Icons.check)),
+        child: CircleAvatar(radius: 40, backgroundColor: preferences.theme.data.colorScheme.inversePrimary, child: const Icon(Icons.check)),
       );
     } else {
       return loadImage(station.favicon);
@@ -66,12 +68,12 @@ class RadioBrowserStationListView extends StatelessWidget {
       shrinkWrap: stations.length > 200,
       itemCount: stations.length,
       itemBuilder: (BuildContext context, int index) => _buildItem(context, index),
-      //leading: null,
     );
 
     return Material(child: listView);
   }
 
+  // Builds a single item in the list view.
   Widget _buildItem(BuildContext context, int index) {
     radio.Station item = stations[index];
     void onTapped() {
@@ -96,6 +98,7 @@ class RadioBrowserStationListView extends StatelessWidget {
     );
   }
 
+  // Returns a list tile that represents a single station.
   Widget _listItem(BuildContext context, int index, void Function() onTapped) {
     var item = stations[index];
     //return ListTile(minLeadingWidth: 80, minTileHeight: 100, leading: _getImage(item, index, false), title: Text(item.name), subtitle: Text(item.favicon ?? ""));
@@ -111,7 +114,8 @@ class RadioBrowserStationListView extends StatelessWidget {
       onTap: onTapped,
       leading: _getImage(item, index, false),
       title: Text("${item.name} (${item.clickCount})", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
-      subtitle: Text(item.url, style: const TextStyle(fontSize: 12)),
+      //subtitle: Text(item.url, style: const TextStyle(fontSize: 12)),
+      subtitle: item.hasExtendedInfo ? Text("${item.bitrate}", style: const TextStyle(fontSize: 12)) : null,
       dismissibleBackgroundColor: preferences.theme.data.colorScheme.inversePrimary,
       canReorder: false,
       confirmDismiss: (direction) async {
@@ -125,6 +129,7 @@ class RadioBrowserStationListView extends StatelessWidget {
     );
   }
 
+  /// Loads an image from a URL, with error handling.
   Widget loadImage(String? uri) {
     if (uri != null && uri.isNotEmpty && !uri.endsWith('.svg') && !uri.endsWith('/null')) {
       try {

@@ -410,7 +410,7 @@ class _TrackListState extends State<TrackListPage> {
             () async {
               var selectedItems = controller.getSelectedTracks();
               if (context.mounted) {
-                if (selectedItems.length == 1 && selectedItems[0].track.album != null) {
+                if (selectedItems.length == 1 && selectedItems[0].track.album != null && selectedItems[0].track.album?.uri != null) {
                   Globals.applicationRoutes.gotoAlbum(selectedItems[0].track.album!);
                 } else {
                   showError(S.of(context).noAlbumInformationError, null);

@@ -197,7 +197,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             () async {
               var selectedItems = await controller.getSelectedItems(playlist);
               if (context.mounted) {
-                if (selectedItems.length == 1 && selectedItems[0].album != null) {
+                if (selectedItems.length == 1 && selectedItems[0].album != null && selectedItems[0].album?.uri != null) {
                   Globals.applicationRoutes.gotoAlbum(selectedItems[0].album!);
                 } else {
                   showError(S.of(context).noAlbumInformationError, null);

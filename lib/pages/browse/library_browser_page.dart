@@ -196,7 +196,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                     track = await libraryController.mopidyService.lookupTrack(item);
                   }
                 }
-                if (track != null) {
+                if (track != null && track.album != null && track.album?.uri != null) {
                   Globals.applicationRoutes.gotoAlbum(track.album!);
                 } else {
                   showError(noAlbumInfoError, null);

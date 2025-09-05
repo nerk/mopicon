@@ -63,7 +63,7 @@ extension MopidyRefExtensions on Ref {
 
   /// Returns a comma separated string of artists.
   String? get artistNames {
-    if (extraData != null) {
+    if (extraData is AlbumInfoExtraData) {
       return (extraData as AlbumInfoExtraData).artistNames;
     }
     return null;
@@ -71,7 +71,7 @@ extension MopidyRefExtensions on Ref {
 
   /// Returns the name of an album.
   String? get albumName {
-    if (extraData != null) {
+    if (extraData is AlbumInfoExtraData) {
       return (extraData as AlbumInfoExtraData).albumName;
     }
     return null;
@@ -79,7 +79,7 @@ extension MopidyRefExtensions on Ref {
 
   /// Returns the URI of an album.
   String? get albumUri {
-    if (extraData != null) {
+    if (extraData is AlbumInfoExtraData) {
       return (extraData as AlbumInfoExtraData).uri;
     }
     return null;

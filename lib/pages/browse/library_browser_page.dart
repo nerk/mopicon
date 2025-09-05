@@ -31,6 +31,7 @@ import 'package:mopicon/components/item_action_dialog.dart';
 import 'package:mopicon/components/material_page_frame.dart';
 import 'package:mopicon/components/volume_control.dart';
 import 'package:mopicon/extensions/mopidy_utils.dart';
+import 'package:mopicon/extensions/timestring.dart';
 import 'package:mopicon/generated/l10n.dart';
 import 'package:mopicon/pages/settings/preferences_controller.dart';
 import 'package:mopicon/services/mopidy_service.dart';
@@ -73,6 +74,9 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
 
       items = await libraryController.browse(parent);
       images = await items.getImages();
+      if (parent?.uri != null && parent!.uri.isPodcastUri()) {
+        await loadPodcastSubtitles();
+      }
     } catch (e, s) {
       logger.e(e, stackTrace: s);
       items = [];
@@ -82,6 +86,26 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
         setState(() {});
       }
       libraryController.mopidyService.setBusy(false);
+    }
+  }
+
+  Future<void> loadPodcastSubtitles() async {
+    for (var item in items) {
+      if (item.type == Ref.typeTrack && item.uri.isPodcastUri()) {
+        var track = await libraryController.mopidyService.lookupTrack(item);
+        var d = track?.date;
+        var l = track?.length?.millisToTimeString();
+        String s = '';
+        if (d != null) {
+          s = d;
+        }
+        if (l != null) {
+          s = "$s $l";
+        }
+        if (s.isNotEmpty) {
+          item.extraData = s;
+        }
+      }
     }
   }
 
@@ -210,7 +234,9 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                 return false;
               }
               var item = value.filterSelected(items).first;
-              return item.type == Ref.typeTrack && !(item.uri.isStreamUri() && !item.uri.isPodcastUri()) && parent?.type != Ref.typeAlbum;
+              return item.type == Ref.typeTrack &&
+                  !(item.uri.isStreamUri() && !item.uri.isPodcastUri()) &&
+                  parent?.type != Ref.typeAlbum;
             },
           ),
           VolumeControl(),

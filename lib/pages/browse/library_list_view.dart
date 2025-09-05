@@ -146,7 +146,7 @@ class LibraryListView {
       onTap: onTapped,
       leading: ImageUtils.resize(_getImage(item, index, false), 40, 40),
       title: Text(item.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
-      subtitle: item.artistNames != null ? Text(item.artistNames!, style: const TextStyle(fontSize: 12)) : null,
+      subtitle: _subtitle(item),
       dismissibleBackgroundColor: preferences.theme.data.colorScheme.inversePrimary,
       canReorder: false,
       confirmDismiss: (item.type == Ref.typeTrack || item.type == Ref.typePlaylist)
@@ -160,6 +160,26 @@ class LibraryListView {
             }
           : null,
     );
+  }
+
+  Widget? _subtitle(Ref item) {
+    if (item.extraData is! String) {
+      return null;
+    }
+
+    var ei = item.extraData;
+    var st = '';
+    if (item.artistNames != null && ei != null) {
+      st = "$ei: ${item.artistNames}";
+    } else if (item.artistNames != null) {
+      st = item.artistNames!;
+    } else if (ei != null) {
+      st = ei;
+    } else {
+      return null;
+    }
+
+    return Text(st, style: const TextStyle(fontSize: 12));
   }
 
   Widget _albumItem(BuildContext context, int index, Ref? parent, Function() onTapped) {

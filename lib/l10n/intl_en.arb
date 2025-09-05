@@ -13,7 +13,7 @@
   "connectingPageStopBtn": "Abort",
   "homePageSearchLbl": "Search",
   "radioBrowserLbl": "Radio",
-  "homePageBrowseLbl": "Browse",
+  "homePageBrowseLbl": "Library",
   "homePageTracksLbl": "Tracks",
   "pageNotFoundMsg": "Page not found!",
   "preferencesPageTitle": "Settings",
@@ -36,7 +36,7 @@
   "preferencesPageSaveError": "Saving preferences failed.",
   "preferencesPageConnectErrorTitle": "Connecting to Mopidy server failed.",
   "preferencesPageConnectErrorDetails": "Max retries exceeded.",
-  "libraryBrowserPageTitle": "Browse",
+  "libraryBrowserPageTitle": "Library",
   "libraryPlaylistSeparator": "Playlists",
   "trackListPageTitle": "Tracks",
   "playlistPageTitle": "Playlist",
@@ -189,7 +189,7 @@
   "logDialogTitle": "Log",
   "showLogButtonLbl": "Show Log",
   "clearLogButtonLbl": "Clear Log",
-  "radioBrowserTitle": "RadioBrowser",
+  "radioBrowserTitle": "Radio Browser",
   "radioBrowserFilterByCountry": "Filter by country..."
 }
 

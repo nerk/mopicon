@@ -134,10 +134,10 @@ class S {
     return Intl.message('Radio', name: 'radioBrowserLbl', desc: '', args: []);
   }
 
-  /// `Browse`
+  /// `Library`
   String get homePageBrowseLbl {
     return Intl.message(
-      'Browse',
+      'Library',
       name: 'homePageBrowseLbl',
       desc: '',
       args: [],
@@ -364,10 +364,10 @@ class S {
     );
   }
 
-  /// `Browse`
+  /// `Library`
   String get libraryBrowserPageTitle {
     return Intl.message(
-      'Browse',
+      'Library',
       name: 'libraryBrowserPageTitle',
       desc: '',
       args: [],
@@ -1119,10 +1119,10 @@ class S {
     );
   }
 
-  /// `RadioBrowser`
+  /// `Radio Browser`
   String get radioBrowserTitle {
     return Intl.message(
-      'RadioBrowser',
+      'Radio Browser',
       name: 'radioBrowserTitle',
       desc: '',
       args: [],

@@ -424,7 +424,7 @@ class _TrackListState extends State<TrackListPage> {
                 return false;
               }
               var item = value.filterSelected(tracks).first;
-              return !(item.track.uri.isStreamUri() || item.track.uri.isPodcastUri());
+              return !(item.track.uri.isStreamUri() && !item.track.uri.isPodcastUri());
             },
           ),
           VolumeControl(),

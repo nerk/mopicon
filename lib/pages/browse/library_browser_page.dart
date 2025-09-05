@@ -210,7 +210,7 @@ class _LibraryBrowserPageState extends State<LibraryBrowserPage> {
                 return false;
               }
               var item = value.filterSelected(items).first;
-              return item.type == Ref.typeTrack && !(item.uri.isStreamUri() || item.uri.isPodcastUri());
+              return item.type == Ref.typeTrack && !(item.uri.isStreamUri() && !item.uri.isPodcastUri()) && parent?.type != Ref.typeAlbum;
             },
           ),
           VolumeControl(),

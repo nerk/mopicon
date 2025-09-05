@@ -211,7 +211,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 return false;
               }
               var item = value.filterSelected(tracks).first;
-              return !(item.uri.isStreamUri() || item.uri.isPodcastUri());
+              return !(item.uri.isStreamUri() && !item.uri.isPodcastUri());
             },
           ),
           VolumeControl(),

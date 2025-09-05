@@ -67,10 +67,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "deletePlaylistError": MessageLookupByLibrary.simpleMessage(
       "Playlist could not be deleted.",
     ),
-    "homePageBrowseLbl": MessageLookupByLibrary.simpleMessage("Browse"),
+    "homePageBrowseLbl": MessageLookupByLibrary.simpleMessage("Library"),
     "homePageSearchLbl": MessageLookupByLibrary.simpleMessage("Search"),
     "homePageTracksLbl": MessageLookupByLibrary.simpleMessage("Tracks"),
-    "libraryBrowserPageTitle": MessageLookupByLibrary.simpleMessage("Browse"),
+    "libraryBrowserPageTitle": MessageLookupByLibrary.simpleMessage("Library"),
     "libraryPlaylistSeparator": MessageLookupByLibrary.simpleMessage(
       "Playlists",
     ),
@@ -234,7 +234,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Filter by country...",
     ),
     "radioBrowserLbl": MessageLookupByLibrary.simpleMessage("Radio"),
-    "radioBrowserTitle": MessageLookupByLibrary.simpleMessage("RadioBrowser"),
+    "radioBrowserTitle": MessageLookupByLibrary.simpleMessage("Radio Browser"),
     "renamePlaylistCreateError": MessageLookupByLibrary.simpleMessage(
       "Could not rename playlist.",
     ),

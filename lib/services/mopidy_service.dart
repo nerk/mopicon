@@ -594,9 +594,25 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<TlTrack>> addTracksToTracklist(List<Ref> tracks) async {
     return waitConnected().then((_) async {
+      var tlTracks = <TlTrack>[];
       try {
         setBusy(true);
-        return await _mopidy.tracklist.add(tracks.asTracks, null);
+        // Try to add add uris and let the server perform
+        // the lookup. This will potentially fail for streams.
+        var uris = tracks.map((t) => t.uri).toList();
+        tlTracks = await _mopidy.tracklist.add(uris, null);
+        // Check tracks with failed lookup.
+        var failedTlids = tlTracks.map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.tlid : null).nonNulls.toList();
+        if (failedTlids.isNotEmpty) {
+          logger.w("Lookup failed for track. Reverting to default name.");
+          // Remove the tracks with failed lookup from tracklist
+          await _mopidy.tracklist.remove(FilterCriteria().tlid(failedTlids).toMap());
+          // Find matching entries from the parameter list
+          var failedUris = tlTracks.map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.track.uri : null).nonNulls.toList();
+          var readd = tracks.map((t) => failedUris.contains(t.uri) ? t : null).nonNulls.toList();
+          tlTracks = await _mopidy.tracklist.add(readd.asTracks, null);
+        }
+        return tlTracks;
       } finally {
         setBusy(false);
       }

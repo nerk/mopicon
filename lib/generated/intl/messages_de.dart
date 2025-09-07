@@ -145,7 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Neuen Stream zur Playlist hinzufügen",
     ),
     "newStreamAccessError": MessageLookupByLibrary.simpleMessage(
-      "Zugriff auf den Stream gescheitert. Ungültiger URI?",
+      "Zugriff auf den Stream gescheitert. Ungültiger URL?",
     ),
     "newStreamCreateError": MessageLookupByLibrary.simpleMessage(
       "Stream konnte nicht angelegt werden.",
@@ -157,14 +157,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "newStreamDialogNameLabel": MessageLookupByLibrary.simpleMessage("Name"),
     "newStreamDialogSubmitBtn": MessageLookupByLibrary.simpleMessage("OK"),
     "newStreamDialogUriHint": MessageLookupByLibrary.simpleMessage(
-      "URI des Streams.",
+      "URL des Streams.",
     ),
-    "newStreamDialogUriLabel": MessageLookupByLibrary.simpleMessage("URI"),
+    "newStreamDialogUriLabel": MessageLookupByLibrary.simpleMessage("URL"),
     "newStreamNameInvalid": MessageLookupByLibrary.simpleMessage(
       "Bitte Namen des Streams eingeben.",
     ),
     "newStreamUriInvalid": MessageLookupByLibrary.simpleMessage(
-      "Bitte gültigen URI des Streams eingeben.",
+      "Bitte gültigen URL des Streams eingeben.",
     ),
     "newTracklistStreamDialogTitle": MessageLookupByLibrary.simpleMessage(
       "Neuen Stream zur Wiedergabeliste hinzufügen",

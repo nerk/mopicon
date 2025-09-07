@@ -139,7 +139,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Add new stream to Playlist",
     ),
     "newStreamAccessError": MessageLookupByLibrary.simpleMessage(
-      "Stream cannot be accessed. Invalid URI?",
+      "Stream cannot be accessed. Invalid URL?",
     ),
     "newStreamCreateError": MessageLookupByLibrary.simpleMessage(
       "Could not create stream.",
@@ -151,14 +151,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "newStreamDialogNameLabel": MessageLookupByLibrary.simpleMessage("Name"),
     "newStreamDialogSubmitBtn": MessageLookupByLibrary.simpleMessage("OK"),
     "newStreamDialogUriHint": MessageLookupByLibrary.simpleMessage(
-      "Enter URI of new stream",
+      "Enter URL of new stream",
     ),
-    "newStreamDialogUriLabel": MessageLookupByLibrary.simpleMessage("URI"),
+    "newStreamDialogUriLabel": MessageLookupByLibrary.simpleMessage("URL"),
     "newStreamNameInvalid": MessageLookupByLibrary.simpleMessage(
       "Please a name for the stream.",
     ),
     "newStreamUriInvalid": MessageLookupByLibrary.simpleMessage(
-      "Please enter a valid URI for the stream.",
+      "Please enter a valid URL for the stream.",
     ),
     "newTracklistStreamDialogTitle": MessageLookupByLibrary.simpleMessage(
       "Add new stream to Tracklist",

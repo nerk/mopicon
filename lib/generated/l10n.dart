@@ -644,20 +644,20 @@ class S {
     );
   }
 
-  /// `URI`
+  /// `URL`
   String get newStreamDialogUriLabel {
     return Intl.message(
-      'URI',
+      'URL',
       name: 'newStreamDialogUriLabel',
       desc: '',
       args: [],
     );
   }
 
-  /// `Enter URI of new stream`
+  /// `Enter URL of new stream`
   String get newStreamDialogUriHint {
     return Intl.message(
-      'Enter URI of new stream',
+      'Enter URL of new stream',
       name: 'newStreamDialogUriHint',
       desc: '',
       args: [],
@@ -694,10 +694,10 @@ class S {
     );
   }
 
-  /// `Please enter a valid URI for the stream.`
+  /// `Please enter a valid URL for the stream.`
   String get newStreamUriInvalid {
     return Intl.message(
-      'Please enter a valid URI for the stream.',
+      'Please enter a valid URL for the stream.',
       name: 'newStreamUriInvalid',
       desc: '',
       args: [],
@@ -714,10 +714,10 @@ class S {
     );
   }
 
-  /// `Stream cannot be accessed. Invalid URI?`
+  /// `Stream cannot be accessed. Invalid URL?`
   String get newStreamAccessError {
     return Intl.message(
-      'Stream cannot be accessed. Invalid URI?',
+      'Stream cannot be accessed. Invalid URL?',
       name: 'newStreamAccessError',
       desc: '',
       args: [],

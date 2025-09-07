@@ -594,34 +594,9 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<TlTrack>> addTracksToTracklist(List<Ref> tracks) async {
     return waitConnected().then((_) async {
-      var tlTracks = <TlTrack>[];
       try {
         setBusy(true);
-        // Try to add add uris and let the server perform
-        // the lookup. This will potentially fail for streams.
-        var uris = tracks.map((t) => t.uri).toList();
-        tlTracks = await _mopidy.tracklist.add(uris, null);
-        // Check tracks with failed lookup.
-        var failedTlids = tlTracks
-            .map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.tlid : null)
-            .nonNulls
-            .toList();
-        if (failedTlids.isNotEmpty) {
-          logger.w("Lookup failed for track. Reverting to default name.");
-          // Remove the tracks with failed lookup from tracklist
-          await _mopidy.tracklist.remove(FilterCriteria().tlid(failedTlids).toMap());
-          // Find matching entries from the parameter list
-          var failedUris = tlTracks
-              .map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.track.uri : null)
-              .nonNulls
-              .toList();
-          var readd = tracks
-              .map((t) => failedUris.contains(t.uri) ? t : null)
-              .nonNulls
-              .toList();
-          tlTracks = await _mopidy.tracklist.add(readd.asTracks, null);
-        }
-        return tlTracks;
+        return await _mopidy.tracklist.add(tracks.asTracks, null);
       } finally {
         setBusy(false);
       }
@@ -1016,16 +991,7 @@ class MopidyServiceImpl extends MopidyService {
         Playlist? pl = await _mopidy.playlists.lookup(playlist.uri);
         if (pl != null) {
           for (var item in items) {
-            Track tr = (await _mopidy.library.lookup([item.uri])).values.first[0];
-            // Special error handling if this is a stream uri and lookup fails if the stream is invalid
-            // or cannot be accessed. Mopidy dart client API sets 'INVALID_STREAM_ERROR' as the name.
-            if (tr.name == 'INVALID_STREAM_ERROR') {
-              // Fall back to inserting a track created directly from item
-              pl.addTrack(item.asTrack);
-            } else {
-              // add track
-              pl.addTrack(tr);
-            }
+            pl.addTrack(item.asTrack);
           }
           Playlist? result = await _mopidy.playlists.save(pl);
           return Future.value(result);

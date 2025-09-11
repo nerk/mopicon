@@ -662,7 +662,7 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<int> getTracklistLength() {
     return waitConnected().then((_) {
-      itry {
+      try {
         setBusy(true);
         return _mopidy.tracklist.getLength();
       } finally {

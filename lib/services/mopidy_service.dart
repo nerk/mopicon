@@ -22,6 +22,7 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' show ValueNotifier;
 import 'package:flutter/services.dart';
 import 'package:mopicon/common/selected_item_positions.dart';
@@ -594,25 +595,64 @@ class MopidyServiceImpl extends MopidyService {
   @override
   Future<List<TlTrack>> addTracksToTracklist(List<Ref> tracks) async {
     return waitConnected().then((_) async {
-      var tlTracks = <TlTrack>[];
       try {
         setBusy(true);
-        // Try to add add uris and let the server perform
-        // the lookup. This will potentially fail for streams.
+
+        // If non stream URIs are to be added, just add tracks as uris and let the server perform
+        // the lookup of additional data.
         var uris = tracks.map((t) => t.uri).toList();
-        tlTracks = await _mopidy.tracklist.add(uris, null);
-        // Check tracks with failed lookup.
-        var failedTlids = tlTracks.map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.tlid : null).nonNulls.toList();
-        if (failedTlids.isNotEmpty) {
-          logger.w("Lookup failed for track. Reverting to default name.");
-          // Remove the tracks with failed lookup from tracklist
-          await _mopidy.tracklist.remove(FilterCriteria().tlid(failedTlids).toMap());
-          // Find matching entries from the parameter list
-          var failedUris = tlTracks.map((tl) => tl.track.name == 'INVALID_STREAM_ERROR' ? tl.track.uri : null).nonNulls.toList();
-          var readd = tracks.map((t) => failedUris.contains(t.uri) ? t : null).nonNulls.toList();
-          tlTracks = await _mopidy.tracklist.add(readd.asTracks, null);
+        if (uris.map((e) => e.isStreamUri() ? e : null).nonNulls.toList().isEmpty) {
+          return await _mopidy.tracklist.add(uris, null);
         }
-        return tlTracks;
+
+        // If we are about to add streams, it is going to be more difficult...
+        // Add tracks as uris
+        var tlTracks = await _mopidy.tracklist.add(uris, null);
+        // Each track now now contains all additional information available.
+        // However, for streams the lookup performed by the server changes
+        // the stream's name in a sometimes strange or undesired way.
+        // If the added tracks contain streams (broadcast, podcast, tunein, etc..),
+        // we remove the newly added tracks, replace the stream names with
+        // the original names and re-add them directly as track objects (not uris).
+
+        // Remove newly added tracks
+        var tlidsAdded = tlTracks.map((tl) => tl.tlid).toList();
+        await _mopidy.tracklist.remove(FilterCriteria().tlid(tlidsAdded).toMap());
+
+        // Create a list of new tracks by copying each track
+        // that is a stream into a new track object, replacing
+        // the name with the original name from the parameter list.
+        var modifiedTracks = List<Track>.empty(growable: true);
+        for (int i = 0; i < tlTracks.length; i++) {
+          var trk = tlTracks[i].track;
+          if (trk.uri.isStreamUri()) {
+            var name = tracks.firstWhereOrNull((t) => t.uri == trk.uri)?.name ?? trk.name;
+            // new track
+            var nTrk = Track(
+              trk.uri,
+              name,
+              trk.artists,
+              trk.album,
+              trk.composers,
+              trk.performers,
+              trk.genre,
+              trk.trackNo,
+              trk.discNo,
+              trk.date,
+              trk.length,
+              trk.bitrate,
+              trk.comment,
+              trk.musicbrainzId,
+              trk.lastModified,
+            );
+            modifiedTracks.add(nTrk);
+          } else {
+            // not a stream, just add as is
+            modifiedTracks.add(trk);
+          }
+        }
+        // add modified tracks to tracklist
+        return await _mopidy.tracklist.add(modifiedTracks, null);
       } finally {
         setBusy(false);
       }

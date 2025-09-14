@@ -44,7 +44,7 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<void>(
       stream: preferences.preferencesChanged$,
-      builder: (_, __) {
+      builder: (_, _) {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           key: Globals.rootNavigatorKey,

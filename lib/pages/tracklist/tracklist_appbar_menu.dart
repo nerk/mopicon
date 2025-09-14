@@ -36,18 +36,18 @@ class TracklistAppBarMenu extends StatelessWidget {
 
   const TracklistAppBarMenu(this.controller, {super.key});
 
-  void _selectAll([BuildContext? context, _, __]) async {
+  void _selectAll([BuildContext? context, _, _]) async {
     int nTracks = controller.getTrackList().length;
     controller.notifySelectAll(nTracks);
   }
 
-  void _deleteAll(BuildContext context, _, __) {
+  void _deleteAll(BuildContext context, _, _) {
     final mopidyService = GetIt.instance<MopidyService>();
     controller.notifyUnselect();
     mopidyService.clearTracklist();
   }
 
-  void _newStream(BuildContext context, _, __) async {
+  void _newStream(BuildContext context, _, _) async {
     var record = await newStreamDialog(S.of(context).newTracklistStreamDialogTitle);
     if (record != null && context.mounted) {
       try {
@@ -62,7 +62,7 @@ class TracklistAppBarMenu extends StatelessWidget {
     }
   }
 
-  void _refresh(BuildContext context, _, __) async {
+  void _refresh(BuildContext context, _, _) async {
     controller.notifyRefresh();
   }
 
@@ -74,7 +74,7 @@ class TracklistAppBarMenu extends StatelessWidget {
         .addMenuItem(S.of(context).menuClearList, Icons.delete, _deleteAll)
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
         .addDivider()
-        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, __, ___) { Globals.applicationRoutes.gotoRadio();})
+        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, _, _) { Globals.applicationRoutes.gotoRadio();})
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
         .build(context, null, null);

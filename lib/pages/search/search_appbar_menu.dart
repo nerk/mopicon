@@ -32,7 +32,7 @@ class SearchAppBarMenu extends StatelessWidget {
 
   const SearchAppBarMenu(this.numberTracks, this.controller, {super.key});
 
-  void _selectAll(BuildContext context, _, __) async {
+  void _selectAll(BuildContext context, _, _) async {
     controller.notifySelectAll(numberTracks);
   }
 
@@ -41,7 +41,7 @@ class SearchAppBarMenu extends StatelessWidget {
     return MenuBuilder()
         .addMenuItem(S.of(context).menuSelectAll, Icons.select_all, _selectAll)
         .addDivider()
-        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, __, ___) { Globals.applicationRoutes.gotoRadio();})
+        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, _, _) { Globals.applicationRoutes.gotoRadio();})
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
         .build(context, null, null);

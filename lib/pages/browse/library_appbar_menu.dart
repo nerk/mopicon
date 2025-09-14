@@ -59,17 +59,17 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
     return menuBuilder
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
         .addDivider()
-        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, __, ___) { Globals.applicationRoutes.gotoRadio();})
+        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, _, _) { Globals.applicationRoutes.gotoRadio();})
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
         .build(context, null, null);
   }
 
-  void _selectAll([BuildContext? context, _, __]) async {
+  void _selectAll([BuildContext? context, _, _]) async {
     controller.notifySelectAll(items.length);
   }
 
-  void _newPlayList(BuildContext context, _, __) {
+  void _newPlayList(BuildContext context, _, _) {
     String alreadyExistsError = S.of(context).playlistAlreadyExistsError;
     String createError = S.of(context).newPlaylistCreateError;
     mopidyService.getPlaylists().then((List<Ref> playlists) {
@@ -91,7 +91,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
     });
   }
 
-  void _renamePlayList(BuildContext context, _, __) async {
+  void _renamePlayList(BuildContext context, _, _) async {
     if (controller.selectionChanged.value.positions.length == 1) {
       var ref = items[controller.selectionChanged.value.positions.first];
       controller.notifyUnselect();
@@ -104,7 +104,7 @@ class LibraryBrowserAppBarMenu extends StatelessWidget {
     }
   }
 
-  void _refresh(BuildContext context, _, __) {
+  void _refresh(BuildContext context, _, _) {
     controller.notifyRefresh();
   }
 }

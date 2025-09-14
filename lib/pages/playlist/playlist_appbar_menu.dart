@@ -36,16 +36,16 @@ class PlaylistAppBarMenu extends StatelessWidget {
 
   const PlaylistAppBarMenu(this.controller, this.playlist, {super.key});
 
-  void _selectAll(BuildContext context, _, __) async {
+  void _selectAll(BuildContext context, _, _) async {
     List<Track> tracks = await controller.getPlaylistItems(playlist);
     controller.notifySelectAll(tracks.length);
   }
 
-  void _deleteAll(BuildContext context, _, __) async {
+  void _deleteAll(BuildContext context, _, _) async {
     await controller.deleteAllPlaylistItems(playlist);
   }
 
-  void _newStream(BuildContext context, _, __) async {
+  void _newStream(BuildContext context, _, _) async {
     var record = await newStreamDialog(S.of(context).newPlaylistStreamDialogTitle);
     if (record != null && context.mounted) {
       try {
@@ -60,7 +60,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
     }
   }
 
-  void _refresh(BuildContext context, _, __) async {
+  void _refresh(BuildContext context, _, _) async {
     controller.notifyRefresh();
   }
 
@@ -72,7 +72,7 @@ class PlaylistAppBarMenu extends StatelessWidget {
         .addMenuItem(S.of(context).menuClearList, Icons.delete, _deleteAll)
         .addMenuItem(S.of(context).menuRefresh, Icons.refresh, _refresh)
         .addDivider()
-        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, __, ___) { Globals.applicationRoutes.gotoRadio();})
+        .addMenuItem(S.of(context).menuRadioBrowser, Icons.radio, (_, _, _) { Globals.applicationRoutes.gotoRadio();})
         .addSettingsMenuItem(S.of(context).menuSettings)
         .addHelpMenuItem(S.of(context).menuAbout)
         .build(context, null, null);

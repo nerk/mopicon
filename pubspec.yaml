@@ -72,6 +72,7 @@ dev_dependencies:
   # rules and activating additional ones.
   build_runner: ^2.4.9
   flutter_lints: ^6.0.0
+  build_web_compilers: ^4.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

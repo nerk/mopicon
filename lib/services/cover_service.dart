@@ -88,10 +88,10 @@ class CoverServiceImpl extends CoverService {
               },
             );
             covers[uri] = FittedBox(fit: BoxFit.cover, child: img);
+            _imageCache.put(uri, covers[uri]!);
           } else {
             covers[uri] = FittedBox(fit: BoxFit.cover, child: getIconForType(uri));
           }
-          _imageCache.put(uri, covers[uri]!);
         }
       } catch (e, s) {
         logger.e(e, stackTrace: s);
@@ -110,7 +110,7 @@ class CoverServiceImpl extends CoverService {
 
   static IconData? defaultIconData(String uri, [double? size]) {
     if (uri.startsWith('local:directory')) {
-      if (uri.startsWith('local:directory?type=album')) {
+      if (uri.startsWith('local:directory?type=album') || uri.startsWith('local:directory?type=track&album=')) {
         return Icons.album;
       } else if (uri.startsWith('local:directory?type=artist')) {
         return Icons.person;
@@ -162,7 +162,7 @@ class CoverServiceImpl extends CoverService {
   }
 
   static bool _isAudioFile(String uri) {
-    const audioFormats = <String>['.mp3', '.ogg', '.wav', '.aac', '.aiff', '.m4a', '.flac'];
+    const audioFormats = <String>['.mp3', '.ogg', '.wav', '.aac', '.aiff', '.m4a', '.mp4a', '.mp4', '.flac'];
 
     var suffix = _getExtension(uri);
     return audioFormats.contains(suffix);

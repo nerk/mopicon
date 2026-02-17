@@ -5,7 +5,7 @@
   The <a href="http://github.com/nerk/mopicon">source code</a> is available on Github.
 </center>
 <p>
-<center>Copyright &copy; 2024 Thomas Kern</center>
+<center>Copyright &copy; 2026 Thomas Kern</center>
 <p>
 <center>Version: {{version}}, Build: {{build}}</center>
 <p>
@@ -14,7 +14,7 @@
 <p>
 <a href="https://en.wikipedia.org/wiki/MIT_License">The MIT License (MIT)</a>
 <p>
-Copyright &copy; 2024 Thomas Kern
+Copyright &copy; 2026 Thomas Kern
 <p>
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),

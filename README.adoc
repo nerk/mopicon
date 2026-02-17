@@ -75,7 +75,7 @@ This project uses my https://github.com/nerk/mopidy_dart_client[mopidy_dart_clie
 
 == Copyright and License
 
-Copyright (C) 2023 Thomas Kern
+Copyright (C) 2026 Thomas Kern
 
 Licensed under MIT License.
 See link:LICENSE[LICENSE] for details.

@@ -12,4 +12,3 @@ key.properties
 **/*.keystore
 **/*.jks
 **/*.jks.bak
-key.properties
